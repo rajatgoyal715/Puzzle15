@@ -1,19 +1,23 @@
-package com.rajatgoyal.puzzle15;
+package com.rajatgoyal.puzzle15.ui;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.PersistableBundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.rajatgoyal.puzzle15.R;
+
 import java.util.Locale;
+
+/**
+ * Created by rajat on 15/9/17.
+ */
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.dialog_high_score, null);
-        timer = view.findViewById(R.id.timer_hs);
-        moves = view.findViewById(R.id.moves_hs);
+        timer = (TextView) view.findViewById(R.id.timer_hs);
+        moves = (TextView) view.findViewById(R.id.moves_hs);
 
         String time = "" + String.format(Locale.US, "%02d", hs_hours)
                 + ":" + String.format(Locale.US, "%02d", hs_minutes)

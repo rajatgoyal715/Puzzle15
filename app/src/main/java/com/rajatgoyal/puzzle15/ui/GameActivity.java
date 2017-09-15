@@ -1,4 +1,4 @@
-package com.rajatgoyal.puzzle15;
+package com.rajatgoyal.puzzle15.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,8 +18,13 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.rajatgoyal.puzzle15.R;
 
 import java.util.Random;
+
+/**
+ * Created by rajat on 15/9/17.
+ */
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -231,6 +236,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    // A method to fill the matrix in ascending order
+    // This is used for debugging.
     public void seriesFill() {
         int temp;
         for(int i = 0; i < size; i++) {
@@ -421,12 +428,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
         });
-//        alertDialogBuilder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
         AlertDialog dialog = alertDialogBuilder.create();
         dialog.show();
     }
@@ -456,7 +457,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-//                super.onBackPressed();
                 finish();
             }
         });

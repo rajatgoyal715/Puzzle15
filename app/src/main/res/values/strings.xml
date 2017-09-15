@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Puzzle15</string>
     <string name="app_logo">App Logo</string>
+    <string name="new_game">New Game</string>
+    <string name="high_score">High Score</string>
+    <string name="rules">Rules</string>
 
     <string name="rule1">1. Click on any block adjacent to the empty block to swap.</string>
     <string name="rule2">2. Your aim is to sort the blocks in increasing order.</string>
@@ -15,4 +18,6 @@
     <string name="sampleAdunitId">ca-app-pub-3940256099942544/6300978111</string>
     <string name="sampleAppId">ca-app-pub-3940256099942544~3347511713</string>
     <string name="testDeviceId">F94FB05401064F99C85F9BECABDC8E59</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

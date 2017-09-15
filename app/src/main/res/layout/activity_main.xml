@@ -6,7 +6,7 @@
     android:background="@color/background"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context="com.rajatgoyal.puzzle15.MainActivity">
+    tools:context="com.rajatgoyal.puzzle15.ui.MainActivity">
 
     <TextView
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             android:layout_marginTop="20dp"
             android:layout_weight="0"
             android:background="@color/light"
-            android:text="New Game"
+            android:text="@string/new_game"
             android:textAllCaps="false"
             android:textColor="@color/background"
             android:textSize="24sp" />
@@ -56,7 +56,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="0"
             android:background="@color/light"
-            android:text="High Score"
+            android:text="@string/high_score"
             android:textAllCaps="false"
             android:textColor="@color/background"
             android:textSize="24sp" />
@@ -68,7 +68,7 @@
             android:layout_marginTop="10dp"
             android:layout_weight="0"
             android:background="@color/light"
-            android:text="Rules"
+            android:text="@string/rules"
             android:textAllCaps="false"
             android:textColor="@color/background"
             android:textSize="24sp" />

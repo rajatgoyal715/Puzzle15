@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.rajatgoyal.puzzle15.GameActivity">
+    tools:context="com.rajatgoyal.puzzle15.ui.GameActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

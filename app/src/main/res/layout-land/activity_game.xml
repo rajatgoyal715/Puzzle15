@@ -6,7 +6,7 @@
     android:background="@color/white"
     android:gravity="center"
     android:orientation="horizontal"
-    tools:context="com.rajatgoyal.puzzle15.GameActivity">
+    tools:context="com.rajatgoyal.puzzle15.ui.GameActivity">
 
     <android.support.v7.widget.CardView
         android:layout_width="400dp"
