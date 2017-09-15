@@ -20,6 +20,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <ImageView
+            android:src="@drawable/empty"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp" />
+
         <TextView
             android:text="@string/rule2"
             android:textSize="25sp"
@@ -27,6 +33,12 @@
             android:textColor="@color/background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <ImageView
+            android:src="@drawable/sorted"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp" />
 
     </LinearLayout>
 
