@@ -32,6 +32,11 @@
         <service
             android:name=".widget.WidgetRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <provider
+            android:authorities="com.rajatgoyal.puzzle15"
+            android:name=".data.GameContentProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

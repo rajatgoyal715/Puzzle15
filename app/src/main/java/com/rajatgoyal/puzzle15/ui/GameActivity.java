@@ -1,15 +1,19 @@
 package com.rajatgoyal.puzzle15.ui;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -19,6 +23,10 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.rajatgoyal.puzzle15.R;
+import com.rajatgoyal.puzzle15.data.GameContract;
+import com.rajatgoyal.puzzle15.model.HighScore;
+import com.rajatgoyal.puzzle15.model.Time;
+import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
 
 import java.util.Random;
 
@@ -26,24 +34,21 @@ import java.util.Random;
  * Created by rajat on 15/9/17.
  */
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener{
+public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public int size, move, hours, minutes, seconds;
-    public int m[][], id[][];
-    public Button buttons[][];
-    public int pos_x = 0, pos_y = 0;
+    private int size, moves, hours, minutes, seconds;
+    private int m[][], id[][];
+    private Button buttons[][];
+    private int pos_x = 0, pos_y = 0;
 
-    Handler handler;
-    TextView timer, moves;
-    long startTime, currTime, lastTime;
+    private Handler handler;
+    private TextView timerTextView, movesTextView;
+    private long startTime, currTime, lastTime;
 
     public static final String TAG = "rajat";
 
-    SharedPreferences sharedPref;
-
-    int hs_moves, hs_hours, hs_minutes, hs_seconds;
-
     private AdView mAdView;
+    private HighScore latestHighScore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,18 +65,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         init();
     }
 
+
     public void init() {
         Log.d(TAG, "init: start");
 
-        getHighScore();
+        getLatestHighScore();
 
         size = 4;
-        move = 0;
+        moves = 0;
         m = new int[size][size];
         id = new int[size][size];
 
-        timer = (TextView) findViewById(R.id.timer);
-        moves = (TextView) findViewById(R.id.moves);
+        timerTextView = (TextView) findViewById(R.id.timer);
+        movesTextView = (TextView) findViewById(R.id.moves);
 
         fillIdMatrix();
 
@@ -90,29 +96,27 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void fillMatrix() {
-        shuffle();
-
-        makeValidMatrix();
+//        shuffle();
+//        makeValidMatrix();
+        seriesFill();
     }
 
-    public void getHighScore() {
-        Context context = getApplicationContext();
-        sharedPref = context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        hs_moves = sharedPref.getInt(getString(R.string.moves), Integer.MAX_VALUE);
-        hs_hours = sharedPref.getInt(getString(R.string.hours), Integer.MAX_VALUE);
-        hs_minutes = sharedPref.getInt(getString(R.string.minutes), Integer.MAX_VALUE);
-        hs_seconds = sharedPref.getInt(getString(R.string.seconds), Integer.MAX_VALUE);
-        Log.d(TAG, "getHighScore: " + hs_moves);
+    public void getLatestHighScore() {
+        new LatestHighScoreFetchTask(this) {
+            @Override
+            protected void onPostExecute(HighScore highScore) {
+                super.onPostExecute(highScore);
+                setLatestHighScore(highScore);
+            }
+        }.execute();
     }
 
-    public void setHighScore() {
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putInt(getString(R.string.moves), move);
-        editor.putInt(getString(R.string.hours), hours);
-        editor.putInt(getString(R.string.minutes), minutes);
-        editor.putInt(getString(R.string.seconds), seconds);
-        editor.apply();
-        Log.d(TAG, "getHighScore: " + move);
+    public void setLatestHighScore(HighScore latestHighScore) {
+        if (latestHighScore == null) {
+            this.latestHighScore = new HighScore(Integer.MAX_VALUE, new Time(Integer.MAX_VALUE));
+        } else {
+            this.latestHighScore = latestHighScore;
+        }
     }
 
     public void fillIdMatrix() {
@@ -135,33 +139,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         id[3][1] = R.id.btn31;
         id[3][2] = R.id.btn32;
         id[3][3] = R.id.btn33;
-
-//        printLogMatrix();
-    }
-
-    public void printLogMatrix() {
-        for(int i=0; i<size; i++){
-            for(int j=0; j<size ;j++) {
-                Log.d(TAG, "printLogMatrix: " + id[i][j]);
-            }
-        }
     }
 
     public void shuffle() {
         Log.d(TAG, "shuffle: start");
         Random rand = new Random();
         //an array to store which value has been assigned.
-        int a[] = new int[size*size];
+        int a[] = new int[size * size];
         int temp;
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
-                temp = rand.nextInt(size*size);
-                while(a[temp]==1) {
-                    temp = rand.nextInt(size*size);
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                temp = rand.nextInt(size * size);
+                while (a[temp] == 1) {
+                    temp = rand.nextInt(size * size);
                 }
                 a[temp] = 1;
                 m[i][j] = temp;
-                if(temp == 0) {
+                if (temp == 0) {
                     pos_x = i;
                     pos_y = j;
                     buttons[i][j].setText("");
@@ -180,18 +174,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     // find inversions in the matrix by first creating a 1D matrix
     // and then compare each number with every number ahead of it and check if it is smaller.
     public int findInversions() {
-        int arr[] = new int[size*size];
-        for (int i = 0;i < size; i++) {
-            System.arraycopy(m[i],0,arr,size*i,size);
-//            for (int j = 0; j < size; j++) {
-//                arr[size*i+j] = m[i][j];
-//            }
+        int arr[] = new int[size * size];
+        for (int i = 0; i < size; i++) {
+            System.arraycopy(m[i], 0, arr, size * i, size);
         }
         int count = 0;
-        for(int i = 0; i < size * size; i++) {
-            if(arr[i]==0) continue;
-            for(int j = i+1; j < size * size; j++) {
-                if(arr[j]!=0 && arr[j]<arr[i]) count++;
+        for (int i = 0; i < size * size; i++) {
+            if (arr[i] == 0) continue;
+            for (int j = i + 1; j < size * size; j++) {
+                if (arr[j] != 0 && arr[j] < arr[i]) count++;
             }
         }
         return count;
@@ -203,35 +194,35 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     // else puzzle is not solvable
     public boolean isValid() {
         int inv = findInversions();
-        if(pos_x % 2 == 0 && inv % 2 != 0) return true;
-        else if(pos_x % 2 != 0 && inv % 2 == 0) return true;
+        if (pos_x % 2 == 0 && inv % 2 != 0) return true;
+        else if (pos_x % 2 != 0 && inv % 2 == 0) return true;
         return false;
     }
 
     // if puzzle is not solvable, make it solvable by decreasing one inversion
     // which can be done easily by swapping two last positions
     public void makeValidMatrix() {
-        if(!isValid()){
-            if(m[size-1][size-1]!=0){
-                if(m[size-1][size-2]!=0){
-                    int temp = m[size-1][size-2];
-                    m[size-1][size-2] = m[size-1][size-1];
-                    buttons[size-1][size-2].setText(m[size-1][size-2] + "");
-                    m[size-1][size-1] = temp;
-                    buttons[size-1][size-1].setText(m[size-1][size-1] + "");
-                } else{
-                    int temp = m[size-1][size-3];
-                    m[size-1][size-3] = m[size-1][size-1];
-                    buttons[size-1][size-3].setText(m[size-1][size-3] + "");
-                    m[size-1][size-1] = temp;
-                    buttons[size-1][size-1].setText(m[size-1][size-1] + "");
+        if (!isValid()) {
+            if (m[size - 1][size - 1] != 0) {
+                if (m[size - 1][size - 2] != 0) {
+                    int temp = m[size - 1][size - 2];
+                    m[size - 1][size - 2] = m[size - 1][size - 1];
+                    buttons[size - 1][size - 2].setText(m[size - 1][size - 2]);
+                    m[size - 1][size - 1] = temp;
+                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1]);
+                } else {
+                    int temp = m[size - 1][size - 3];
+                    m[size - 1][size - 3] = m[size - 1][size - 1];
+                    buttons[size - 1][size - 3].setText(m[size - 1][size - 3]);
+                    m[size - 1][size - 1] = temp;
+                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1]);
                 }
             } else {
-                int temp = m[size-1][size-3];
-                m[size-1][size-3] = m[size-1][size-2];
-                buttons[size-1][size-3].setText(m[size-1][size-3] + "");
-                m[size-1][size-2] = temp;
-                buttons[size-1][size-2].setText(m[size-1][size-2] + "");
+                int temp = m[size - 1][size - 3];
+                m[size - 1][size - 3] = m[size - 1][size - 2];
+                buttons[size - 1][size - 3].setText(m[size - 1][size - 3]);
+                m[size - 1][size - 2] = temp;
+                buttons[size - 1][size - 2].setText(m[size - 1][size - 2]);
             }
         }
     }
@@ -240,12 +231,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     // This is used for debugging.
     public void seriesFill() {
         int temp;
-        for(int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                temp = (i*size + j + 1)%16;
+                temp = (i * size + j + 1) % 16;
                 m[i][j] = temp;
-                if(temp != 0) {
-                    buttons[i][j].setText(temp + "");
+                if (temp != 0) {
+                    buttons[i][j].setText(Integer.toString(temp));
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
                 } else {
                     buttons[i][j].setText("");
@@ -268,22 +259,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             currTime = SystemClock.uptimeMillis() - startTime + lastTime;
             // Log.d(TAG, "run: " + currTime);
             long time = currTime;
-            time/=1000;
-            seconds = (int)time%60;
-            time/=60;
-            minutes = (int)time%60;
-            time/=60;
-            hours = (int)time%24;
+            time /= 1000;
+            seconds = (int) time % 60;
+            time /= 60;
+            minutes = (int) time % 60;
+            time /= 60;
+            hours = (int) time % 24;
 
-            timer.setText("" + String.format("%02d", hours) + ":" + String.format("%02d", minutes) +
-                    ":" + String.format("%02d", seconds));
+            timerTextView.setText(new Time((int)(currTime/1000)).toString());
 
             handler.postDelayed(this, 0);
         }
     };
 
     public void startTimer() {
-        startTime = SystemClock.uptimeMillis();;
+        startTime = SystemClock.uptimeMillis();
         lastTime = 0;
         handler.postDelayed(runnable, 0);
     }
@@ -318,50 +308,52 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Log.d(TAG, "check: start " + v.getId());
-        int i, j=0;
+        int i, j = 0;
+
+        // get button's coordinates using id matrix
         label:
-        for(i = 0; i < size; i++) {
-            for(j = 0; j < size; j++) {
-                if(v.getId() == id[i][j])
+        for (i = 0; i < size; i++) {
+            for (j = 0; j < size; j++) {
+                if (v.getId() == id[i][j])
                     break label;
             }
         }
 
         String n = buttons[i][j].getText().toString();
-        if(n.isEmpty()) {
-//            Toast.makeText(this, "Select a valid tile.", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(n)) {
+            // user clicked on the empty tile
             return;
         }
+
         int num = Integer.parseInt(n);
         int i1 = i, j1 = j;
 
-        if(isEmpty(i-1, j))
+        if (isEmpty(i - 1, j))
             i--;
-        else if(isEmpty(i+1, j))
+        else if (isEmpty(i + 1, j))
             i++;
-        else if(isEmpty(i, j-1))
+        else if (isEmpty(i, j - 1))
             j--;
-        else if(isEmpty(i, j+1))
+        else if (isEmpty(i, j + 1))
             j++;
         else {
 //            Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
             return;
         }
-        updateMoves(++move);
-        // v.playSoundEffect(SoundEffectConstants.CLICK);
+        updateMoves(++moves);
+        v.playSoundEffect(SoundEffectConstants.CLICK);
 
         m[i][j] = num;
         buttons[i][j].setText(num + "");
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
+
         m[i1][j1] = 0;
         buttons[i1][j1].setText("");
         buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
 
-        if(gameWon()){
+        if (gameWon()) {
             wonGame();
         }
-        Log.d(TAG, "check: end");
     }
 
     public void wonGame() {
@@ -372,9 +364,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         // stop the timer
         handler.removeCallbacks(runnable);
         // save the score and compare with high score
-        if(isLessTime()) {
+        if (isHighScore()) {
             //show user that he got high score
-            setHighScore();
+            addHighScore();
         }
 
         Toast.makeText(this, "Game Won !!", Toast.LENGTH_LONG).show();
@@ -394,18 +386,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }, 2000);
     }
 
-    public boolean isLessTime() {
-        if(hours > hs_hours)
-            return false;
-        else if(hours == hs_hours) {
-            if(minutes > hs_minutes)
-                return false;
-            else if(minutes == hs_minutes) {
-                if(seconds > hs_seconds)
-                    return false;
-            }
+    public boolean isHighScore() {
+        Time currentTime = new Time(hours, minutes, seconds);
+        return (currentTime.isLessThan(latestHighScore.getTime())) && (moves < latestHighScore.getMoves());
+    }
+    
+    public void addHighScore() {
+        int moves = this.moves;
+        int time = new Time(hours, minutes, seconds).toSeconds();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(GameContract.GameEntry.COLUMN_MOVES, moves);
+        contentValues.put(GameContract.GameEntry.COLUMN_TIME, time);
+        
+        Uri uri = getContentResolver().insert(GameContract.GameEntry.CONTENT_URI, contentValues);
+        if (uri != null) {
+            Log.d(TAG, "addHighScore: High Score added");
         }
-        return true;
     }
 
     public void startNewGame() {
@@ -433,17 +430,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateMoves(int move) {
-        moves.setText(move + "");
+        movesTextView.setText(move + "");
     }
 
     public boolean isEmpty(int i, int j) {
-        return i>=0 && i<size && j>=0 && j<size && m[i][j]==0;
+        return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
     }
 
     public boolean gameWon() {
-        for(int i = 0; i < size; i++) {
-            for(int j = 0; j < size; j++) {
-                if(m[i][j]!=((size*i+j+1)%(size*size)))
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (m[i][j] != ((size * i + j + 1) % (size * size)))
                     return false;
             }
         }

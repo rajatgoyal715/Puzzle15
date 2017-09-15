@@ -6,13 +6,20 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.rajatgoyal.puzzle15.R;
+import com.rajatgoyal.puzzle15.adapter.HighScoresAdapter;
+import com.rajatgoyal.puzzle15.model.HighScore;
+import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -21,14 +28,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button newGame, highscore, help;
-    private TextView moves, timer;
-
-    public static final String TAG = "MainActivity";
-
-    private int hs_moves, hs_hours, hs_minutes, hs_seconds;
-
-    SharedPreferences sharedPref;
+    private ArrayList<HighScore> highScores;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void init() {
-        newGame = (Button) findViewById(R.id.newGame);
+        Button newGame = (Button) findViewById(R.id.newGame);
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        highscore = (Button) findViewById(R.id.highScore);
+        Button highscore = (Button) findViewById(R.id.highScore);
         highscore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        help = (Button) findViewById(R.id.help);
+        Button help = (Button) findViewById(R.id.help);
         help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,35 +66,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showHighScore() {
-        getHighScore();
+        new HighScoreFetchTask(this) {
+            @Override
+            protected void onPostExecute(ArrayList<HighScore> highScores) {
+                super.onPostExecute(highScores);
+                fillHighScores(highScores);
+                openDialog();
+            }
+        }.execute();
+    }
 
+    private void fillHighScores(ArrayList<HighScore> highScores) {
+        this.highScores = highScores;
+//        if (highScores != null) {
+//            Toast.makeText(this, Integer.toString(highScores.get(0).getMoves()), Toast.LENGTH_SHORT).show();
+//        }
+    }
+
+    public void openDialog() {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.dialog_high_score, null);
-        timer = (TextView) view.findViewById(R.id.timer_hs);
-        moves = (TextView) view.findViewById(R.id.moves_hs);
 
-        String time = "" + String.format(Locale.US, "%02d", hs_hours)
-                + ":" + String.format(Locale.US, "%02d", hs_minutes)
-                + ":" + String.format(Locale.US, "%02d", hs_seconds);
-        timer.setText(time);
+        RecyclerView highScoresList = (RecyclerView) view.findViewById(R.id.high_scores_list);
 
-        String movesString = Integer.toString(hs_moves);
-        moves.setText(movesString);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        highScoresList.setLayoutManager(layoutManager);
+
+        HighScoresAdapter adapter = new HighScoresAdapter();
+        adapter.setHighScores(highScores);
+
+        highScoresList.setAdapter(adapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(view);
 
         AlertDialog dialog = builder.create();
         dialog.show();
-    }
-
-    public void getHighScore() {
-        Context context = getApplicationContext();
-        sharedPref = context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        hs_moves = sharedPref.getInt(getString(R.string.moves), 0);
-        hs_hours = sharedPref.getInt(getString(R.string.hours), 0);
-        hs_minutes = sharedPref.getInt(getString(R.string.minutes), 0);
-        hs_seconds = sharedPref.getInt(getString(R.string.seconds), 0);
     }
 
     public void showRules() {
