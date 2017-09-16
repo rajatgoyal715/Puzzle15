@@ -25,12 +25,10 @@ public class Widget extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         views.setOnClickPendingIntent(R.id.appTitle, pendingIntent);
 
-        Intent intent1 = new Intent(context, GameActivity.class);
-        PendingIntent pendingIntent1 = PendingIntent.getActivity(context, 0, intent1, 0);
-        views.setOnClickPendingIntent(R.id.playNewGame, pendingIntent1);
+        views.setOnClickPendingIntent(R.id.leaderboard, pendingIntent);
 
         Intent listIntent = new Intent(context, WidgetRemoteViewsService.class);
-        views.setRemoteAdapter(R.id.high_scores_list, listIntent);
+        views.setRemoteAdapter(R.id.leaderboard_list, listIntent);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -42,6 +40,17 @@ public class Widget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        final String action = intent.getAction();
+        if (action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] ids = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+            appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.leaderboard_list);
+        }
+        super.onReceive(context, intent);
     }
 
     @Override

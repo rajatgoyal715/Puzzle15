@@ -25,14 +25,14 @@
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/playNewGame"
+        android:id="@+id/leaderboard"
         android:layout_marginTop="2dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent">
 
         <TextView
-            android:text="@string/new_game"
+            android:text="@string/leaderboard"
             android:padding="8dp"
             android:textSize="20sp"
             android:textColor="@color/white"
@@ -44,9 +44,9 @@
     </FrameLayout>
 
     <ListView
-        android:id="@+id/high_scores_list"
+        android:id="@+id/leaderboard_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/widget_list_item" />
+        tools:listitem="@layout/leaderboard_list_item" />
 
 </LinearLayout>

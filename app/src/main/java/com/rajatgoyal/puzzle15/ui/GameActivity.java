@@ -1,5 +1,7 @@
 package com.rajatgoyal.puzzle15.ui;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +31,7 @@ import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.model.HighScore;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
+import com.rajatgoyal.puzzle15.widget.Widget;
 
 import java.util.Random;
 
@@ -39,20 +42,21 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private int size, moves, hours, minutes, seconds;
+    private boolean gameOver;
     private int m[][], id[][];
     private Button buttons[][];
-    private int pos_x = 0, pos_y = 0;
+    private int pos_x = 0;
 
     private Handler handler;
     private TextView timerTextView, movesTextView;
     private long startTime, currTime, lastTime;
 
-    public static final String TAG = "rajat";
+    public static final String TAG = "GameActivity";
 
     private AdView mAdView;
-    private HighScore latestHighScore;
 
     private String uid, name;
+    private int highScoreMoves, highScoreTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,19 +74,24 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (intent != null) {
             uid = intent.hasExtra("uid") ? intent.getStringExtra("uid") : null;
             name = intent.hasExtra("name") ? intent.getStringExtra("name") : null;
+            highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
+            highScoreTime = intent.getIntExtra("highScoreTime", 0);
+        }
+        
+        if (savedInstanceState == null) {
+            init();
+        } else {
+//            m = savedInstanceState.getIntArray("matrix");
         }
 
-        init();
     }
 
 
     public void init() {
-        Log.d(TAG, "init: start");
-
-        getLatestHighScore();
 
         size = 4;
         moves = 0;
+        gameOver = false;
         m = new int[size][size];
         id = new int[size][size];
 
@@ -91,7 +100,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         fillIdMatrix();
 
-        //buttons
         buttons = new Button[size][size];
 
         for (int i = 0; i < size; i++) {
@@ -101,34 +109,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-        Log.d(TAG, "init: end");
         fillMatrix();
     }
-
-    public void fillMatrix() {
-//        shuffle();
-//        makeValidMatrix();
-        seriesFill();
-    }
-
-    public void getLatestHighScore() {
-        new LatestHighScoreFetchTask(this) {
-            @Override
-            protected void onPostExecute(HighScore highScore) {
-                super.onPostExecute(highScore);
-                setLatestHighScore(highScore);
-            }
-        }.execute();
-    }
-
-    public void setLatestHighScore(HighScore latestHighScore) {
-        if (latestHighScore == null) {
-            this.latestHighScore = new HighScore(Integer.MAX_VALUE, new Time(Integer.MAX_VALUE));
-        } else {
-            this.latestHighScore = latestHighScore;
-        }
-    }
-
+    
     public void fillIdMatrix() {
         id[0][0] = R.id.btn00;
         id[0][1] = R.id.btn01;
@@ -150,11 +133,31 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         id[3][2] = R.id.btn32;
         id[3][3] = R.id.btn33;
     }
+    
+    public void fillMatrix() {
+//        shuffle();
+        seriesFill();
+    }
+
+    // A method to fill the matrix in ascending order
+    // This is used for debugging.
+    public void seriesFill() {
+        int temp;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                temp = (i * size + j + 1) % 16;
+                m[i][j] = temp;
+            }
+        }
+
+        updateUI();
+        postInit();
+    }
 
     public void shuffle() {
-        Log.d(TAG, "shuffle: start");
         Random rand = new Random();
-        //an array to store which value has been assigned.
+        
+        //a local array, used to store values from 1 to 15 which have been already assigned.
         int a[] = new int[size * size];
         int temp;
         for (int i = 0; i < size; i++) {
@@ -165,20 +168,27 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 a[temp] = 1;
                 m[i][j] = temp;
-                if (temp == 0) {
+            }
+        }
+        
+        updateUI();
+        postInit();
+    }
+    
+    public void updateUI() {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (m[i][j] == 0) {
                     pos_x = i;
-                    pos_y = j;
                     buttons[i][j].setText("");
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
                 } else {
-                    buttons[i][j].setText(temp + "");
+                    String num = m[i][j] + "";
+                    buttons[i][j].setText(num);
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
                 }
             }
         }
-        Log.d(TAG, "shuffle: end");
-
-        postInit();
     }
 
     // find inversions in the matrix by first creating a 1D matrix
@@ -237,27 +247,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    // A method to fill the matrix in ascending order
-    // This is used for debugging.
-    public void seriesFill() {
-        int temp;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                temp = (i * size + j + 1) % 16;
-                m[i][j] = temp;
-                if (temp != 0) {
-                    buttons[i][j].setText(Integer.toString(temp));
-                    buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
-                } else {
-                    buttons[i][j].setText("");
-                    buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
-                }
-            }
-        }
-
-        postInit();
-    }
-
     public void postInit() {
         handler = new Handler();
         startTimer();
@@ -276,7 +265,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             time /= 60;
             hours = (int) time % 24;
 
-            timerTextView.setText(new Time((int)(currTime/1000)).toString());
+            timerTextView.setText(new Time((int) (currTime / 1000)).toString());
 
             handler.postDelayed(this, 0);
         }
@@ -313,14 +302,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (mAdView != null) {
             mAdView.resume();
         }
-        resumeTimer();
+        if (!gameOver) {
+            resumeTimer();
+        }
     }
 
     @Override
     public void onClick(View v) {
         int i, j = 0;
 
-        // get button's coordinates using id matrix
+        // Get button's coordinates using id matrix
         label:
         for (i = 0; i < size; i++) {
             for (j = 0; j < size; j++) {
@@ -347,12 +338,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         else if (isEmpty(i, j + 1))
             j++;
         else {
-//            Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
+            // Invalid move
             return;
         }
         updateMoves(++moves);
         v.playSoundEffect(SoundEffectConstants.CLICK);
 
+        // swapping of tiles
+        
         m[i][j] = num;
         buttons[i][j].setText(num + "");
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
@@ -361,7 +354,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         buttons[i1][j1].setText("");
         buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
 
-        if (gameWon()) {
+        if (checkIfGameOver()) {
             wonGame();
         }
     }
@@ -372,13 +365,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mp.start();
 
         // stop the timer
+        gameOver = true;
         handler.removeCallbacks(runnable);
-        // save the score and compare with high score
+
+        // Compare with high score
         if (isHighScore()) {
             //show user that he got high score
             addHighScore();
-            if (uid != null)
+            if (uid != null) {
                 uploadHighScore();
+            }
         }
 
         Toast.makeText(this, "Game Won !!", Toast.LENGTH_LONG).show();
@@ -400,9 +396,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public boolean isHighScore() {
         Time currentTime = new Time(hours, minutes, seconds);
-        return (currentTime.isLessThan(latestHighScore.getTime())) && (moves < latestHighScore.getMoves());
+        return (currentTime.isLessThan(new Time(highScoreTime))) && (moves < highScoreMoves);
     }
-    
+
     public void addHighScore() {
         int moves = this.moves;
         int time = new Time(hours, minutes, seconds).toSeconds();
@@ -410,7 +406,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         ContentValues contentValues = new ContentValues();
         contentValues.put(GameContract.GameEntry.COLUMN_MOVES, moves);
         contentValues.put(GameContract.GameEntry.COLUMN_TIME, time);
-        
+
         Uri uri = getContentResolver().insert(GameContract.GameEntry.CONTENT_URI, contentValues);
         if (uri != null) {
             Log.d(TAG, "addHighScore: High Score added");
@@ -425,6 +421,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         userRef.child("name").setValue(name);
         userRef.child("moves").setValue(moves);
         userRef.child("time").setValue(new Time(hours, minutes, seconds).toSeconds());
+
+        updateWidgets();
+    }
+
+    public void updateWidgets() {
+        Intent intent = new Intent(this,Widget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int ids[] = AppWidgetManager.getInstance(
+                getApplication()).getAppWidgetIds(new ComponentName(getApplication(), Widget.class)
+        );
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        sendBroadcast(intent);
     }
 
     public void startNewGame() {
@@ -460,7 +468,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
     }
 
-    public boolean gameWon() {
+    public boolean checkIfGameOver() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (m[i][j] != ((size * i + j + 1) % (size * size)))

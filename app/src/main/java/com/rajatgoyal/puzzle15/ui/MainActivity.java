@@ -1,5 +1,7 @@
 package com.rajatgoyal.puzzle15.ui;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -46,6 +48,7 @@ import com.rajatgoyal.puzzle15.model.Leaderboard;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
 import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
+import com.rajatgoyal.puzzle15.widget.Widget;
 
 import java.util.ArrayList;
 
@@ -53,7 +56,7 @@ import java.util.ArrayList;
  * Created by rajat on 15/9/17.
  */
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     private ArrayList<HighScore> highScores;
     private ArrayList<Leaderboard> leaderboard;
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
 
     private TextView loginMessage, welcomeMessage;
+    private HighScore latestHighScore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +86,25 @@ public class MainActivity extends AppCompatActivity{
             if (isOnline()) {
                 fetchLeaderboard();
             }
+            getLatestHighScore();
+        }
+    }
+
+    public void getLatestHighScore() {
+        new LatestHighScoreFetchTask(this) {
+            @Override
+            protected void onPostExecute(HighScore highScore) {
+                super.onPostExecute(highScore);
+                setLatestHighScore(highScore);
+            }
+        }.execute();
+    }
+
+    public void setLatestHighScore(HighScore latestHighScore) {
+        if (latestHighScore == null) {
+            this.latestHighScore = new HighScore(Integer.MAX_VALUE, new Time(Integer.MAX_VALUE));
+        } else {
+            this.latestHighScore = latestHighScore;
         }
     }
 
@@ -208,6 +231,8 @@ public class MainActivity extends AppCompatActivity{
                     i.putExtra("uid", user.getUid());
                     i.putExtra("name", user.getDisplayName());
                 }
+                i.putExtra("highScoreMoves", latestHighScore.getMoves());
+                i.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
                 startActivity(i);
             }
         });
@@ -296,8 +321,8 @@ public class MainActivity extends AppCompatActivity{
                     Iterable<DataSnapshot> items = snapshot.getChildren();
                     int j = 0;
                     for (DataSnapshot item : items) {
-                        if(j==0) moves = Integer.parseInt(item.getValue().toString());
-                        else if(j==1) name = item.getValue().toString();
+                        if (j == 0) moves = Integer.parseInt(item.getValue().toString());
+                        else if (j == 1) name = item.getValue().toString();
                         else time = Integer.parseInt(item.getValue().toString());
                         j++;
                     }
@@ -317,6 +342,17 @@ public class MainActivity extends AppCompatActivity{
 
     public void fillLeaderboard(ArrayList<Leaderboard> leaderboard) {
         this.leaderboard = leaderboard;
+        updateWidgets();
+    }
+
+    public void updateWidgets() {
+        Intent intent = new Intent(this,Widget.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int ids[] = AppWidgetManager.getInstance(
+                getApplication()).getAppWidgetIds(new ComponentName(getApplication(), Widget.class)
+        );
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        sendBroadcast(intent);
     }
 
     public void showHighScore() {
@@ -325,7 +361,7 @@ public class MainActivity extends AppCompatActivity{
             protected void onPostExecute(ArrayList<HighScore> highScores) {
                 super.onPostExecute(highScores);
                 fillHighScores(highScores);
-                if (highScores == null ){
+                if (highScores == null) {
                     Toast.makeText(MainActivity.this, "No High Score yet", Toast.LENGTH_SHORT).show();
                 } else {
                     openDialog();
