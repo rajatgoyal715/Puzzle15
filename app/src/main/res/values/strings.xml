@@ -1,17 +1,23 @@
 <resources>
     <string name="app_name">Puzzle15</string>
     <string name="app_logo">App Logo</string>
+
     <string name="new_game">New Game</string>
     <string name="high_score">High Score</string>
     <string name="high_scores">High Scores</string>
     <string name="rules">Rules</string>
+
+    <string name="signIn"><u>Sign In With Google Account</u></string>
+    <string name="signOut"><u>Sign Out</u></string>
 
     <string name="rule1">1. Click on any block adjacent to the empty block to swap.</string>
     <string name="rule2">2. Your aim is to sort the blocks in increasing order.</string>
 
     <string name="preference_file_key">com.rajatgoyal.puzzle15.PREFERENCE_FILE_KEY</string>
 
-    <string name="moves">moves</string>
+    <string name="moves">Moves</string>
+    <string name="time">Time</string>
+
     <string name="hours">hours</string>
     <string name="minutes">minutes</string>
     <string name="seconds">seconds</string>

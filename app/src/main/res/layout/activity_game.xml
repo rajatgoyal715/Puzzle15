@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Moves"
+                android:text="@string/moves"
                 android:textColor="@color/background"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Time"
+                android:text="@string/time"
                 android:textColor="@color/background"
                 android:textSize="18sp"
                 android:textStyle="bold" />

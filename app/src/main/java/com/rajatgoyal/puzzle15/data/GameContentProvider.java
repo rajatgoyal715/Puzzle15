@@ -22,7 +22,6 @@ public class GameContentProvider extends ContentProvider {
     public static final String TAG = "GameContentProvider";
 
     public static final int HIGH_SCORES = 100;
-//    public static final int HIGH_SCORE_WITH_ID = 101;
 
     private GameDbHelper mGameDbHelper;
 
@@ -32,7 +31,6 @@ public class GameContentProvider extends ContentProvider {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
         uriMatcher.addURI(GameContract.AUTHORITY, GameContract.PATH_HIGH_SCORES, HIGH_SCORES);
-//        uriMatcher.addURI(GameContract.AUTHORITY, GameContract.PATH_HIGH_SCORES + "/#", HIGH_SCORE_WITH_ID);
 
         return uriMatcher;
     }
@@ -55,10 +53,6 @@ public class GameContentProvider extends ContentProvider {
         switch (match) {
             case HIGH_SCORES:
                 break;
-//            case HIGH_SCORE_WITH_ID:
-//                String game_id = uri.getPathSegments().get(1);
-//                selection = "_id=" + game_id;
-//                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
         }

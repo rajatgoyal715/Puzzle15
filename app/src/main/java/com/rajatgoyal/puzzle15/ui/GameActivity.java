@@ -1,9 +1,7 @@
 package com.rajatgoyal.puzzle15.ui;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -430,7 +428,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateMoves(int move) {
-        movesTextView.setText(move + "");
+        movesTextView.setText(Integer.toString(move));
+        moves = move;
     }
 
     public boolean isEmpty(int i, int j) {

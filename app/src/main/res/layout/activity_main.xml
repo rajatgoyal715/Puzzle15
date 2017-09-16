@@ -37,6 +37,15 @@
             android:contentDescription="@string/app_logo"
             android:src="@drawable/icon" />
 
+        <TextView
+            android:id="@+id/welcome_message"
+            tools:text="Welcome Rajat"
+            android:textColor="@color/white"
+            android:layout_marginTop="20dp"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <Button
             android:id="@+id/newGame"
             android:layout_width="200dp"
@@ -47,7 +56,7 @@
             android:text="@string/new_game"
             android:textAllCaps="false"
             android:textColor="@color/background"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/highScore"
@@ -59,7 +68,7 @@
             android:text="@string/high_score"
             android:textAllCaps="false"
             android:textColor="@color/background"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/help"
@@ -71,8 +80,17 @@
             android:text="@string/rules"
             android:textAllCaps="false"
             android:textColor="@color/background"
-            android:textSize="24sp" />
+            android:textSize="20sp" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/login_message"
+        android:text="@string/signIn"
+        android:textSize="16sp"
+        android:layout_marginBottom="18dp"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

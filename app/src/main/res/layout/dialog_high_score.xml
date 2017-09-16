@@ -15,7 +15,7 @@
         android:paddingTop="5dp"
         android:text="@string/high_scores"
         android:textColor="@color/background"
-        android:textSize="30sp" />
+        android:textSize="28sp" />
 
     <android.support.v7.widget.RecyclerView
         android:padding="10dp"
