@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/app_bar_article_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:theme="@style/AppTheme.AppBarOverlay">
@@ -16,13 +15,12 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_weight="0"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="center"
+            android:layout_weight="1"
             android:background="@color/light"
-            android:gravity="center_horizontal"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
+            android:gravity="center"
+            android:layout_marginRight="16dp"
             android:text="@string/app_name"
             android:textColor="@color/background"
             android:textSize="30sp" />

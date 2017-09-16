@@ -1,36 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
     tools:context="com.rajatgoyal.puzzle15.ui.MainActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_weight="0"
-        android:background="@color/light"
-        android:gravity="center_horizontal"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp"
-        android:text="@string/app_name"
-        android:textColor="@color/background"
-        android:textSize="30sp" />
+    <include layout="@layout/toolbar" />
 
     <LinearLayout
+        android:background="@color/background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_marginTop="56dp"
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
+            android:layout_marginTop="20dp"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -39,12 +27,12 @@
 
         <TextView
             android:id="@+id/welcome_message"
-            tools:text="Welcome Rajat"
-            android:textColor="@color/white"
-            android:layout_marginTop="20dp"
-            android:textSize="24sp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            tools:text="Welcome Rajat" />
 
         <Button
             android:id="@+id/newGame"
@@ -94,15 +82,15 @@
             android:textColor="@color/background"
             android:textSize="20sp" />
 
+        <TextView
+            android:id="@+id/login_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/signIn"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/login_message"
-        android:text="@string/signIn"
-        android:textSize="16sp"
-        android:layout_marginBottom="18dp"
-        android:textColor="@color/white"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
