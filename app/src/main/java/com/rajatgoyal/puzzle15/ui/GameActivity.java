@@ -145,8 +145,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void fillMatrix() {
-//        shuffle();
-        seriesFill();
+        shuffle();
+//        seriesFill();
     }
 
     // A method to fill the matrix in ascending order

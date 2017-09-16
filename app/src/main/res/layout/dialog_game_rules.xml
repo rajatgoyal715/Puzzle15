@@ -21,6 +21,7 @@
             android:layout_height="wrap_content" />
 
         <ImageView
+            android:contentDescription="@string/rule1"
             android:src="@drawable/empty"
             android:layout_margin="10dp"
             android:layout_width="wrap_content"
@@ -35,6 +36,7 @@
             android:layout_height="wrap_content" />
 
         <ImageView
+            android:contentDescription="@string/rule2"
             android:src="@drawable/sorted"
             android:layout_margin="10dp"
             android:layout_width="wrap_content"
