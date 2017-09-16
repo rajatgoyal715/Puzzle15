@@ -1,6 +1,9 @@
 package com.rajatgoyal.puzzle15.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,10 +33,19 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.adapter.HighScoresAdapter;
+import com.rajatgoyal.puzzle15.adapter.LeaderboardAdapter;
 import com.rajatgoyal.puzzle15.model.HighScore;
+import com.rajatgoyal.puzzle15.model.Leaderboard;
+import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
+import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
 
 import java.util.ArrayList;
 
@@ -44,6 +56,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity{
 
     private ArrayList<HighScore> highScores;
+    private ArrayList<Leaderboard> leaderboard;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -62,8 +75,14 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        firebaseInit();
-        init();
+        if (savedInstanceState == null) {
+            firebaseInit();
+            init();
+
+            if (isOnline()) {
+                fetchLeaderboard();
+            }
+        }
     }
 
     public void firebaseInit() {
@@ -106,8 +125,12 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        if (isOnline()) {
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        } else {
+            Toast.makeText(this, "PLease check your internet connection.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -136,6 +159,9 @@ public class MainActivity extends AppCompatActivity{
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+
+                            // send the latest high score to the firebase account
+                            uploadHighScore();
                         } else {
                             Toast.makeText(MainActivity.this, "PLease check your internet connection.", Toast.LENGTH_SHORT).show();
                             updateUI(null);
@@ -177,6 +203,11 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, GameActivity.class);
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    i.putExtra("uid", user.getUid());
+                    i.putExtra("name", user.getDisplayName());
+                }
                 startActivity(i);
             }
         });
@@ -186,6 +217,14 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 showHighScore();
+            }
+        });
+
+        Button leaderboard = (Button) findViewById(R.id.leaderboard);
+        leaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLeaderboard();
             }
         });
 
@@ -211,6 +250,73 @@ public class MainActivity extends AppCompatActivity{
         });
 
         welcomeMessage = (TextView) findViewById(R.id.welcome_message);
+    }
+
+    public void showLeaderboard() {
+        if (leaderboard == null) {
+            Toast.makeText(this, "No Leaderboard yet.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.dialog_leaderboard, null);
+
+        RecyclerView leaderboardList = (RecyclerView) view.findViewById(R.id.leaderboard_list);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        leaderboardList.setLayoutManager(layoutManager);
+
+        LeaderboardAdapter adapter = new LeaderboardAdapter();
+        adapter.setLeaderboard(leaderboard);
+
+        leaderboardList.setAdapter(adapter);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(view);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void fetchLeaderboard() {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("high_scores");
+
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                ArrayList<Leaderboard> list = new ArrayList<>();
+
+                Iterable<DataSnapshot> snapshots = dataSnapshot.getChildren();
+                int i = 1;
+                for (DataSnapshot snapshot : snapshots) {
+                    if (i > 20) break;
+                    String name = "";
+                    int moves = 0, time = 0;
+                    Iterable<DataSnapshot> items = snapshot.getChildren();
+                    int j = 0;
+                    for (DataSnapshot item : items) {
+                        if(j==0) moves = Integer.parseInt(item.getValue().toString());
+                        else if(j==1) name = item.getValue().toString();
+                        else time = Integer.parseInt(item.getValue().toString());
+                        j++;
+                    }
+                    list.add(new Leaderboard(name, moves, time));
+                    i++;
+                }
+
+                fillLeaderboard(list);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void fillLeaderboard(ArrayList<Leaderboard> leaderboard) {
+        this.leaderboard = leaderboard;
     }
 
     public void showHighScore() {
@@ -261,7 +367,30 @@ public class MainActivity extends AppCompatActivity{
         dialog.show();
     }
 
-    public void isOnline() {
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
+    public void uploadHighScore() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference dbRef = database.getReference();
+
+        new LatestHighScoreFetchTask(this) {
+            @Override
+            protected void onPostExecute(HighScore highScore) {
+                super.onPostExecute(highScore);
+
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null && highScore != null) {
+                    DatabaseReference userRef = dbRef.child("high_scores").child(user.getUid());
+                    userRef.child("name").setValue(user.getDisplayName());
+                    userRef.child("moves").setValue(highScore.getMoves());
+                    userRef.child("time").setValue(highScore.getTime().toSeconds());
+                }
+            }
+        }.execute();
     }
 }

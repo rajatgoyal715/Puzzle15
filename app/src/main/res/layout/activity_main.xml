@@ -71,6 +71,18 @@
             android:textSize="20sp" />
 
         <Button
+            android:id="@+id/leaderboard"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0"
+            android:background="@color/light"
+            android:text="@string/leaderboard"
+            android:textAllCaps="false"
+            android:textColor="@color/background"
+            android:textSize="20sp" />
+
+        <Button
             android:id="@+id/help"
             android:layout_width="200dp"
             android:layout_height="wrap_content"

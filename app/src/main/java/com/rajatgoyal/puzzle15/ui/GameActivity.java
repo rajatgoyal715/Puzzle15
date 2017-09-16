@@ -2,6 +2,7 @@ package com.rajatgoyal.puzzle15.ui;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -20,6 +21,9 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.model.HighScore;
@@ -48,6 +52,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private AdView mAdView;
     private HighScore latestHighScore;
 
+    private String uid, name;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +65,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("F94FB05401064F99C85F9BECABDC8E59").build();
         mAdView.loadAd(adRequest);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            uid = intent.hasExtra("uid") ? intent.getStringExtra("uid") : null;
+            name = intent.hasExtra("name") ? intent.getStringExtra("name") : null;
+        }
 
         init();
     }
@@ -365,6 +377,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (isHighScore()) {
             //show user that he got high score
             addHighScore();
+            if (uid != null)
+                uploadHighScore();
         }
 
         Toast.makeText(this, "Game Won !!", Toast.LENGTH_LONG).show();
@@ -401,6 +415,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (uri != null) {
             Log.d(TAG, "addHighScore: High Score added");
         }
+    }
+
+    public void uploadHighScore() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference dbRef = database.getReference();
+
+        DatabaseReference userRef = dbRef.child("high_scores").child(uid);
+        userRef.child("name").setValue(name);
+        userRef.child("moves").setValue(moves);
+        userRef.child("time").setValue(new Time(hours, minutes, seconds).toSeconds());
     }
 
     public void startNewGame() {
