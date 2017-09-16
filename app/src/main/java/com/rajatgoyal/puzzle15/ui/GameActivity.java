@@ -77,11 +77,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
         }
-        
+
+        init();
         if (savedInstanceState == null) {
-            init();
+            fillMatrix();
         } else {
-//            m = savedInstanceState.getIntArray("matrix");
+            m[0] = savedInstanceState.getIntArray("matrix_row_0");
+            m[1] = savedInstanceState.getIntArray("matrix_row_1");
+            m[2] = savedInstanceState.getIntArray("matrix_row_2");
+            m[3] = savedInstanceState.getIntArray("matrix_row_3");
+
+            updateUI();
+
+            moves = savedInstanceState.getInt("moves");
+            updateMoves(moves);
+
+            lastTime = savedInstanceState.getLong("currTime");
+            resumeTimer();
         }
 
     }
@@ -108,10 +120,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 buttons[i][j].setOnClickListener(this);
             }
         }
-
-        fillMatrix();
     }
-    
+
     public void fillIdMatrix() {
         id[0][0] = R.id.btn00;
         id[0][1] = R.id.btn01;
@@ -133,7 +143,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         id[3][2] = R.id.btn32;
         id[3][3] = R.id.btn33;
     }
-    
+
     public void fillMatrix() {
 //        shuffle();
         seriesFill();
@@ -156,7 +166,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void shuffle() {
         Random rand = new Random();
-        
+
         //a local array, used to store values from 1 to 15 which have been already assigned.
         int a[] = new int[size * size];
         int temp;
@@ -170,11 +180,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 m[i][j] = temp;
             }
         }
-        
+
         updateUI();
         postInit();
     }
-    
+
     public void updateUI() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -272,12 +282,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     public void startTimer() {
+        if (handler == null) {
+            handler = new Handler();
+        }
         startTime = SystemClock.uptimeMillis();
         lastTime = 0;
         handler.postDelayed(runnable, 0);
     }
 
     public void resumeTimer() {
+        if (handler == null) {
+            handler = new Handler();
+        }
         startTime = SystemClock.uptimeMillis();
         handler.postDelayed(runnable, 0);
     }
@@ -305,6 +321,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (!gameOver) {
             resumeTimer();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putIntArray("matrix_row_0", m[0]);
+        outState.putIntArray("matrix_row_1", m[1]);
+        outState.putIntArray("matrix_row_2", m[2]);
+        outState.putIntArray("matrix_row_3", m[3]);
+
+        outState.putInt("moves", moves);
+
+        outState.putLong("currTime", currTime);
     }
 
     @Override
@@ -345,7 +375,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         v.playSoundEffect(SoundEffectConstants.CLICK);
 
         // swapping of tiles
-        
+
         m[i][j] = num;
         buttons[i][j].setText(num + "");
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
@@ -426,12 +456,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateWidgets() {
-        Intent intent = new Intent(this,Widget.class);
+        Intent intent = new Intent(this, Widget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         int ids[] = AppWidgetManager.getInstance(
                 getApplication()).getAppWidgetIds(new ComponentName(getApplication(), Widget.class)
         );
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         sendBroadcast(intent);
     }
 

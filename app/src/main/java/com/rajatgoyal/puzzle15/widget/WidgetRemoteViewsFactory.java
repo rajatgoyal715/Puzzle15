@@ -38,11 +38,11 @@ public class WidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsF
 
     public void setLeaderboards(ArrayList<Leaderboard> leaderboards) {
         this.leaderboards = leaderboards;
+        onDataSetChanged();
     }
 
     @Override
     public void onDataSetChanged() {
-//        fetchLeaderboard();
     }
 
     @Override

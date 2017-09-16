@@ -79,15 +79,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            firebaseInit();
-            init();
+        firebaseInit();
+        init();
 
-            if (isOnline()) {
-                fetchLeaderboard();
-            }
-            getLatestHighScore();
+        if (isOnline()) {
+            fetchLeaderboard();
         }
+        getLatestHighScore();
     }
 
     public void getLatestHighScore() {
@@ -209,7 +207,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthStateListener);
+        if (mAuth != null && mAuthStateListener != null) {
+            mAuth.addAuthStateListener(mAuthStateListener);
+        }
     }
 
     @Override
@@ -321,6 +321,8 @@ public class MainActivity extends AppCompatActivity {
                     Iterable<DataSnapshot> items = snapshot.getChildren();
                     int j = 0;
                     for (DataSnapshot item : items) {
+                        String itemString = item.getValue().toString();
+                        Log.d(TAG, "onDataChange: at j = " + j + " item is = " + itemString);
                         if (j == 0) moves = Integer.parseInt(item.getValue().toString());
                         else if (j == 1) name = item.getValue().toString();
                         else time = Integer.parseInt(item.getValue().toString());
@@ -422,8 +424,8 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null && highScore != null) {
                     DatabaseReference userRef = dbRef.child("high_scores").child(user.getUid());
-                    userRef.child("name").setValue(user.getDisplayName());
                     userRef.child("moves").setValue(highScore.getMoves());
+                    userRef.child("name").setValue(user.getDisplayName());
                     userRef.child("time").setValue(highScore.getTime().toSeconds());
                 }
             }
