@@ -64,10 +64,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
         Log.d(TAG, "onCreate: ");
 
-        MobileAds.initialize(this, "ca-app-pub-3940256099942544~3347511713");
+        MobileAds.initialize(this, getResources().getString(R.string.sampleAppId));
 
         mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("F94FB05401064F99C85F9BECABDC8E59").build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice(getResources().getString(R.string.testDeviceId)).build();
         mAdView.loadAd(adRequest);
 
         Intent intent = getIntent();
@@ -407,7 +407,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
 
-        Toast.makeText(this, "Game Won !!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getResources().getString(R.string.game_won), Toast.LENGTH_LONG).show();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setView(R.layout.dialog_game_won);
@@ -467,8 +467,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void startNewGame() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("Want to play a new game?");
-        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setMessage(getResources().getString(R.string.play_new_game));
+        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -478,7 +478,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 updateMoves(0);
             }
         });
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -511,14 +511,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Are you sure you want to quit the game?");
-        alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setTitle(getResources().getString(R.string.quit_the_game));
+        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
         });
-        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();

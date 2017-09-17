@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
         } else {
-            Toast.makeText(this, "PLease check your internet connection.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.check_internet), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
                             // send the latest high score to the firebase account
                             uploadHighScore();
                         } else {
-                            Toast.makeText(MainActivity.this, "PLease check your internet connection.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getResources().getString(R.string.check_internet), Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void showLeaderboard() {
         if (leaderboard == null) {
-            Toast.makeText(this, "No Leaderboard yet.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.no_leaderboard), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -322,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
                     int j = 0;
                     for (DataSnapshot item : items) {
                         String itemString = item.getValue().toString();
-                        Log.d(TAG, "onDataChange: at j = " + j + " item is = " + itemString);
                         if (j == 0) moves = Integer.parseInt(item.getValue().toString());
                         else if (j == 1) name = item.getValue().toString();
                         else time = Integer.parseInt(item.getValue().toString());
@@ -364,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onPostExecute(highScores);
                 fillHighScores(highScores);
                 if (highScores == null) {
-                    Toast.makeText(MainActivity.this, "No High Score yet", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.no_high_score), Toast.LENGTH_SHORT).show();
                 } else {
                     openDialog();
                 }

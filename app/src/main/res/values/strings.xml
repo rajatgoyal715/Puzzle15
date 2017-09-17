@@ -19,6 +19,20 @@
     <string name="moves">Moves</string>
     <string name="time">Time</string>
 
+    <string name="moves_label">Moves : </string>
+    <string name="time_label">Time : </string>
+
+    <string name="game_won">Game Won !!</string>
+    <string name="check_internet">Please check your internet connection.</string>
+    <string name="no_high_score">No high score yet.</string>
+    <string name="no_leaderboard">No leaderboard yet.</string>
+
+    <string name="quit_the_game">Are you sure you want to quit the game?</string>
+    <string name="play_new_game">Want to play a new game?</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
     <string name="initial_moves">0</string>
     <string name="initial_time">00:00:00</string>
 
