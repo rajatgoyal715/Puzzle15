@@ -11,6 +11,8 @@
     <string name="signIn"><u>Sign In With Google Account</u></string>
     <string name="signOut"><u>Sign Out</u></string>
 
+    <string name="signin_failed">Sign In failed.</string>
+
     <string name="rule1">1. Click on any block adjacent to the empty block to swap.</string>
     <string name="rule2">2. Your aim is to sort the blocks in increasing order.</string>
 

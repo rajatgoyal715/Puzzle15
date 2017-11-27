@@ -166,6 +166,8 @@ public class MainActivity extends AppCompatActivity {
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
+                Toast.makeText(this, getResources().getString(R.string.signin_failed), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onActivityResult: " + getResources().getString(R.string.signin_failed));
                 updateUI(null);
             }
         }
