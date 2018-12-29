@@ -1,2 +1,2 @@
-# Capstone-Project
-Capstone Project of Android Developer Nanodegree Program at Udacity
+# Puzzle15
+Classic Android Puzzle game to reorder 15 tiles in ascending order
