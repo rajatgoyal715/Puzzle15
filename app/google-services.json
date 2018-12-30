@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "205774853151",
+    "firebase_url": "https://puzzle15-94418.firebaseio.com",
+    "project_id": "puzzle15-94418",
+    "storage_bucket": "puzzle15-94418.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205774853151:android:7bfde2a83bc18353",
+        "android_client_info": {
+          "package_name": "com.rajatgoyal.puzzle15"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205774853151-2vfp4nbn2rogkmd7hq8q44bom5lnf9hm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rajatgoyal.puzzle15",
+            "certificate_hash": "c47cfe434d7f01e5ccb90396023e13377a63d4f8"
+          }
+        },
+        {
+          "client_id": "205774853151-76klmhb0jd2glqh7e82pus3u2vfs7pmk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnSles099BubnvGofxOyiTAvoiBDR0Uks"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205774853151-f4boalcbkemdsin4e5lfcng7k2njaics.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-1519820590645303~1870944874"
+    }
+  ],
+  "configuration_version": "1"
+}
