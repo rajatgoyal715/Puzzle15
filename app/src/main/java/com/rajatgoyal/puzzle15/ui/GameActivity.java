@@ -23,16 +23,14 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
-import com.rajatgoyal.puzzle15.model.HighScore;
 import com.rajatgoyal.puzzle15.model.Time;
-import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
 import com.rajatgoyal.puzzle15.widget.Widget;
 
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -41,11 +39,10 @@ import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private int size, moves, hours, minutes, seconds;
+    private int size = 4, moves, hours, minutes, seconds;
     private boolean gameOver;
     private int m[][], id[][];
     private Button buttons[][];
-    private int pos_x = 0;
 
     private Handler handler;
     private TextView timerTextView, movesTextView;
@@ -66,7 +63,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         MobileAds.initialize(this, getResources().getString(R.string.sampleAppId));
 
-        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().addTestDevice(getResources().getString(R.string.testDeviceId)).build();
         mAdView.loadAd(adRequest);
 
@@ -79,6 +76,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         init();
+
         if (savedInstanceState == null) {
             fillMatrix();
         } else {
@@ -87,7 +85,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             m[2] = savedInstanceState.getIntArray("matrix_row_2");
             m[3] = savedInstanceState.getIntArray("matrix_row_3");
 
-            updateUI();
+            updateBoard();
 
             moves = savedInstanceState.getInt("moves");
             updateMoves(moves);
@@ -98,17 +96,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
     public void init() {
-
-        size = 4;
         moves = 0;
         gameOver = false;
         m = new int[size][size];
         id = new int[size][size];
 
-        timerTextView = (TextView) findViewById(R.id.timer);
-        movesTextView = (TextView) findViewById(R.id.moves);
+        timerTextView = findViewById(R.id.timer);
+        movesTextView = findViewById(R.id.moves);
 
         fillIdMatrix();
 
@@ -116,7 +111,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                buttons[i][j] = (Button) findViewById(id[i][j]);
+                buttons[i][j] = findViewById(id[i][j]);
                 buttons[i][j].setOnClickListener(this);
             }
         }
@@ -145,8 +140,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void fillMatrix() {
+        seriesFill();
         shuffle();
-//        seriesFill();
+        makeValidMatrix();
+
+		updateBoard();
+        postInit();
     }
 
     // A method to fill the matrix in ascending order
@@ -159,37 +158,36 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 m[i][j] = temp;
             }
         }
-
-        updateUI();
-        postInit();
     }
 
     public void shuffle() {
+        int pos_x = size-1, pos_y = size-1;
+        int temp, temp_x, temp_y, swap;
+
         Random rand = new Random();
 
-        //a local array, used to store values from 1 to 15 which have been already assigned.
-        int a[] = new int[size * size];
-        int temp;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                temp = rand.nextInt(size * size);
-                while (a[temp] == 1) {
-                    temp = rand.nextInt(size * size);
-                }
-                a[temp] = 1;
-                m[i][j] = temp;
+        for(int index = size*size-1; index>1; index--) {
+            temp = rand.nextInt(index);
+            temp_x = temp/size;
+            temp_y = (temp + size)%size;
+            
+            swap = m[temp_x][temp_y];
+            m[temp_x][temp_y] = m[pos_x][pos_y];
+            m[pos_x][pos_y] = swap;
+
+            if (pos_y == 0) {
+                pos_x--;
+                pos_y = size-1;
+            } else {
+                pos_y--;
             }
         }
-
-        updateUI();
-        postInit();
     }
 
-    public void updateUI() {
+    public void updateBoard() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (m[i][j] == 0) {
-                    pos_x = i;
                     buttons[i][j].setText("");
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
                 } else {
@@ -218,14 +216,25 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return count;
     }
 
+    private int findEmptyCellPosition() {
+    	for(int i = 0; i < size; i++) {
+    		for(int j = 0; j < size; j++) {
+    			if(m[i][j] == 0) return i;
+			}
+		}
+		return -1;
+	}
+
     // If n is even, then the matrix is solvable if;
     // 1. blank is on even row counting from the bottom and no of inversions is odd.
-    // 2 blank is on odd row from the bottom and no of inversions is even.
+    // 2. blank is on odd row from the bottom and no of inversions is even.
     // else puzzle is not solvable
     public boolean isValid() {
         int inv = findInversions();
-        if (pos_x % 2 == 0 && inv % 2 != 0) return true;
-        else if (pos_x % 2 != 0 && inv % 2 == 0) return true;
+
+        int empty_cell_pos_x = findEmptyCellPosition();
+        if (empty_cell_pos_x % 2 == 0 && inv % 2 != 0) return true;
+        else if (empty_cell_pos_x % 2 != 0 && inv % 2 == 0) return true;
         return false;
     }
 
@@ -490,7 +499,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateMoves(int move) {
-        movesTextView.setText(Integer.toString(move));
+        movesTextView.setText(String.format(Locale.US, "%d", move));
         moves = move;
     }
 
