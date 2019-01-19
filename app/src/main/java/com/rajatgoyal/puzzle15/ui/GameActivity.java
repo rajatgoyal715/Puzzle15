@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.Button;
@@ -33,6 +32,8 @@ import com.rajatgoyal.puzzle15.widget.Widget;
 import java.util.Locale;
 import java.util.Random;
 
+import timber.log.Timber;
+
 /**
  * Created by rajat on 15/9/17.
  */
@@ -48,8 +49,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private TextView timerTextView, movesTextView;
     private long startTime, currTime, lastTime;
 
-    public static final String TAG = "GameActivity";
-
     private AdView mAdView;
 
     private String uid, name;
@@ -59,7 +58,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        Log.d(TAG, "onCreate: ");
+        Timber.d("onCreate: ");
 
         MobileAds.initialize(this, getResources().getString(R.string.sampleAppId));
 
@@ -448,7 +447,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         Uri uri = getContentResolver().insert(GameContract.GameEntry.CONTENT_URI, contentValues);
         if (uri != null) {
-            Log.d(TAG, "addHighScore: High Score added");
+            Timber.d("addHighScore: High Score added");
         }
     }
 

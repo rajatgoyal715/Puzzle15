@@ -1,8 +1,6 @@
 package com.rajatgoyal.puzzle15.widget;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -16,6 +14,8 @@ import com.rajatgoyal.puzzle15.model.Leaderboard;
 import com.rajatgoyal.puzzle15.model.Time;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 /**
  * Created by rajat on 15/9/17.
@@ -52,7 +52,7 @@ public class WidgetRemoteViewsFactory implements RemoteViewsService.RemoteViewsF
 
     @Override
     public int getCount() {
-        Log.d(TAG, "getCount: " + (leaderboards == null));
+		Timber.tag(TAG).d("getCount: " + (leaderboards == null));
         return leaderboards == null ? 0 : leaderboards.size();
     }
 

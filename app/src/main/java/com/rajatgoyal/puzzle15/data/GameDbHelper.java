@@ -3,9 +3,10 @@ package com.rajatgoyal.puzzle15.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.rajatgoyal.puzzle15.data.GameContract.GameEntry;
+
+import timber.log.Timber;
 
 /**
  * Created by rajat on 15/9/17.
@@ -29,7 +30,7 @@ public class GameDbHelper extends SQLiteOpenHelper {
                 GameEntry._ID + " INTEGER PRIMARY KEY, " +
                 GameEntry.COLUMN_MOVES + " INTEGER NOT NULL, " +
                 GameEntry.COLUMN_TIME + " INTEGER NOT NULL " + ");";
-        Log.d(TAG, "onCreate: " + CREATE_TABLE);
+		Timber.tag(TAG).d("onCreate: " + CREATE_TABLE);
         db.execSQL(CREATE_TABLE);
     }
 

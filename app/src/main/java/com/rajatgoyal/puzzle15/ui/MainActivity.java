@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -51,6 +50,8 @@ import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
 import com.rajatgoyal.puzzle15.widget.Widget;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 /**
  * Created by rajat on 15/9/17.
@@ -167,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 firebaseAuthWithGoogle(account);
             } else {
                 Toast.makeText(this, getResources().getString(R.string.signin_failed), Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "onActivityResult: " + getResources().getString(R.string.signin_failed));
+                Timber.d(getResources().getString(R.string.signin_failed));
                 updateUI(null);
             }
         }
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void init() {
-        Button newGame = (Button) findViewById(R.id.newGame);
+        Button newGame = findViewById(R.id.newGame);
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button highscore = (Button) findViewById(R.id.highScore);
+        Button highscore = findViewById(R.id.highScore);
         highscore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button leaderboard = (Button) findViewById(R.id.leaderboard);
+        Button leaderboard = findViewById(R.id.leaderboard);
         leaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -255,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button help = (Button) findViewById(R.id.help);
+        Button help = findViewById(R.id.help);
         help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -263,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        loginMessage = (TextView) findViewById(R.id.login_message);
+        loginMessage = findViewById(R.id.login_message);
         loginMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -276,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        welcomeMessage = (TextView) findViewById(R.id.welcome_message);
+        welcomeMessage = findViewById(R.id.welcome_message);
     }
 
     public void showLeaderboard() {
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.dialog_leaderboard, null);
 
-        RecyclerView leaderboardList = (RecyclerView) view.findViewById(R.id.leaderboard_list);
+        RecyclerView leaderboardList = view.findViewById(R.id.leaderboard_list);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         leaderboardList.setLayoutManager(layoutManager);
@@ -324,9 +325,9 @@ public class MainActivity extends AppCompatActivity {
                     int j = 0;
                     for (DataSnapshot item : items) {
                         String itemString = item.getValue().toString();
-                        if (j == 0) moves = Integer.parseInt(item.getValue().toString());
-                        else if (j == 1) name = item.getValue().toString();
-                        else time = Integer.parseInt(item.getValue().toString());
+                        if (j == 0) moves = Integer.parseInt(itemString);
+                        else if (j == 1) name = itemString;
+                        else time = Integer.parseInt(itemString);
                         j++;
                     }
                     list.add(new Leaderboard(name, moves, time));
@@ -381,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.dialog_high_score, null);
 
-        RecyclerView highScoresList = (RecyclerView) view.findViewById(R.id.high_scores_list);
+        RecyclerView highScoresList = view.findViewById(R.id.high_scores_list);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         highScoresList.setLayoutManager(layoutManager);
@@ -409,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        NetworkInfo netInfo = cm != null ? cm.getActiveNetworkInfo() : null;
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
