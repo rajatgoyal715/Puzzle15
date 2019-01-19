@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     // Extras
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.8'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
     testImplementation 'junit:junit:4.12'
 }
 
