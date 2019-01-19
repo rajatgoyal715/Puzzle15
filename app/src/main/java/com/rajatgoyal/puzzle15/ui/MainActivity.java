@@ -1,5 +1,6 @@
 package com.rajatgoyal.puzzle15.ui;
 
+import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         getLatestHighScore();
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void getLatestHighScore() {
         new LatestHighScoreFetchTask(this) {
             @Override
@@ -359,6 +361,7 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void showHighScore() {
         new HighScoreFetchTask(this) {
             @Override
@@ -414,6 +417,7 @@ public class MainActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void uploadHighScore() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference dbRef = database.getReference();
