@@ -22,3 +22,6 @@ install:
 
 script:
     - ./gradlew build --stacktrace
+
+notifications:
+    slack: rajatgoyal715:aN1ypVFqeAeZdL400Kk4Fpub#puzzle15
