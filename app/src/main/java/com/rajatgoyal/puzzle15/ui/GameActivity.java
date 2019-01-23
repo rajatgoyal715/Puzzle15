@@ -245,22 +245,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if (m[size - 1][size - 2] != 0) {
                     int temp = m[size - 1][size - 2];
                     m[size - 1][size - 2] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 2].setText(m[size - 1][size - 2]);
+                    buttons[size - 1][size - 2].setText(m[size - 1][size - 2] + "");
                     m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1]);
+                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1] + "");
                 } else {
                     int temp = m[size - 1][size - 3];
                     m[size - 1][size - 3] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 3].setText(m[size - 1][size - 3]);
+                    buttons[size - 1][size - 3].setText(m[size - 1][size - 3] + "");
                     m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1]);
+                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1] + "");
                 }
             } else {
                 int temp = m[size - 1][size - 3];
                 m[size - 1][size - 3] = m[size - 1][size - 2];
-                buttons[size - 1][size - 3].setText(m[size - 1][size - 3]);
+                buttons[size - 1][size - 3].setText(m[size - 1][size - 3] + "");
                 m[size - 1][size - 2] = temp;
-                buttons[size - 1][size - 2].setText(m[size - 1][size - 2]);
+                buttons[size - 1][size - 2].setText(m[size - 1][size - 2] + "");
             }
         }
     }
