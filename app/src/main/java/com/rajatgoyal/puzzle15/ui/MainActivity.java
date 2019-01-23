@@ -110,8 +110,7 @@ public class MainActivity extends AppCompatActivity {
     public void firebaseInit() {
 
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
+                .requestIdToken(getString(R.string.web_client_id))
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
