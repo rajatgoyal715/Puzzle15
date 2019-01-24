@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "205774853151-2vfp4nbn2rogkmd7hq8q44bom5lnf9hm.apps.googleusercontent.com",
+          "client_id": "205774853151-fnbt409ajjdj4umtqcfhiu4fij27ncev.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.rajatgoyal.puzzle15",
-            "certificate_hash": "c47cfe434d7f01e5ccb90396023e13377a63d4f8"
+            "certificate_hash": "f8d388aeac5a43a23d0baeeb913c9440888359d9"
           }
         },
         {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "205774853151-f4boalcbkemdsin4e5lfcng7k2njaics.apps.googleusercontent.com",
+              "client_id": "205774853151-76klmhb0jd2glqh7e82pus3u2vfs7pmk.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
