@@ -47,4 +47,6 @@
     <string name="testDeviceId">1F45267EC1DC80D3BB57C61903D4631F</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+
+    <string name="web_client_id">205774853151-76klmhb0jd2glqh7e82pus3u2vfs7pmk.apps.googleusercontent.com</string>
 </resources>
