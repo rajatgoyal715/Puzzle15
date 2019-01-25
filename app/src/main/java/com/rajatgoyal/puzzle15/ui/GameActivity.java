@@ -1,7 +1,5 @@
 package com.rajatgoyal.puzzle15.ui;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,7 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.model.Time;
-import com.rajatgoyal.puzzle15.widget.Widget;
 
 import java.util.Locale;
 import java.util.Random;
@@ -459,18 +456,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         userRef.child("name").setValue(name);
         userRef.child("moves").setValue(moves);
         userRef.child("time").setValue(new Time(hours, minutes, seconds).toSeconds());
-
-        updateWidgets();
-    }
-
-    public void updateWidgets() {
-        Intent intent = new Intent(this, Widget.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int ids[] = AppWidgetManager.getInstance(
-                getApplication()).getAppWidgetIds(new ComponentName(getApplication(), Widget.class)
-        );
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        sendBroadcast(intent);
     }
 
     public void startNewGame() {

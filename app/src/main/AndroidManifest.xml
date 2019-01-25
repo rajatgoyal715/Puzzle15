@@ -27,20 +27,6 @@
         </activity>
         <activity android:name=".ui.GameActivity" />
 
-        <receiver android:name=".widget.Widget">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info" />
-        </receiver>
-
-        <service
-            android:name=".widget.WidgetRemoteViewsService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
-
         <provider
             android:authorities="com.rajatgoyal.puzzle15"
             android:name=".data.GameContentProvider"

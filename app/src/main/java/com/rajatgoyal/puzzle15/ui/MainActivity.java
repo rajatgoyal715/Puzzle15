@@ -48,7 +48,6 @@ import com.rajatgoyal.puzzle15.model.Leaderboard;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
 import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
-import com.rajatgoyal.puzzle15.widget.Widget;
 
 import java.util.ArrayList;
 
@@ -345,17 +344,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void fillLeaderboard(ArrayList<Leaderboard> leaderboard) {
         this.leaderboard = leaderboard;
-        updateWidgets();
-    }
-
-    public void updateWidgets() {
-        Intent intent = new Intent(this,Widget.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int ids[] = AppWidgetManager.getInstance(
-                getApplication()).getAppWidgetIds(new ComponentName(getApplication(), Widget.class)
-        );
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
-        sendBroadcast(intent);
     }
 
     @SuppressLint("StaticFieldLeak")
