@@ -17,9 +17,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rajatgoyal.puzzle15.R;
@@ -46,8 +43,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private TextView timerTextView, movesTextView;
     private long startTime, currTime, lastTime;
 
-    private AdView mAdView;
-
     private String uid, name;
     private int highScoreMoves, highScoreTime;
 
@@ -56,12 +51,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         Timber.d("onCreate: ");
-
-        MobileAds.initialize(this, getResources().getString(R.string.sampleAppId));
-
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice(getResources().getString(R.string.testDeviceId)).build();
-        mAdView.loadAd(adRequest);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -311,18 +300,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        if (mAdView != null) {
-            mAdView.pause();
-        }
         pauseTimer();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mAdView != null) {
-            mAdView.resume();
-        }
         if (!gameOver) {
             resumeTimer();
         }
