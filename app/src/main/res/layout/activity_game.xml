@@ -6,15 +6,12 @@
     android:background="@color/white"
     android:gravity="center"
     android:orientation="vertical"
+    android:padding="20dp"
     tools:context="com.rajatgoyal.puzzle15.ui.GameActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
@@ -87,8 +84,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -101,43 +97,33 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn00"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/background"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1"/>
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn01"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/light"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn02"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn03"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
@@ -146,41 +132,33 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn10"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn11"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn12"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn13"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
@@ -189,41 +167,33 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn20"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn21"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn22"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn23"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
@@ -232,41 +202,33 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn30"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn31"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn32"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn33"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
