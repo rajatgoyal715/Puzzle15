@@ -17,8 +17,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.model.Time;
@@ -43,7 +41,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private TextView timerTextView, movesTextView;
     private long startTime, currTime, lastTime;
 
-    private String uid, name;
     private int highScoreMoves, highScoreTime;
 
     @Override
@@ -54,8 +51,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         Intent intent = getIntent();
         if (intent != null) {
-            uid = intent.hasExtra("uid") ? intent.getStringExtra("uid") : null;
-            name = intent.hasExtra("name") ? intent.getStringExtra("name") : null;
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
         }
@@ -390,9 +385,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (isHighScore()) {
             //show user that he got high score
             addHighScore();
-            if (uid != null) {
-                uploadHighScore();
-            }
         }
 
         Toast.makeText(this, getResources().getString(R.string.game_won), Toast.LENGTH_LONG).show();
@@ -429,16 +421,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (uri != null) {
             Timber.d("addHighScore: High Score added");
         }
-    }
-
-    public void uploadHighScore() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference dbRef = database.getReference();
-
-        DatabaseReference userRef = dbRef.child("high_scores").child(uid);
-        userRef.child("name").setValue(name);
-        userRef.child("moves").setValue(moves);
-        userRef.child("time").setValue(new Time(hours, minutes, seconds).toSeconds());
     }
 
     public void startNewGame() {
