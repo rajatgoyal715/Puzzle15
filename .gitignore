@@ -46,3 +46,6 @@ captures/
 freeline.py
 freeline/
 freeline_project_description.json
+
+# Garbage folder and files
+garbage/
