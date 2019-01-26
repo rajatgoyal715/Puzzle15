@@ -27,6 +27,8 @@ public class Tile extends AppCompatButton {
 		float textSize = a.getDimensionPixelSize(R.styleable.Tile_android_textSize, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 24, context.getResources().getDisplayMetrics()));
 		this.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
+		this.setContentDescription(this.getText());
+
 		a.recycle();
 	}
 }
