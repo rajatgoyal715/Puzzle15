@@ -19,7 +19,8 @@ public class Tile extends AppCompatButton {
 
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Tile);
 
-		this.setBackgroundColor(getResources().getColor(R.color.background));
+		int backgroundColor = a.getColor(R.styleable.Tile_android_background, getResources().getColor(R.color.background));
+		this.setBackgroundColor(backgroundColor);
 
 		int textColor = a.getColor(R.styleable.Tile_android_textColor, getResources().getColor(R.color.white));
 		this.setTextColor(textColor);
