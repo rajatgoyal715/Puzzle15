@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -42,6 +41,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private long startTime, currTime, lastTime;
 
     private int highScoreMoves, highScoreTime;
+    private MediaPlayer clickMP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -336,6 +336,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 		return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
 	}
 
+	private void playClickSound() {
+        if(clickMP != null) {
+            clickMP.release();
+        }
+        clickMP = MediaPlayer.create(this, R.raw.click);
+        clickMP.start();
+    }
+
     @Override
     public void onClick(View v) {
         int i, j = 0;
@@ -371,7 +379,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         updateMoves(++moves);
-        v.playSoundEffect(SoundEffectConstants.CLICK);
+        playClickSound();
 
         // swapping of tiles
         m[i][j] = num;
