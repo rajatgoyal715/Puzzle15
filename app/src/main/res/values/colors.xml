@@ -7,6 +7,7 @@
     <color name="background">#3083AC</color>
     <color name="light">#FFFFFF</color>
     <color name="game_background">#90caf9</color>
+    <color name="stats_text_color">#3083AC</color>
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

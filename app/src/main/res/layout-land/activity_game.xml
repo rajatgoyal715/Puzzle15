@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/game_background"
     android:gravity="center"
     android:orientation="horizontal"
     android:padding="20dp"
@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="@string/moves" />
@@ -35,14 +35,14 @@
                 android:layout_width="100dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/background" />
+                android:background="@color/stats_text_color" />
 
             <TextView
                 android:id="@+id/moves"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="30sp"
                 android:text="@string/initial_moves" />
         </LinearLayout>
@@ -58,7 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="@string/time" />
@@ -67,14 +67,14 @@
                 android:layout_width="150dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/background" />
+                android:background="@color/stats_text_color" />
 
             <TextView
                 android:id="@+id/timer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="30sp"
                 tools:text="00:00:00" />
         </LinearLayout>

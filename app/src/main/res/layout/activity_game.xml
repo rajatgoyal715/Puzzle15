@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/moves"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -35,7 +35,7 @@
                 android:layout_width="100dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/background" />
+                android:background="@color/stats_text_color" />
 
             <TextView
                 android:id="@+id/moves"
@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/initial_moves"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="30sp" />
         </LinearLayout>
 
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/time"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -67,7 +67,7 @@
                 android:layout_width="150dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/background" />
+                android:background="@color/stats_text_color" />
 
             <TextView
                 android:id="@+id/timer"
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/initial_time"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="30sp" />
         </LinearLayout>
 
