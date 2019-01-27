@@ -2,6 +2,7 @@ package com.rajatgoyal.puzzle15.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 
@@ -28,7 +29,10 @@ public class Tile extends AppCompatButton {
 		float textSize = a.getDimensionPixelSize(R.styleable.Tile_android_textSize, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 24, context.getResources().getDisplayMetrics()));
 		this.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
-		this.setContentDescription(this.getText());
+		CharSequence text = this.getText();
+		if(TextUtils.isEmpty(text)) text = "Empty Tile";
+		else text = "Tile Number " + text;
+		this.setContentDescription(text);
 
 		a.recycle();
 	}
