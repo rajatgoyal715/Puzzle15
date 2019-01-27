@@ -2,6 +2,8 @@ package com.rajatgoyal.puzzle15.ui;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.adapter.HighScoresAdapter;
 import com.rajatgoyal.puzzle15.model.HighScore;
@@ -32,13 +39,22 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<HighScore> highScores;
     private HighScore latestHighScore;
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        firebaseInit();
         init();
         getLatestHighScore();
+    }
+
+    private void firebaseInit() {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        Bundle bundle = new Bundle();
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
     }
 
     @SuppressLint("StaticFieldLeak")

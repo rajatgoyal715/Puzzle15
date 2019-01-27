@@ -15,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "205774853151-fnbt409ajjdj4umtqcfhiu4fij27ncev.apps.googleusercontent.com",
+          "client_id": "205774853151-uu6hu0fdcnko2k829qnbkrgc913gsl9v.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.rajatgoyal.puzzle15",
@@ -23,13 +23,21 @@
           }
         },
         {
-          "client_id": "205774853151-76klmhb0jd2glqh7e82pus3u2vfs7pmk.apps.googleusercontent.com",
+          "client_id": "205774853151-hfev2mvr5dka4q0hpt37mrtrh0luh308.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rajatgoyal.puzzle15",
+            "certificate_hash": "20c297d03f9b634e506c0d75916a820f20a7794e"
+          }
+        },
+        {
+          "client_id": "205774853151-3kutqgaf4i31m1u9mlveb2r21kksu8fq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDnSles099BubnvGofxOyiTAvoiBDR0Uks"
+          "current_key": "AIzaSyCL1vbc9xTMBWuPJEaECqwx76hz8lQ16HI"
         }
       ],
       "services": {
@@ -40,7 +48,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "205774853151-76klmhb0jd2glqh7e82pus3u2vfs7pmk.apps.googleusercontent.com",
+              "client_id": "205774853151-3kutqgaf4i31m1u9mlveb2r21kksu8fq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
