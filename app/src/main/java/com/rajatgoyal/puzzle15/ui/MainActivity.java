@@ -14,8 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -39,7 +42,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<HighScore> highScores;
     private HighScore latestHighScore;
 
-    private FirebaseAnalytics firebaseAnalytics;
+    private GoogleSignInClient googleSignInClient = null;
+    private static final int RC_UNUSED = 5001;
+    private static final int RC_SIGN_IN = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +57,109 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void firebaseInit() {
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        Bundle bundle = new Bundle();
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
+                .requestServerAuthCode(getString(R.string.default_web_client_id))
+                .build();
+
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        signInSilently();
+        if(!isSignedIn()) {
+            startSignInIntent();
+        }
+    }
+
+    private boolean isSignedIn() {
+        return GoogleSignIn.getLastSignedInAccount(this) != null;
+    }
+
+//    public void signInSilently() {
+//        Timber.d("signInSilently()");
+//
+//        googleSignInClient.silentSignIn().addOnCompleteListener(this,
+//                new OnCompleteListener<GoogleSignInAccount>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+//                        if (task.isSuccessful()) {
+//                            Timber.d("signInSilently(): success");
+//                            onConnected(task.getResult());
+//                        } else {
+//                            Timber.d("signInSilently(): failure");
+//                            Timber.d(task.getException());
+//                            onDisconnected();
+//                            startSignInIntent();
+//                        }
+//                    }
+//                });
+//    }
+
+    private void startSignInIntent() {
+        startActivityForResult(googleSignInClient.getSignInIntent(), RC_SIGN_IN);
+    }
+
+    private void signOut() {
+        Timber.d("signOut()");
+
+        if (!isSignedIn()) {
+            Timber.w("signOut() called, but was not signed in!");
+            return;
+        }
+
+        googleSignInClient.signOut().addOnCompleteListener(this,
+                new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        boolean successful = task.isSuccessful();
+                        Timber.d("signOut(): " + (successful ? "success" : "failed"));
+
+                        onDisconnected();
+                    }
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task =
+                    GoogleSignIn.getSignedInAccountFromIntent(intent);
+
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                onConnected(account);
+            } catch (ApiException apiException) {
+                String message = apiException.getMessage();
+                if (message == null || message.isEmpty()) {
+                    message = "Sign In Failed Message";
+                }
+
+                onDisconnected();
+
+                new AlertDialog.Builder(this)
+                        .setMessage(message)
+                        .setNeutralButton(android.R.string.ok, null)
+                        .show();
+            }
+        }
+    }
+
+    GoogleSignInAccount signedInAccount;
+
+    private void onConnected(GoogleSignInAccount googleSignInAccount) {
+        Timber.d("onConnected(): connected to Google APIs");
+        if (signedInAccount != googleSignInAccount) {
+
+            signedInAccount = googleSignInAccount;
+        }
+    }
+
+    public void onDisconnected() {
+        Timber.d("onDisconnected()");
     }
 
     @SuppressLint("StaticFieldLeak")
