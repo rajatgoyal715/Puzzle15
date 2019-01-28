@@ -21,7 +21,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.adapter.HighScoresAdapter;
 import com.rajatgoyal.puzzle15.model.HighScore;
@@ -43,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private HighScore latestHighScore;
 
     private GoogleSignInClient googleSignInClient = null;
-    private static final int RC_UNUSED = 5001;
     private static final int RC_SIGN_IN = 9001;
 
     @Override
@@ -68,9 +66,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-//        signInSilently();
         if(!isSignedIn()) {
-            startSignInIntent();
+            signInSilently();
+//            startSignInIntent();
         }
     }
 
@@ -78,25 +76,25 @@ public class MainActivity extends AppCompatActivity {
         return GoogleSignIn.getLastSignedInAccount(this) != null;
     }
 
-//    public void signInSilently() {
-//        Timber.d("signInSilently()");
-//
-//        googleSignInClient.silentSignIn().addOnCompleteListener(this,
-//                new OnCompleteListener<GoogleSignInAccount>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-//                        if (task.isSuccessful()) {
-//                            Timber.d("signInSilently(): success");
-//                            onConnected(task.getResult());
-//                        } else {
-//                            Timber.d("signInSilently(): failure");
-//                            Timber.d(task.getException());
-//                            onDisconnected();
-//                            startSignInIntent();
-//                        }
-//                    }
-//                });
-//    }
+    public void signInSilently() {
+        Timber.d("signInSilently()");
+
+        googleSignInClient.silentSignIn().addOnCompleteListener(this,
+                new OnCompleteListener<GoogleSignInAccount>() {
+                    @Override
+                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                        if (task.isSuccessful()) {
+                            Timber.d("signInSilently(): success");
+                            onConnected(task.getResult());
+                        } else {
+                            Timber.d("signInSilently(): failure");
+                            Timber.d(task.getException());
+                            onDisconnected();
+                            startSignInIntent();
+                        }
+                    }
+                });
+    }
 
     private void startSignInIntent() {
         startActivityForResult(googleSignInClient.getSignInIntent(), RC_SIGN_IN);
