@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Timber.d("signInSilently(): failure");
                             onDisconnected();
-                            startSignInIntent();
                         }
                     }
                 });
@@ -135,13 +134,8 @@ public class MainActivity extends AppCompatActivity {
                 if (message == null || message.isEmpty()) {
                     message = "Sign In Failed Message";
                 }
-
+                Timber.d(message);
                 onDisconnected();
-
-                new AlertDialog.Builder(this)
-                        .setMessage(message)
-                        .setNeutralButton(android.R.string.ok, null)
-                        .show();
             }
         }
     }
