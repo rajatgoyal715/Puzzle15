@@ -8,8 +8,8 @@
     <string name="leaderboard">Leaderboard</string>
     <string name="rules">Rules</string>
 
-    <string name="signIn"><u>Sign In With Google Account</u></string>
-    <string name="signOut"><u>Sign Out</u></string>
+    <string name="signIn">Sign In</string>
+    <string name="signOut">Sign Out</string>
 
     <string name="signin_failed">Sign In failed.</string>
 

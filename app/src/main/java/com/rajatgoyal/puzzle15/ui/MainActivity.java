@@ -44,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient = null;
     private static final int RC_SIGN_IN = 9001;
 
+    private Button signInSignOutButton;
+    private boolean signedIn = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,10 +69,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(!isSignedIn()) {
-            signInSilently();
-//            startSignInIntent();
-        }
+        if(isSignedIn()) return;
+        signInSilently();
     }
 
     private boolean isSignedIn() {
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
                             onConnected(task.getResult());
                         } else {
                             Timber.d("signInSilently(): failure");
-                            Timber.d(task.getException());
                             onDisconnected();
                             startSignInIntent();
                         }
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         Timber.d("signOut()");
 
         if (!isSignedIn()) {
-            Timber.w("signOut() called, but was not signed in!");
+            Timber.d("signOut() called, but was not signed in!");
             return;
         }
 
@@ -153,11 +153,21 @@ public class MainActivity extends AppCompatActivity {
         if (signedInAccount != googleSignInAccount) {
 
             signedInAccount = googleSignInAccount;
+            Toast.makeText(this, signedInAccount.getEmail(), Toast.LENGTH_SHORT).show();
+            Timber.d(signedInAccount.toString());
         }
+        signedIn = true;
+        updateSignInSignOutButton();
     }
 
     public void onDisconnected() {
         Timber.d("onDisconnected()");
+        signedIn = false;
+        updateSignInSignOutButton();
+    }
+
+    public void updateSignInSignOutButton() {
+        signInSignOutButton.setText(signedIn ? R.string.signOut : R.string.signIn);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -204,6 +214,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showRules();
+            }
+        });
+
+        signInSignOutButton = findViewById(R.id.signin_signout);
+        signInSignOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(signedIn) signOut();
+                else startSignInIntent();
             }
         });
     }

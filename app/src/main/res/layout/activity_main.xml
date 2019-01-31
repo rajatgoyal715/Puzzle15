@@ -61,6 +61,18 @@
             android:textColor="@color/background"
             android:textSize="20sp" />
 
+        <Button
+            android:id="@+id/signin_signout"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0"
+            android:background="@color/light"
+            android:text="@string/signIn"
+            android:textAllCaps="false"
+            android:textColor="@color/background"
+            android:textSize="20sp" />
+
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
