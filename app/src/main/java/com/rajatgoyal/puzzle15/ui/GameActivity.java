@@ -1,18 +1,22 @@
 package com.rajatgoyal.puzzle15.ui;
 
+import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.Button;
@@ -34,13 +38,33 @@ import java.util.Random;
 
 import timber.log.Timber;
 
+import static android.view.GestureDetector.SimpleOnGestureListener;
+
 /**
  * Created by rajat on 15/9/17.
  */
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private int size = 4, moves, hours, minutes, seconds;
+    private static final int size = 4;
+    public Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            currTime = SystemClock.uptimeMillis() - startTime + lastTime;
+            // Log.d(TAG, "run: " + currTime);
+            long time = currTime;
+            time /= 1000;
+            seconds = (int) time % 60;
+            time /= 60;
+            minutes = (int) time % 60;
+            time /= 60;
+            hours = (int) time % 24;
+
+            timerTextView.setText(new Time((int) (currTime / 1000)).toString());
+
+            handler.postDelayed(this, 0);
+        }
+    };
     private boolean gameOver;
     private int m[][], id[][];
     private Button buttons[][];
@@ -48,9 +72,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Handler handler;
     private TextView timerTextView, movesTextView;
     private long startTime, currTime, lastTime;
-
+    private int moves, hours, minutes, seconds;
     private AdView mAdView;
-
     private String uid, name;
     private int highScoreMoves, highScoreTime;
 
@@ -95,6 +118,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void init() {
         moves = 0;
         gameOver = false;
@@ -112,6 +136,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             for (int j = 0; j < size; j++) {
                 buttons[i][j] = findViewById(id[i][j]);
                 buttons[i][j].setOnClickListener(this);
+                buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this, buttons[i][j]));
             }
         }
     }
@@ -143,7 +168,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         shuffle();
         makeValidMatrix();
 
-		updateBoard();
+        updateBoard();
         postInit();
     }
 
@@ -160,23 +185,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void shuffle() {
-        int pos_x = size-1, pos_y = size-1;
+        int pos_x = size - 1, pos_y = size - 1;
         int temp, temp_x, temp_y, swap;
 
         Random rand = new Random();
 
-        for(int index = size*size-1; index>1; index--) {
+        for (int index = size * size - 1; index > 1; index--) {
             temp = rand.nextInt(index);
-            temp_x = temp/size;
-            temp_y = (temp + size)%size;
-            
+            temp_x = temp / size;
+            temp_y = (temp + size) % size;
+
             swap = m[temp_x][temp_y];
             m[temp_x][temp_y] = m[pos_x][pos_y];
             m[pos_x][pos_y] = swap;
 
             if (pos_y == 0) {
                 pos_x--;
-                pos_y = size-1;
+                pos_y = size - 1;
             } else {
                 pos_y--;
             }
@@ -216,13 +241,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private int findEmptyCellPosition() {
-    	for(int i = 0; i < size; i++) {
-    		for(int j = 0; j < size; j++) {
-    			if(m[i][j] == 0) return i;
-			}
-		}
-		return -1;
-	}
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (m[i][j] == 0) return i;
+            }
+        }
+        return -1;
+    }
 
     // If n is even, then the matrix is solvable if;
     // 1. blank is on even row counting from the bottom and no of inversions is odd.
@@ -233,8 +258,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         int empty_cell_pos_x = findEmptyCellPosition();
         if (empty_cell_pos_x % 2 == 0 && inv % 2 != 0) return true;
-        else if (empty_cell_pos_x % 2 != 0 && inv % 2 == 0) return true;
-        return false;
+        else return empty_cell_pos_x % 2 != 0 && inv % 2 == 0;
     }
 
     // if puzzle is not solvable, make it solvable by decreasing one inversion
@@ -269,25 +293,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         handler = new Handler();
         startTimer();
     }
-
-    public Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            currTime = SystemClock.uptimeMillis() - startTime + lastTime;
-            // Log.d(TAG, "run: " + currTime);
-            long time = currTime;
-            time /= 1000;
-            seconds = (int) time % 60;
-            time /= 60;
-            minutes = (int) time % 60;
-            time /= 60;
-            hours = (int) time % 24;
-
-            timerTextView.setText(new Time((int) (currTime / 1000)).toString());
-
-            handler.postDelayed(this, 0);
-        }
-    };
 
     public void startTimer() {
         if (handler == null) {
@@ -535,5 +540,78 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         AlertDialog dialog = alertDialogBuilder.create();
         dialog.show();
+    }
+
+    public class OnSwipeTouchListener implements View.OnTouchListener {
+
+        private final GestureDetector gestureDetector;
+        View view;
+
+        OnSwipeTouchListener(Context ctx, View view) {
+            gestureDetector = new GestureDetector(ctx, new SwipeGestureListener());
+            this.view = view;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        void onSwipeRight() {
+            Toast.makeText(GameActivity.this, "Right", Toast.LENGTH_SHORT).show();
+        }
+
+        void onSwipeLeft() {
+            Toast.makeText(GameActivity.this, "Left", Toast.LENGTH_SHORT).show();
+        }
+
+        void onSwipeTop() {
+            Toast.makeText(GameActivity.this, "Top", Toast.LENGTH_SHORT).show();
+        }
+
+        void onSwipeBottom() {
+            Toast.makeText(GameActivity.this, "Bottom", Toast.LENGTH_SHORT).show();
+        }
+
+        private final class SwipeGestureListener extends SimpleOnGestureListener {
+
+            private static final int MAX_SWIPE_DISTANCE = 100;
+            private static final int MAX_SWIPE_SPEED = 100;
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+                                   float velocityY) {
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    // Horizontal Swipes
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > MAX_SWIPE_DISTANCE &&
+                                Math.abs(velocityX) > MAX_SWIPE_SPEED) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                            result = true;
+                        }
+                    }
+                    // Vertical Swipes
+                    else if (Math.abs(diffY) > MAX_SWIPE_DISTANCE &&
+                            Math.abs(velocityY) > MAX_SWIPE_SPEED) {
+                        if (diffY > 0) {
+                            onSwipeBottom();
+                        } else {
+                            onSwipeTop();
+                        }
+                        result = true;
+                    }
+                } catch (Exception exception) {
+                    Timber.e(exception);
+                }
+                return result;
+            }
+        }
     }
 }
