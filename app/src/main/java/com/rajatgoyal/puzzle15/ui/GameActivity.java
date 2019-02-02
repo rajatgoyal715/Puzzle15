@@ -269,22 +269,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if (m[size - 1][size - 2] != 0) {
                     int temp = m[size - 1][size - 2];
                     m[size - 1][size - 2] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 2].setText(m[size - 1][size - 2] + "");
+                    buttons[size - 1][size - 2].setText(String.format("%s", m[size - 1][size - 2]));
                     m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1] + "");
+                    buttons[size - 1][size - 1].setText(String.format("%s", m[size - 1][size - 1]));
                 } else {
                     int temp = m[size - 1][size - 3];
                     m[size - 1][size - 3] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 3].setText(m[size - 1][size - 3] + "");
+                    buttons[size - 1][size - 3].setText(String.format("%s", m[size - 1][size - 3]));
                     m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1] + "");
+                    buttons[size - 1][size - 1].setText(String.format("%s", m[size - 1][size - 1]));
                 }
             } else {
                 int temp = m[size - 1][size - 3];
                 m[size - 1][size - 3] = m[size - 1][size - 2];
-                buttons[size - 1][size - 3].setText(m[size - 1][size - 3] + "");
+                buttons[size - 1][size - 3].setText(String.format("%s", m[size - 1][size - 3]));
                 m[size - 1][size - 2] = temp;
-                buttons[size - 1][size - 2].setText(m[size - 1][size - 2] + "");
+                buttons[size - 1][size - 2].setText(String.format("%s", m[size - 1][size - 2]));
             }
         }
     }
@@ -390,7 +390,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         // swapping of tiles
 
         m[i][j] = num;
-        buttons[i][j].setText(num + "");
+        buttons[i][j].setText(String.format("%s", num));
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
 
         m[i1][j1] = 0;
@@ -590,7 +590,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         buttons[i][j].setText("");
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
 
-        buttons[i1][j1].setText("" + m[i1][j1]);
+        buttons[i1][j1].setText(String.format("%s", m[i1][j1]));
         buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.background));
 
         if (checkIfGameOver()) {
