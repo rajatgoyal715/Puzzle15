@@ -47,6 +47,14 @@ import static android.view.GestureDetector.SimpleOnGestureListener;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int size = 4;
+    private int moves, hours, minutes, seconds;
+    private boolean gameOver;
+    private int m[][], id[][];
+    private Button buttons[][];
+
+    private Handler handler;
+    private TextView timerTextView, movesTextView;
+    private long startTime, currTime, lastTime;
     public Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -65,14 +73,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             handler.postDelayed(this, 0);
         }
     };
-    private boolean gameOver;
-    private int m[][], id[][];
-    private Button buttons[][];
-
-    private Handler handler;
-    private TextView timerTextView, movesTextView;
-    private long startTime, currTime, lastTime;
-    private int moves, hours, minutes, seconds;
     private AdView mAdView;
     private String uid, name;
     private int highScoreMoves, highScoreTime;
@@ -542,6 +542,73 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
     }
 
+
+    private void swipeHandler(View view, SWIPE DIR) {
+        int i, j = 0;
+
+        // Get button's coordinates using id matrix
+        label:
+        for (i = 0; i < size; i++) {
+            for (j = 0; j < size; j++) {
+                if (view.getId() == id[i][j])
+                    break label;
+            }
+        }
+
+        String buttonText = buttons[i][j].getText().toString();
+        if (!TextUtils.isEmpty(buttonText)) {
+            // user clicked on a non-empty tile
+            return;
+        }
+
+
+        int i1 = i, j1 = j;
+
+        if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(i, j + 1)) {
+            Timber.d("Swiped Right");
+            j++;
+        } else if (DIR.equals(SWIPE.LEFT) && isSwipeValid(i, j - 1)) {
+            Timber.d("Swiped Left");
+            j--;
+        } else if (DIR.equals(SWIPE.BOTTOM) && isSwipeValid(i + 1, j)) {
+            Timber.d("Swiped Bottom");
+            i++;
+        } else if (DIR.equals(SWIPE.TOP) && isSwipeValid(i - 1, j)) {
+            Timber.d("Swiped Top");
+            i--;
+        } else {
+            // Invalid move
+            return;
+        }
+        updateMoves(++moves);
+        view.playSoundEffect(SoundEffectConstants.CLICK);
+
+        // swapping of tiles
+
+        m[i1][j1] = m[i][j];
+        m[i][j] = 0;
+        buttons[i][j].setText("");
+        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
+
+        buttons[i1][j1].setText("" + m[i1][j1]);
+        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.background));
+
+        if (checkIfGameOver()) {
+            wonGame();
+        }
+    }
+
+    private boolean isSwipeValid(int i, int j) {
+        return i >= 0 && i < size && j >= 0 && j < size && m[i][j] != 0;
+    }
+
+    public enum SWIPE {
+        TOP,
+        RIGHT,
+        BOTTOM,
+        LEFT
+    }
+
     public class OnSwipeTouchListener implements View.OnTouchListener {
 
         private final GestureDetector gestureDetector;
@@ -558,19 +625,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         void onSwipeRight() {
-            Toast.makeText(GameActivity.this, "Right", Toast.LENGTH_SHORT).show();
+            swipeHandler(view, SWIPE.RIGHT);
         }
 
         void onSwipeLeft() {
-            Toast.makeText(GameActivity.this, "Left", Toast.LENGTH_SHORT).show();
+            swipeHandler(view, SWIPE.LEFT);
         }
 
         void onSwipeTop() {
-            Toast.makeText(GameActivity.this, "Top", Toast.LENGTH_SHORT).show();
+            swipeHandler(view, SWIPE.TOP);
         }
 
         void onSwipeBottom() {
-            Toast.makeText(GameActivity.this, "Bottom", Toast.LENGTH_SHORT).show();
+            swipeHandler(view, SWIPE.BOTTOM);
         }
 
         private final class SwipeGestureListener extends SimpleOnGestureListener {
