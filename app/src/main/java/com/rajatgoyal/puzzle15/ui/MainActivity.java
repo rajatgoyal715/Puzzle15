@@ -7,10 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -50,6 +50,8 @@ import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
 import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
 import com.rajatgoyal.puzzle15.widget.Widget;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 
 import timber.log.Timber;
@@ -60,17 +62,13 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int RC_SIGN_IN = 101;
     private ArrayList<HighScore> highScores;
     private ArrayList<Leaderboard> leaderboard;
-
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-
     private GoogleSignInOptions gso;
     private GoogleApiClient mGoogleApiClient;
-
-    private static final int RC_SIGN_IN = 101;
-
     private TextView loginMessage, welcomeMessage;
     private HighScore latestHighScore;
 
@@ -165,7 +163,11 @@ public class MainActivity extends AppCompatActivity {
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
+                if (account != null) {
+                    firebaseAuthWithGoogle(account);
+                } else {
+                    Timber.d("Account null");
+                }
             } else {
                 Toast.makeText(this, getResources().getString(R.string.signin_failed), Toast.LENGTH_SHORT).show();
                 Timber.d(getResources().getString(R.string.signin_failed));
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
-                    public void onResult(Status status) {
+                    public void onResult(@NotNull Status status) {
                         updateUI(null);
                     }
                 });
@@ -311,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
 
         dbRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
 
                 ArrayList<Leaderboard> list = new ArrayList<>();
 
@@ -324,11 +326,13 @@ public class MainActivity extends AppCompatActivity {
                     Iterable<DataSnapshot> items = snapshot.getChildren();
                     int j = 0;
                     for (DataSnapshot item : items) {
-                        String itemString = item.getValue().toString();
-                        if (j == 0) moves = Integer.parseInt(itemString);
-                        else if (j == 1) name = itemString;
-                        else time = Integer.parseInt(itemString);
-                        j++;
+                        if (item.getValue() != null) {
+                            String itemString = item.getValue().toString();
+                            if (j == 0) moves = Integer.parseInt(itemString);
+                            else if (j == 1) name = itemString;
+                            else time = Integer.parseInt(itemString);
+                            j++;
+                        }
                     }
                     list.add(new Leaderboard(name, moves, time));
                     i++;
@@ -338,7 +342,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NotNull DatabaseError databaseError) {
 
             }
         });
@@ -350,12 +354,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateWidgets() {
-        Intent intent = new Intent(this,Widget.class);
+        Intent intent = new Intent(this, Widget.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         int ids[] = AppWidgetManager.getInstance(
                 getApplication()).getAppWidgetIds(new ComponentName(getApplication(), Widget.class)
         );
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS,ids);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         sendBroadcast(intent);
     }
 
