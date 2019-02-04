@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
+import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.Time;
 
 import java.util.Locale;
@@ -582,13 +583,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         LEFT
     }
 
-    public class OnSwipeTouchListener implements View.OnTouchListener {
+    public class OnSwipeTouchListener implements View.OnTouchListener,
+            SwipeGestureListener.OnSwipeInterface {
 
         private final GestureDetector gestureDetector;
         View view;
 
         OnSwipeTouchListener(Context ctx, View view) {
-            gestureDetector = new GestureDetector(ctx, new SwipeGestureListener());
+            gestureDetector = new GestureDetector(ctx, new SwipeGestureListener(this));
             this.view = view;
         }
 
@@ -597,61 +599,24 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             return gestureDetector.onTouchEvent(event);
         }
 
-        void onSwipeRight() {
+        @Override
+        public void onSwipeRight() {
             swipeHandler(view, SWIPE.RIGHT);
         }
 
-        void onSwipeLeft() {
+        @Override
+        public void onSwipeLeft() {
             swipeHandler(view, SWIPE.LEFT);
         }
 
-        void onSwipeTop() {
+        @Override
+        public void onSwipeTop() {
             swipeHandler(view, SWIPE.TOP);
         }
 
-        void onSwipeBottom() {
+        @Override
+        public void onSwipeBottom() {
             swipeHandler(view, SWIPE.BOTTOM);
-        }
-
-        private final class SwipeGestureListener extends SimpleOnGestureListener {
-
-            private static final int MAX_SWIPE_DISTANCE = 100;
-            private static final int MAX_SWIPE_SPEED = 100;
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-                                   float velocityY) {
-                boolean result = false;
-                try {
-                    float diffY = e2.getY() - e1.getY();
-                    float diffX = e2.getX() - e1.getX();
-                    // Horizontal Swipes
-                    if (Math.abs(diffX) > Math.abs(diffY)) {
-                        if (Math.abs(diffX) > MAX_SWIPE_DISTANCE &&
-                                Math.abs(velocityX) > MAX_SWIPE_SPEED) {
-                            if (diffX > 0) {
-                                onSwipeRight();
-                            } else {
-                                onSwipeLeft();
-                            }
-                            result = true;
-                        }
-                    }
-                    // Vertical Swipes
-                    else if (Math.abs(diffY) > MAX_SWIPE_DISTANCE &&
-                            Math.abs(velocityY) > MAX_SWIPE_SPEED) {
-                        if (diffY > 0) {
-                            onSwipeBottom();
-                        } else {
-                            onSwipeTop();
-                        }
-                        result = true;
-                    }
-                } catch (Exception exception) {
-                    Timber.e(exception);
-                }
-                return result;
-            }
         }
     }
 }
