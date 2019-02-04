@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Google Play game services IDs.
+Save this file as res/values/games-ids.xml in your project.
+-->
+<resources>
+    <!-- app_id -->
+    <string name="app_id" translatable="false">205774853151</string>
+    <!-- package_name -->
+    <string name="package_name" translatable="false">com.rajatgoyal.puzzle15</string>
+    <!-- achievement Play your first game -->
+    <string name="achievement_play_your_first_game" translatable="false">CgkIn6iMyf4FEAIQAQ</string>
+    <!-- achievement Knower -->
+    <string name="achievement_knower" translatable="false">CgkIn6iMyf4FEAIQAg</string>
+    <!-- achievement 5 Games -->
+    <string name="achievement_5_games" translatable="false">CgkIn6iMyf4FEAIQAw</string>
+    <!-- achievement 10 Games -->
+    <string name="achievement_10_games" translatable="false">CgkIn6iMyf4FEAIQBA</string>
+    <!-- achievement 15 Games -->
+    <string name="achievement_15_games" translatable="false">CgkIn6iMyf4FEAIQBQ</string>
+    <!-- achievement Complete a game within 5 minutes -->
+    <string name="achievement_complete_a_game_within_5_minutes" translatable="false">CgkIn6iMyf4FEAIQBg</string>
+    <!-- achievement Complete a game within 2 minutes -->
+    <string name="achievement_complete_a_game_within_2_minutes" translatable="false">CgkIn6iMyf4FEAIQBw</string>
+    <!-- achievement Complete a game within 1 minute 30 seconds -->
+    <string name="achievement_complete_a_game_within_1_minute_30_seconds" translatable="false">CgkIn6iMyf4FEAIQCA</string>
+    <!-- achievement Complete a game within 1 minute -->
+    <string name="achievement_complete_a_game_within_1_minute" translatable="false">CgkIn6iMyf4FEAIQCQ</string>
+    <!-- achievement Complete a game within 300 moves -->
+    <string name="achievement_complete_a_game_within_300_moves" translatable="false">CgkIn6iMyf4FEAIQCg</string>
+    <!-- achievement Complete a game within 250 moves -->
+    <string name="achievement_complete_a_game_within_250_moves" translatable="false">CgkIn6iMyf4FEAIQCw</string>
+    <!-- achievement Complete a game within 200 moves -->
+    <string name="achievement_complete_a_game_within_200_moves" translatable="false">CgkIn6iMyf4FEAIQDA</string>
+    <!-- achievement Complete a game within 150 moves -->
+    <string name="achievement_complete_a_game_within_150_moves" translatable="false">CgkIn6iMyf4FEAIQDQ</string>
+    <!-- achievement Complete a game within 100 moves -->
+    <string name="achievement_complete_a_game_within_100_moves" translatable="false">CgkIn6iMyf4FEAIQDg</string>
+    <!-- achievement Complete 20 games -->
+    <string name="achievement_complete_20_games" translatable="false">CgkIn6iMyf4FEAIQDw</string>
+    <!-- leaderboard Time Leaderboard -->
+    <string name="leaderboard_time_leaderboard" translatable="false">CgkIn6iMyf4FEAIQEA</string>
+    <!-- leaderboard Moves Leaderboard -->
+    <string name="leaderboard_moves_leaderboard" translatable="false">CgkIn6iMyf4FEAIQEQ</string>
+</resources>
