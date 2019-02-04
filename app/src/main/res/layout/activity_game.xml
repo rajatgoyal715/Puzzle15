@@ -3,18 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/game_background"
     android:gravity="center"
     android:orientation="vertical"
+    android:padding="20dp"
     tools:context="com.rajatgoyal.puzzle15.ui.GameActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
         android:baselineAligned="false"
         android:orientation="horizontal">
 
@@ -30,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/moves"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -38,7 +35,7 @@
                 android:layout_width="100dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/background" />
+                android:background="@color/stats_text_color" />
 
             <TextView
                 android:id="@+id/moves"
@@ -46,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/initial_moves"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="30sp" />
         </LinearLayout>
 
@@ -62,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/time"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -70,7 +67,7 @@
                 android:layout_width="150dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
-                android:background="@color/background" />
+                android:background="@color/stats_text_color" />
 
             <TextView
                 android:id="@+id/timer"
@@ -78,17 +75,16 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/initial_time"
-                android:textColor="@color/background"
+                android:textColor="@color/stats_text_color"
                 android:textSize="30sp" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginTop="20dp"
         android:layout_weight="1">
 
         <LinearLayout
@@ -97,189 +93,147 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn00"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/background"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:background="@color/light"
+                    android:layout_weight="1"/>
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn01"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:background="@color/light"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn02"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn03"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn10"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn11"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn12"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn13"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn20"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn21"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn22"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn23"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn30"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn31"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn32"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
-                <Button
+                <com.rajatgoyal.puzzle15.view.Tile
                     android:id="@+id/btn33"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="1dp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+                    android:layout_weight="1" />
 
             </LinearLayout>
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
-
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/sampleAdunitId" />
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

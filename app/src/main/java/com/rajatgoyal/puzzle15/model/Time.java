@@ -1,8 +1,5 @@
 package com.rajatgoyal.puzzle15.model;
 
-import android.support.annotation.NonNull;
-
-import java.util.Comparator;
 import java.util.Locale;
 
 /**

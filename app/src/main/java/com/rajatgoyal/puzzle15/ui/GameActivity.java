@@ -1,8 +1,6 @@
 package com.rajatgoyal.puzzle15.ui;
 
 import android.annotation.SuppressLint;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,8 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -23,15 +21,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.model.Time;
-import com.rajatgoyal.puzzle15.widget.Widget;
 
 import java.util.Locale;
 import java.util.Random;
@@ -59,7 +51,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             currTime = SystemClock.uptimeMillis() - startTime + lastTime;
-            // Log.d(TAG, "run: " + currTime);
             long time = currTime;
             time /= 1000;
             seconds = (int) time % 60;
@@ -73,9 +64,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             handler.postDelayed(this, 0);
         }
     };
-    private AdView mAdView;
-    private String uid, name;
+
     private int highScoreMoves, highScoreTime;
+    private MediaPlayer clickMP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,16 +74,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_game);
         Timber.d("onCreate: ");
 
-        MobileAds.initialize(this, getResources().getString(R.string.sampleAppId));
-
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice(getResources().getString(R.string.testDeviceId)).build();
-        mAdView.loadAd(adRequest);
-
         Intent intent = getIntent();
         if (intent != null) {
-            uid = intent.hasExtra("uid") ? intent.getStringExtra("uid") : null;
-            name = intent.hasExtra("name") ? intent.getStringExtra("name") : null;
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
         }
@@ -172,8 +155,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         postInit();
     }
 
-    // A method to fill the matrix in ascending order
-    // This is used for debugging.
+	/**
+	 * Fill the matrix in ascending order
+	 */
     public void seriesFill() {
         int temp;
         for (int i = 0; i < size; i++) {
@@ -184,8 +168,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void shuffle() {
-        int pos_x = size - 1, pos_y = size - 1;
+	/**
+	 * Fill the matrix in random order
+	 */
+	public void shuffle() {
+        int pos_x = size-1, pos_y = size-1;
         int temp, temp_x, temp_y, swap;
 
         Random rand = new Random();
@@ -208,7 +195,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void updateBoard() {
+	/**
+	 * Update the board according to the matrix
+	 */
+	public void updateBoard() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (m[i][j] == 0) {
@@ -223,8 +213,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    // find inversions in the matrix by first creating a 1D matrix
-    // and then compare each number with every number ahead of it and check if it is smaller.
+	/**
+	 * Calculate number of inversions in the matrix
+	 * @return number of inversions
+	 */
     public int findInversions() {
         int arr[] = new int[size * size];
         for (int i = 0; i < size; i++) {
@@ -249,20 +241,25 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return -1;
     }
 
-    // If n is even, then the matrix is solvable if;
-    // 1. blank is on even row counting from the bottom and no of inversions is odd.
-    // 2. blank is on odd row from the bottom and no of inversions is even.
-    // else puzzle is not solvable
+	/**
+	 * Check if the matrix is valid according to following rules:
+	 * If n is even, then the matrix is solvable if:
+	 * 1. blank is on even row counting from the bottom and no of inversions is odd.
+	 * 2. blank is on odd row from the bottom and no of inversions is even.
+	 * If n is odd, then the matrix is solvable if no. of inversions is even.
+	 * @return validity of matrix
+	 */
     public boolean isValid() {
         int inv = findInversions();
-
         int empty_cell_pos_x = findEmptyCellPosition();
-        if (empty_cell_pos_x % 2 == 0 && inv % 2 != 0) return true;
-        else return empty_cell_pos_x % 2 != 0 && inv % 2 == 0;
+
+        return (empty_cell_pos_x % 2 == 0 && inv % 2 != 0) || (empty_cell_pos_x % 2 != 0 && inv % 2 == 0);
     }
 
-    // if puzzle is not solvable, make it solvable by decreasing one inversion
-    // which can be done easily by swapping two last positions
+	/**
+	 * If puzzle is not solvable, make it solvable by decreasing one inversion
+	 * which can be done easily by swapping two last positions
+	 */
     public void makeValidMatrix() {
         if (!isValid()) {
             if (m[size - 1][size - 1] != 0) {
@@ -319,18 +316,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        if (mAdView != null) {
-            mAdView.pause();
-        }
         pauseTimer();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mAdView != null) {
-            mAdView.resume();
-        }
         if (!gameOver) {
             resumeTimer();
         }
@@ -348,6 +339,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         outState.putInt("moves", moves);
 
         outState.putLong("currTime", currTime);
+    }
+
+	public boolean isEmpty(int i, int j) {
+		return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
+	}
+
+	private void playClickSound() {
+        if(clickMP != null) {
+            clickMP.release();
+        }
+        clickMP = MediaPlayer.create(this, R.raw.click);
+        clickMP.start();
     }
 
     @Override
@@ -385,10 +388,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
         updateMoves(++moves);
-        v.playSoundEffect(SoundEffectConstants.CLICK);
+        playClickSound();
 
         // swapping of tiles
-
         m[i][j] = num;
         buttons[i][j].setText(String.format("%s", num));
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
@@ -415,9 +417,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (isHighScore()) {
             //show user that he got high score
             addHighScore();
-            if (uid != null) {
-                uploadHighScore();
-            }
         }
 
         Toast.makeText(this, getResources().getString(R.string.game_won), Toast.LENGTH_LONG).show();
@@ -456,28 +455,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void uploadHighScore() {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference dbRef = database.getReference();
-
-        DatabaseReference userRef = dbRef.child("high_scores").child(uid);
-        userRef.child("name").setValue(name);
-        userRef.child("moves").setValue(moves);
-        userRef.child("time").setValue(new Time(hours, minutes, seconds).toSeconds());
-
-        updateWidgets();
-    }
-
-    public void updateWidgets() {
-        Intent intent = new Intent(this, Widget.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int ids[] = AppWidgetManager.getInstance(
-                getApplication()).getAppWidgetIds(new ComponentName(getApplication(), Widget.class)
-        );
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        sendBroadcast(intent);
-    }
-
     public void startNewGame() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage(getResources().getString(R.string.play_new_game));
@@ -505,10 +482,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void updateMoves(int move) {
         movesTextView.setText(String.format(Locale.US, "%d", move));
         moves = move;
-    }
-
-    public boolean isEmpty(int i, int j) {
-        return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
     }
 
     public boolean checkIfGameOver() {
