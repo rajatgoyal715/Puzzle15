@@ -342,10 +342,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         outState.putLong("currTime", currTime);
     }
 
-	public boolean isEmpty(int i, int j) {
-		return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
-	}
-
 	private void playClickSound() {
         if(clickMP != null) {
             clickMP.release();
@@ -376,13 +372,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         int num = Integer.parseInt(n);
         int i1 = i, j1 = j;
 
-        if (isEmpty(i - 1, j))
+        if (isSwipeValid(i - 1, j))
             i--;
-        else if (isEmpty(i + 1, j))
+        else if (isSwipeValid(i + 1, j))
             i++;
-        else if (isEmpty(i, j - 1))
+        else if (isSwipeValid(i, j - 1))
             j--;
-        else if (isEmpty(i, j + 1))
+        else if (isSwipeValid(i, j + 1))
             j++;
         else {
             // Invalid move
@@ -530,12 +526,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         String buttonText = buttons[i][j].getText().toString();
-        if (!TextUtils.isEmpty(buttonText)) {
-            // user clicked on a non-empty tile
+        if (TextUtils.isEmpty(buttonText)) {
+            // user clicked on the empty tile
             return;
         }
 
-
+        int num = Integer.parseInt(buttonText);
         int i1 = i, j1 = j;
 
         if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(i, j + 1)) {
@@ -554,18 +550,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             // Invalid move
             return;
         }
+
         updateMoves(++moves);
-        view.playSoundEffect(SoundEffectConstants.CLICK);
+        playClickSound();
 
         // swapping of tiles
+        m[i][j] = num;
+        buttons[i][j].setText(String.format("%s", num));
+        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
 
-        m[i1][j1] = m[i][j];
-        m[i][j] = 0;
-        buttons[i][j].setText("");
-        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
-
-        buttons[i1][j1].setText(String.format("%s", m[i1][j1]));
-        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.background));
+        m[i1][j1] = 0;
+        buttons[i1][j1].setText("");
+        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
 
         if (checkIfGameOver()) {
             wonGame();
@@ -573,7 +569,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isSwipeValid(int i, int j) {
-        return i >= 0 && i < size && j >= 0 && j < size && m[i][j] != 0;
+        return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
     }
 
     public enum SWIPE {
