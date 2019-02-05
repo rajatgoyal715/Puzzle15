@@ -1,16 +1,21 @@
 package com.rajatgoyal.puzzle15.ui;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,6 +23,7 @@ import android.widget.Toast;
 
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
+import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.Time;
 
 import java.util.Locale;
@@ -25,13 +31,16 @@ import java.util.Random;
 
 import timber.log.Timber;
 
+import static android.view.GestureDetector.SimpleOnGestureListener;
+
 /**
  * Created by rajat on 15/9/17.
  */
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private int size = 4, moves, hours, minutes, seconds;
+    private static final int size = 4;
+    private int moves, hours, minutes, seconds;
     private boolean gameOver;
     private int m[][], id[][];
     private Button buttons[][];
@@ -39,6 +48,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Handler handler;
     private TextView timerTextView, movesTextView;
     private long startTime, currTime, lastTime;
+    public Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            currTime = SystemClock.uptimeMillis() - startTime + lastTime;
+            long time = currTime;
+            time /= 1000;
+            seconds = (int) time % 60;
+            time /= 60;
+            minutes = (int) time % 60;
+            time /= 60;
+            hours = (int) time % 24;
+
+            timerTextView.setText(new Time((int) (currTime / 1000)).toString());
+
+            handler.postDelayed(this, 0);
+        }
+    };
 
     private int highScoreMoves, highScoreTime;
     private MediaPlayer clickMP;
@@ -76,6 +102,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void init() {
         moves = 0;
         gameOver = false;
@@ -93,6 +120,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             for (int j = 0; j < size; j++) {
                 buttons[i][j] = findViewById(id[i][j]);
                 buttons[i][j].setOnClickListener(this);
+                buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this, buttons[i][j]));
             }
         }
     }
@@ -124,7 +152,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         shuffle();
         makeValidMatrix();
 
-		updateBoard();
+        updateBoard();
         postInit();
     }
 
@@ -150,18 +178,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         Random rand = new Random();
 
-        for(int index = size*size-1; index>1; index--) {
+        for (int index = size * size - 1; index > 1; index--) {
             temp = rand.nextInt(index);
-            temp_x = temp/size;
-            temp_y = (temp + size)%size;
-            
+            temp_x = temp / size;
+            temp_y = (temp + size) % size;
+
             swap = m[temp_x][temp_y];
             m[temp_x][temp_y] = m[pos_x][pos_y];
             m[pos_x][pos_y] = swap;
 
             if (pos_y == 0) {
                 pos_x--;
-                pos_y = size-1;
+                pos_y = size - 1;
             } else {
                 pos_y--;
             }
@@ -206,13 +234,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private int findEmptyCellPosition() {
-    	for(int i = 0; i < size; i++) {
-    		for(int j = 0; j < size; j++) {
-    			if(m[i][j] == 0) return i;
-			}
-		}
-		return -1;
-	}
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (m[i][j] == 0) return i;
+            }
+        }
+        return -1;
+    }
 
 	/**
 	 * Check if the matrix is valid according to following rules:
@@ -239,22 +267,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if (m[size - 1][size - 2] != 0) {
                     int temp = m[size - 1][size - 2];
                     m[size - 1][size - 2] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 2].setText(m[size - 1][size - 2] + "");
+                    buttons[size - 1][size - 2].setText(String.format("%s", m[size - 1][size - 2]));
                     m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1] + "");
+                    buttons[size - 1][size - 1].setText(String.format("%s", m[size - 1][size - 1]));
                 } else {
                     int temp = m[size - 1][size - 3];
                     m[size - 1][size - 3] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 3].setText(m[size - 1][size - 3] + "");
+                    buttons[size - 1][size - 3].setText(String.format("%s", m[size - 1][size - 3]));
                     m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(m[size - 1][size - 1] + "");
+                    buttons[size - 1][size - 1].setText(String.format("%s", m[size - 1][size - 1]));
                 }
             } else {
                 int temp = m[size - 1][size - 3];
                 m[size - 1][size - 3] = m[size - 1][size - 2];
-                buttons[size - 1][size - 3].setText(m[size - 1][size - 3] + "");
+                buttons[size - 1][size - 3].setText(String.format("%s", m[size - 1][size - 3]));
                 m[size - 1][size - 2] = temp;
-                buttons[size - 1][size - 2].setText(m[size - 1][size - 2] + "");
+                buttons[size - 1][size - 2].setText(String.format("%s", m[size - 1][size - 2]));
             }
         }
     }
@@ -263,24 +291,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         handler = new Handler();
         startTimer();
     }
-
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            currTime = SystemClock.uptimeMillis() - startTime + lastTime;
-            long time = currTime;
-            time /= 1000;
-            seconds = (int) time % 60;
-            time /= 60;
-            minutes = (int) time % 60;
-            time /= 60;
-            hours = (int) time % 24;
-
-            timerTextView.setText(new Time((int) (currTime / 1000)).toString());
-
-            handler.postDelayed(this, 0);
-        }
-    };
 
     public void startTimer() {
         if (handler == null) {
@@ -332,10 +342,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         outState.putLong("currTime", currTime);
     }
 
-	public boolean isEmpty(int i, int j) {
-		return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
-	}
-
 	private void playClickSound() {
         if(clickMP != null) {
             clickMP.release();
@@ -366,13 +372,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         int num = Integer.parseInt(n);
         int i1 = i, j1 = j;
 
-        if (isEmpty(i - 1, j))
+        if (isSwipeValid(i - 1, j))
             i--;
-        else if (isEmpty(i + 1, j))
+        else if (isSwipeValid(i + 1, j))
             i++;
-        else if (isEmpty(i, j - 1))
+        else if (isSwipeValid(i, j - 1))
             j--;
-        else if (isEmpty(i, j + 1))
+        else if (isSwipeValid(i, j + 1))
             j++;
         else {
             // Invalid move
@@ -383,7 +389,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         // swapping of tiles
         m[i][j] = num;
-        buttons[i][j].setText(num + "");
+        buttons[i][j].setText(String.format("%s", num));
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
 
         m[i1][j1] = 0;
@@ -504,5 +510,109 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         AlertDialog dialog = alertDialogBuilder.create();
         dialog.show();
+    }
+
+
+    private void swipeHandler(View view, SWIPE DIR) {
+        int i, j = 0;
+
+        // Get button's coordinates using id matrix
+        label:
+        for (i = 0; i < size; i++) {
+            for (j = 0; j < size; j++) {
+                if (view.getId() == id[i][j])
+                    break label;
+            }
+        }
+
+        String buttonText = buttons[i][j].getText().toString();
+        if (TextUtils.isEmpty(buttonText)) {
+            // user clicked on the empty tile
+            return;
+        }
+
+        int num = Integer.parseInt(buttonText);
+        int i1 = i, j1 = j;
+
+        if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(i, j + 1)) {
+            Timber.d("Swiped Right");
+            j++;
+        } else if (DIR.equals(SWIPE.LEFT) && isSwipeValid(i, j - 1)) {
+            Timber.d("Swiped Left");
+            j--;
+        } else if (DIR.equals(SWIPE.BOTTOM) && isSwipeValid(i + 1, j)) {
+            Timber.d("Swiped Bottom");
+            i++;
+        } else if (DIR.equals(SWIPE.TOP) && isSwipeValid(i - 1, j)) {
+            Timber.d("Swiped Top");
+            i--;
+        } else {
+            // Invalid move
+            return;
+        }
+
+        updateMoves(++moves);
+        playClickSound();
+
+        // swapping of tiles
+        m[i][j] = num;
+        buttons[i][j].setText(String.format("%s", num));
+        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
+
+        m[i1][j1] = 0;
+        buttons[i1][j1].setText("");
+        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
+
+        if (checkIfGameOver()) {
+            wonGame();
+        }
+    }
+
+    private boolean isSwipeValid(int i, int j) {
+        return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
+    }
+
+    public enum SWIPE {
+        TOP,
+        RIGHT,
+        BOTTOM,
+        LEFT
+    }
+
+    public class OnSwipeTouchListener implements View.OnTouchListener,
+            SwipeGestureListener.OnSwipeInterface {
+
+        private final GestureDetector gestureDetector;
+        View view;
+
+        OnSwipeTouchListener(Context ctx, View view) {
+            gestureDetector = new GestureDetector(ctx, new SwipeGestureListener(this));
+            this.view = view;
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        @Override
+        public void onSwipeRight() {
+            swipeHandler(view, SWIPE.RIGHT);
+        }
+
+        @Override
+        public void onSwipeLeft() {
+            swipeHandler(view, SWIPE.LEFT);
+        }
+
+        @Override
+        public void onSwipeTop() {
+            swipeHandler(view, SWIPE.TOP);
+        }
+
+        @Override
+        public void onSwipeBottom() {
+            swipeHandler(view, SWIPE.BOTTOM);
+        }
     }
 }
