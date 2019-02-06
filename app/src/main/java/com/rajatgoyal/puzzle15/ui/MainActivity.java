@@ -33,6 +33,7 @@ import com.rajatgoyal.puzzle15.model.HighScore;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
 import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
+import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.ArrayList;
 
@@ -219,6 +220,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void init() {
+        SharedPref.init(this);
+
         Button newGame = findViewById(R.id.newGame);
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
