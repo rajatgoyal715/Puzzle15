@@ -400,6 +400,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         buttons[i1][j1].setText("");
         buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
 
+        emptyRowIndex = i1;
+        emptyColIndex = j1;
+
         if (checkIfGameOver()) {
             wonGame();
         }
