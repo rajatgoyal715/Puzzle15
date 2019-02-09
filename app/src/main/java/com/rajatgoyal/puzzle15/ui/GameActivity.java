@@ -65,7 +65,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private int highScoreMoves, highScoreTime;
     private MediaPlayer clickMP;
-    private View matrixContainer;
+    /**
+     * Empty Row Index: stores the row number of the empty cell
+     * Empty Col Index: stores the column number of the empty cell
+     */
     private int emptyRowIndex = 0;
     private int emptyColIndex = 0;
 
@@ -524,6 +527,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         int i, j;
         Timber.d("Swipe Handler called");
 
+        /*
+          Check if the 4 button around the empty cell is valid or not corresponding to the
+          swipe direction
+         */
         if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(emptyRowIndex, emptyColIndex - 1)) {
             Timber.d("Swiped Right");
             i = emptyRowIndex;
@@ -546,6 +553,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         updateMoves(++moves);
+
+        // Todo: Make this click sound optional, give option from the setting to turn this on or off
         playClickSound();
 
         // swapping of tiles
@@ -566,6 +575,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * @param rowIndex row index of the surrounding buttons w.r.t to the empty cell
+     * @param colIndex column index of the surrounding buttons w.r.t to the empty cell
+     * @return if there exists a valid button around the empty cell corresponding to the
+     * swipe direction, returns true if it exists, false otherwise
+     */
     private boolean isSwipeValid(int rowIndex, int colIndex) {
         return rowIndex >= 0 && rowIndex < size &&
                 colIndex >= 0 && colIndex < size && m[rowIndex][colIndex] != 0;
