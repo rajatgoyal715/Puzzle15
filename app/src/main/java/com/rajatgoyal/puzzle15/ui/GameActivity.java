@@ -10,12 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -29,9 +26,9 @@ import com.rajatgoyal.puzzle15.model.Time;
 import java.util.Locale;
 import java.util.Random;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
-
-import static android.view.GestureDetector.SimpleOnGestureListener;
 
 /**
  * Created by rajat on 15/9/17.
@@ -68,6 +65,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private int highScoreMoves, highScoreTime;
     private MediaPlayer clickMP;
+    private View matrixContainer;
+    private int emptyRowIndex = 0;
+    private int emptyColIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +120,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             for (int j = 0; j < size; j++) {
                 buttons[i][j] = findViewById(id[i][j]);
                 buttons[i][j].setOnClickListener(this);
-                buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this, buttons[i][j]));
+                buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
             }
         }
     }
@@ -156,9 +156,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         postInit();
     }
 
-	/**
-	 * Fill the matrix in ascending order
-	 */
+    /**
+     * Fill the matrix in ascending order
+     */
     public void seriesFill() {
         int temp;
         for (int i = 0; i < size; i++) {
@@ -169,11 +169,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-	/**
-	 * Fill the matrix in random order
-	 */
-	public void shuffle() {
-        int pos_x = size-1, pos_y = size-1;
+    /**
+     * Fill the matrix in random order
+     */
+    public void shuffle() {
+        int pos_x = size - 1, pos_y = size - 1;
         int temp, temp_x, temp_y, swap;
 
         Random rand = new Random();
@@ -196,13 +196,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-	/**
-	 * Update the board according to the matrix
-	 */
-	public void updateBoard() {
+    /**
+     * Update the board according to the matrix
+     */
+    public void updateBoard() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (m[i][j] == 0) {
+                    emptyRowIndex = i;
+                    emptyColIndex = j;
                     buttons[i][j].setText("");
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
                 } else {
@@ -214,10 +216,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-	/**
-	 * Calculate number of inversions in the matrix
-	 * @return number of inversions
-	 */
+    /**
+     * Calculate number of inversions in the matrix
+     *
+     * @return number of inversions
+     */
     public int findInversions() {
         int arr[] = new int[size * size];
         for (int i = 0; i < size; i++) {
@@ -242,14 +245,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return -1;
     }
 
-	/**
-	 * Check if the matrix is valid according to following rules:
-	 * If n is even, then the matrix is solvable if:
-	 * 1. blank is on even row counting from the bottom and no of inversions is odd.
-	 * 2. blank is on odd row from the bottom and no of inversions is even.
-	 * If n is odd, then the matrix is solvable if no. of inversions is even.
-	 * @return validity of matrix
-	 */
+    /**
+     * Check if the matrix is valid according to following rules:
+     * If n is even, then the matrix is solvable if:
+     * 1. blank is on even row counting from the bottom and no of inversions is odd.
+     * 2. blank is on odd row from the bottom and no of inversions is even.
+     * If n is odd, then the matrix is solvable if no. of inversions is even.
+     *
+     * @return validity of matrix
+     */
     public boolean isValid() {
         int inv = findInversions();
         int empty_cell_pos_x = findEmptyCellPosition();
@@ -257,10 +261,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         return (empty_cell_pos_x % 2 == 0 && inv % 2 != 0) || (empty_cell_pos_x % 2 != 0 && inv % 2 == 0);
     }
 
-	/**
-	 * If puzzle is not solvable, make it solvable by decreasing one inversion
-	 * which can be done easily by swapping two last positions
-	 */
+    /**
+     * If puzzle is not solvable, make it solvable by decreasing one inversion
+     * which can be done easily by swapping two last positions
+     */
     public void makeValidMatrix() {
         if (!isValid()) {
             if (m[size - 1][size - 1] != 0) {
@@ -342,8 +346,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         outState.putLong("currTime", currTime);
     }
 
-	private void playClickSound() {
-        if(clickMP != null) {
+    private void playClickSound() {
+        if (clickMP != null) {
             clickMP.release();
         }
         clickMP = MediaPlayer.create(this, R.raw.click);
@@ -372,13 +376,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         int num = Integer.parseInt(n);
         int i1 = i, j1 = j;
 
-        if (isSwipeValid(i - 1, j))
+        if (isMoveValid(i - 1, j))
             i--;
-        else if (isSwipeValid(i + 1, j))
+        else if (isMoveValid(i + 1, j))
             i++;
-        else if (isSwipeValid(i, j - 1))
+        else if (isMoveValid(i, j - 1))
             j--;
-        else if (isSwipeValid(i, j + 1))
+        else if (isMoveValid(i, j + 1))
             j++;
         else {
             // Invalid move
@@ -513,39 +517,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void swipeHandler(View view, SWIPE DIR) {
-        int i, j = 0;
+    private void swipeHandler(SWIPE DIR) {
+        int i, j;
+        Timber.d("Swipe Handler called");
 
-        // Get button's coordinates using id matrix
-        label:
-        for (i = 0; i < size; i++) {
-            for (j = 0; j < size; j++) {
-                if (view.getId() == id[i][j])
-                    break label;
-            }
-        }
-
-        String buttonText = buttons[i][j].getText().toString();
-        if (TextUtils.isEmpty(buttonText)) {
-            // user clicked on the empty tile
-            return;
-        }
-
-        int num = Integer.parseInt(buttonText);
-        int i1 = i, j1 = j;
-
-        if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(i, j + 1)) {
+        if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(emptyRowIndex, emptyColIndex - 1)) {
             Timber.d("Swiped Right");
-            j++;
-        } else if (DIR.equals(SWIPE.LEFT) && isSwipeValid(i, j - 1)) {
+            i = emptyRowIndex;
+            j = emptyColIndex - 1;
+        } else if (DIR.equals(SWIPE.LEFT) && isSwipeValid(emptyRowIndex, emptyColIndex + 1)) {
             Timber.d("Swiped Left");
-            j--;
-        } else if (DIR.equals(SWIPE.BOTTOM) && isSwipeValid(i + 1, j)) {
+            i = emptyRowIndex;
+            j = emptyColIndex + 1;
+        } else if (DIR.equals(SWIPE.BOTTOM) && isSwipeValid(emptyRowIndex - 1, emptyColIndex)) {
             Timber.d("Swiped Bottom");
-            i++;
-        } else if (DIR.equals(SWIPE.TOP) && isSwipeValid(i - 1, j)) {
+            i = emptyRowIndex - 1;
+            j = emptyColIndex;
+        } else if (DIR.equals(SWIPE.TOP) && isSwipeValid(emptyRowIndex + 1, emptyColIndex)) {
             Timber.d("Swiped Top");
-            i--;
+            i = emptyRowIndex + 1;
+            j = emptyColIndex;
         } else {
             // Invalid move
             return;
@@ -555,20 +546,29 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         playClickSound();
 
         // swapping of tiles
-        m[i][j] = num;
-        buttons[i][j].setText(String.format("%s", num));
-        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
+        int num = Integer.parseInt(buttons[i][j].getText().toString());
+        m[emptyRowIndex][emptyColIndex] = num;
+        buttons[emptyRowIndex][emptyColIndex].setText(String.format("%s", num));
+        buttons[emptyRowIndex][emptyColIndex].setBackgroundColor(getResources().getColor(R.color.background));
 
-        m[i1][j1] = 0;
-        buttons[i1][j1].setText("");
-        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
+        m[i][j] = 0;
+        buttons[i][j].setText("");
+        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
+
+        emptyRowIndex = i;
+        emptyColIndex = j;
 
         if (checkIfGameOver()) {
             wonGame();
         }
     }
 
-    private boolean isSwipeValid(int i, int j) {
+    private boolean isSwipeValid(int rowIndex, int colIndex) {
+        return rowIndex >= 0 && rowIndex < size &&
+                colIndex >= 0 && colIndex < size && m[rowIndex][colIndex] != 0;
+    }
+
+    private boolean isMoveValid(int i, int j) {
         return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
     }
 
@@ -583,11 +583,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             SwipeGestureListener.OnSwipeInterface {
 
         private final GestureDetector gestureDetector;
-        View view;
 
-        OnSwipeTouchListener(Context ctx, View view) {
+        OnSwipeTouchListener(Context ctx) {
+            Timber.d("Set OnSwipeTouchListener");
             gestureDetector = new GestureDetector(ctx, new SwipeGestureListener(this));
-            this.view = view;
         }
 
         @Override
@@ -597,22 +596,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSwipeRight() {
-            swipeHandler(view, SWIPE.RIGHT);
+            swipeHandler(SWIPE.RIGHT);
         }
 
         @Override
         public void onSwipeLeft() {
-            swipeHandler(view, SWIPE.LEFT);
+            swipeHandler(SWIPE.LEFT);
         }
 
         @Override
         public void onSwipeTop() {
-            swipeHandler(view, SWIPE.TOP);
+            swipeHandler(SWIPE.TOP);
         }
 
         @Override
         public void onSwipeBottom() {
-            swipeHandler(view, SWIPE.BOTTOM);
+            swipeHandler(SWIPE.BOTTOM);
         }
     }
 }
