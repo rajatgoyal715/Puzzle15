@@ -25,6 +25,7 @@ import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.Time;
+import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.Locale;
 import java.util.Random;
@@ -104,6 +105,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     @SuppressLint("ClickableViewAccessibility")
     public void init() {
+        int playedGames = SharedPref.incrementPlayedGames();
+        Toast.makeText(this, "Played Games: " + playedGames, Toast.LENGTH_SHORT).show();
+
         moves = 0;
         gameOver = false;
         m = new int[size][size];
@@ -149,7 +153,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void fillMatrix() {
         seriesFill();
-        shuffle();
+//        shuffle();
         makeValidMatrix();
 
         updateBoard();
@@ -402,6 +406,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void wonGame() {
+        int completedGames = SharedPref.incrementCompletedGames();
+        Toast.makeText(this, "Completed Games: " + completedGames, Toast.LENGTH_SHORT).show();
+
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
         mp.start();

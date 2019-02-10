@@ -10,6 +10,7 @@ public class SharedPref {
 
 	private static final String GAME_PREF = "GAME_PREF";
 	private static final String PLAYED_GAMES = "PLAYED_GAMES";
+	private static final String COMPLETED_GAMES = "COMPLETED_GAMES";
 
 	private static SharedPreferences gamePref;
 
@@ -31,11 +32,33 @@ public class SharedPref {
 
 	/**
 	 * Increment number of played games
+	 * @return number of played games after increment
 	 */
-	public static void incrementPlayedGames() {
+	public static int incrementPlayedGames() {
 		int alreadyPlayedGames = getPlayedGames();
 		SharedPreferences.Editor editor = gamePref.edit();
 		editor.putInt(PLAYED_GAMES, alreadyPlayedGames + 1);
 		editor.apply();
+		return alreadyPlayedGames + 1;
+	}
+
+	/**
+	 * Get number of already completed games using gamePref
+	 * @return number of completed games
+	 */
+	private static int getCompletedGames() {
+		return gamePref.getInt(COMPLETED_GAMES, 0);
+	}
+
+	/**
+	 * Increment number of completed games
+	 * @return number of completed games after increment
+	 */
+	public static int incrementCompletedGames() {
+		int alreadyCompletedGames = getCompletedGames();
+		SharedPreferences.Editor editor = gamePref.edit();
+		editor.putInt(COMPLETED_GAMES, alreadyCompletedGames + 1);
+		editor.apply();
+		return alreadyCompletedGames + 1;
 	}
 }
