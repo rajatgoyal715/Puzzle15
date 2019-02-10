@@ -1,5 +1,7 @@
 package com.rajatgoyal.puzzle15.model;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Locale;
 
 /**
@@ -17,6 +19,10 @@ public class Time {
         this.seconds = seconds;
     }
 
+    public Time(long millis) {
+        this((int) millis/1000);
+    }
+
     public Time(int seconds) {
         hours = seconds/(60*60);
         seconds %= 60*60;
@@ -31,12 +37,12 @@ public class Time {
         return hours*3600 + minutes*60 + seconds;
     }
 
+    @NotNull
     @Override
     public String toString() {
-        String time = String.format(Locale.US, "%02d", hours)
-                + ":" + String.format(Locale.US, "%02d", minutes)
-                + ":" + String.format(Locale.US, "%02d", seconds);
-        return time;
+	    return String.format(Locale.US, "%02d", hours)
+	            + ":" + String.format(Locale.US, "%02d", minutes)
+	            + ":" + String.format(Locale.US, "%02d", seconds);
     }
 
     public boolean isLessThan(Time t) {
@@ -46,8 +52,7 @@ public class Time {
             if(minutes > t.minutes)
                 return false;
             else if(minutes == t.minutes) {
-                if(seconds > t.seconds)
-                    return false;
+	            return seconds <= t.seconds;
             }
         }
         return true;
