@@ -1,14 +1,9 @@
 package com.rajatgoyal.puzzle15.ui;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +32,11 @@ import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
 
 /**
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient = null;
     private static final int RC_SIGN_IN = 9001;
 
-    private Button signInSignOutButton;
+	private Button signInSignOutButton, resumeBtn;
     private boolean signedIn = false;
 
     private AchievementsClient mAchievementsClient;
@@ -81,7 +81,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(isSignedIn()) return;
+	    long prevGameTime = SharedPref.getGameTime();
+	    if (prevGameTime > 0) {
+		    resumeBtn.setVisibility(View.VISIBLE);
+	    } else {
+		    resumeBtn.setVisibility(View.GONE);
+	    }
+	    if (isSignedIn()) return;
+
         signInSilently();
     }
 
@@ -222,14 +229,49 @@ public class MainActivity extends AppCompatActivity {
     public void init() {
         SharedPref.init(this);
 
+	    resumeBtn = findViewById(R.id.resumeGame);
+	    resumeBtn.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    Intent intent = new Intent(MainActivity.this, GameActivity.class);
+			    intent.putExtra("highScoreMoves", latestHighScore.getMoves());
+			    intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
+			    intent.putExtra("resumeGame", true);
+			    startActivity(intent);
+		    }
+	    });
+
+
         Button newGame = findViewById(R.id.newGame);
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, GameActivity.class);
-                i.putExtra("highScoreMoves", latestHighScore.getMoves());
-                i.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
-                startActivity(i);
+	            final Intent intent = new Intent(MainActivity.this, GameActivity.class);
+	            intent.putExtra("highScoreMoves", latestHighScore.getMoves());
+	            intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
+	            long prevGameTime = SharedPref.getGameTime();
+	            if (prevGameTime > 0) {
+		            String dialogTitle = getResources().getString(R.string.restart_game);
+		            String dialogYesText = getResources().getString(R.string.yes);
+		            String dialogNoText = getResources().getString(R.string.no);
+		            DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
+			            @Override
+			            public void onClick(DialogInterface dialog, int which) {
+				            startActivity(intent);
+			            }
+		            };
+		            DialogInterface.OnClickListener noListener = new DialogInterface.OnClickListener() {
+			            @Override
+			            public void onClick(DialogInterface dialog, int which) {
+				            dialog.cancel();
+			            }
+		            };
+		            showAlert(dialogTitle, dialogYesText, yesListener, dialogNoText, noListener);
+
+	            } else {
+		            startActivity(intent);
+	            }
+
             }
         });
 
@@ -259,7 +301,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("StaticFieldLeak")
+	private void showAlert(String title, String yesText,
+	                       DialogInterface.OnClickListener yesListener, String noText,
+	                       DialogInterface.OnClickListener noListener) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		alertDialogBuilder.setTitle(title);
+		alertDialogBuilder.setPositiveButton(yesText, yesListener);
+		alertDialogBuilder.setNegativeButton(noText, noListener);
+
+		AlertDialog dialog = alertDialogBuilder.create();
+		dialog.show();
+	}
+
+	@SuppressLint("StaticFieldLeak")
     public void showHighScore() {
         new HighScoreFetchTask(this) {
             @Override

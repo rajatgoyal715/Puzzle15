@@ -10,10 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -27,12 +23,12 @@ import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.GameMatrix;
 import com.rajatgoyal.puzzle15.model.Time;
-
-import org.jetbrains.annotations.NotNull;
+import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.Locale;
-import java.util.Random;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
 /**
@@ -50,11 +46,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private Handler handler;
     private TextView timerTextView, movesTextView;
-    private long startTime, currTime, lastTime;
+	private long startTime, currTime, prevTime;
     public Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            currTime = SystemClock.uptimeMillis() - startTime + lastTime;
+	        currTime = SystemClock.uptimeMillis() - startTime + prevTime;
             long time = currTime;
             time /= 1000;
             seconds = (int) time % 60;
@@ -63,9 +59,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             time /= 60;
             hours = (int) time % 24;
 
-            timerTextView.setText(new Time((int) (currTime / 1000)).toString());
+	        timerTextView.setText(new Time(hours, minutes, seconds).toString());
 
-            handler.postDelayed(this, 0);
+	        handler.postDelayed(this, 1000);
         }
     };
 
@@ -79,29 +75,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Timber.d("onCreate: ");
 
         Intent intent = getIntent();
+	    boolean resumeGame = false;
         if (intent != null) {
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
+	        resumeGame = intent.getBooleanExtra("resumeGame", false);
         }
 
         init();
-
-        if (savedInstanceState == null) {
-            gameMatrix = new GameMatrix(size);
-            updateBoard();
+	    if (resumeGame) {
+		    updateBoard(SharedPref.getGameMatrix());
+		    updateMoves(SharedPref.getMoves());
+		    startTimer(SharedPref.getGameTime());
+	    } else {
+		    updateBoard(new GameMatrix(size));
+		    updateMoves(0);
             startTimer(0);
-        } else {
-            int[] matrixAsArray = savedInstanceState.getIntArray("matrixAs1DArray");
-            gameMatrix = new GameMatrix(matrixAsArray, size);
-            int moves = savedInstanceState.getInt("moves");
-
-            updateBoard();
-
-            updateMoves(moves);
-
-            lastTime = savedInstanceState.getLong("currTime");
-            startTimer(lastTime);
-        }
+	    }
 
     }
 
@@ -125,6 +115,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this, buttons[i][j]));
             }
         }
+	    prevTime = 0;
     }
 
     public void fillIdMatrix(int[][] id) {
@@ -152,8 +143,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Update the board according to the matrix
+     * @param gameMatrix game matrix
      */
-    public void updateBoard() {
+    public void updateBoard(GameMatrix gameMatrix) {
+	    this.gameMatrix = gameMatrix;
         int[][] matrix = gameMatrix.getMatrix();
         int size = matrix.length;
         for (int i = 0; i < size; i++) {
@@ -170,17 +163,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void startTimer(long lastTime) {
+	public void startTimer(long prevTime) {
         if (this.handler == null) {
             this.handler = new Handler();
         }
         this.startTime = SystemClock.uptimeMillis();
-        this.lastTime = lastTime;
+		this.prevTime = prevTime;
         this.handler.postDelayed(runnable, 0);
     }
 
     public void pauseTimer() {
-        lastTime = currTime;
         handler.removeCallbacks(runnable);
     }
 
@@ -188,25 +180,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         pauseTimer();
+	    SharedPref.setGameMatrix(gameMatrix);
+	    SharedPref.setMoves(moves);
+	    SharedPref.setGameTime(currTime);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (!gameOver) {
-            startTimer(lastTime);
+	        updateBoard(SharedPref.getGameMatrix());
+	        updateMoves(SharedPref.getMoves());
+	        startTimer(SharedPref.getGameTime());
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NotNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putIntArray("matrixAs1DArray", gameMatrix.get1DArray());
-
-        outState.putInt("moves", moves);
-
-        outState.putLong("currTime", currTime);
     }
 
     private void playClickSound() {
@@ -325,10 +311,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                gameMatrix = new GameMatrix(size);
-                updateBoard();
+	            updateBoard(new GameMatrix(size));
                 //updating the moves
                 updateMoves(0);
+	            startTimer(0);
             }
         });
         alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -346,30 +332,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         movesTextView.setText(String.format(Locale.US, "%d", moves));
         this.moves = moves;
     }
-
-
-
-//    @Override
-//    public void onBackPressed() {
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-//        alertDialogBuilder.setTitle(getResources().getString(R.string.quit_the_game));
-//        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                finish();
-//            }
-//        });
-//        alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//
-//        AlertDialog dialog = alertDialogBuilder.create();
-//        dialog.show();
-//    }
-
 
     private void swipeHandler(View view, SWIPE DIR) {
         int i, j = 0;
