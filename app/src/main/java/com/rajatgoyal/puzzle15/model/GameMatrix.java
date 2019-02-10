@@ -5,9 +5,9 @@ import java.util.Random;
 import androidx.annotation.NonNull;
 
 public class GameMatrix {
-	private static final String ROW_SEPARATOR = ",";
-	private static final String COL_SEPARATOR = ";";
-	private int[][] matrix;
+    private static final String ROW_SEPARATOR = ",";
+    private static final String COL_SEPARATOR = ";";
+    private int[][] matrix;
     private int size, emptyCellRow, emptyCellCol;
 
     public GameMatrix(int size) {
@@ -27,41 +27,42 @@ public class GameMatrix {
     public GameMatrix(int[] arr, int size) {
         this.matrix = new int[size][size];
         this.size = size;
-        for ( int i = 0; i < size; i++ ) {
-            System.arraycopy(arr, (i*size), this.matrix[i], 0, size);
+        for (int i = 0; i < size; i++) {
+            System.arraycopy(arr, (i * size), this.matrix[i], 0, size);
         }
         validateMatrix();
     }
 
-	public GameMatrix(String matrixString, int size) {
-		this(getMatrixFromString(matrixString, size));
-	}
+    public GameMatrix(String matrixString, int size) {
+        this(getMatrixFromString(matrixString, size));
+    }
 
-	/**
-	 * get matrix from string
-	 * @param matrixString matrix string obtained by {toString} method
-	 * @param size size of matrix
-	 * @return matrix
-	 */
-	private static int[][] getMatrixFromString(String matrixString, int size) {
-		String[] matrixStringRows = matrixString.split(ROW_SEPARATOR);
-		int[][] matrix = new int[size][size];
-		for (int i = 0; i < size; ++i) {
-			String[] matrixStringColumns = matrixStringRows[i].split(COL_SEPARATOR);
-			for (int j = 0; j < size; ++j) {
-				matrix[i][j] = Integer.parseInt(matrixStringColumns[j]);
-			}
-		}
-		return matrix;
-	}
+    /**
+     * get matrix from string
+     *
+     * @param matrixString matrix string obtained by {toString} method
+     * @param size         size of matrix
+     * @return matrix
+     */
+    private static int[][] getMatrixFromString(String matrixString, int size) {
+        String[] matrixStringRows = matrixString.split(ROW_SEPARATOR);
+        int[][] matrix = new int[size][size];
+        for (int i = 0; i < size; ++i) {
+            String[] matrixStringColumns = matrixStringRows[i].split(COL_SEPARATOR);
+            for (int j = 0; j < size; ++j) {
+                matrix[i][j] = Integer.parseInt(matrixStringColumns[j]);
+            }
+        }
+        return matrix;
+    }
 
-	/**
-	 * @return flattened 1D matrix
-	 */
-	public int[] get1DArray() {
-        int[] arr = new int[(this.size*this.size)];
-        for ( int i = 0; i < this.size; i++ ) {
-            System.arraycopy(this.matrix[i], 0, arr, (i*this.size), this.size);
+    /**
+     * @return flattened 1D matrix
+     */
+    public int[] get1DArray() {
+        int[] arr = new int[(this.size * this.size)];
+        for (int i = 0; i < this.size; i++) {
+            System.arraycopy(this.matrix[i], 0, arr, (i * this.size), this.size);
         }
         return arr;
     }
@@ -114,8 +115,7 @@ public class GameMatrix {
             if (swap == 0) {
                 emptyCellRow = pos_x;
                 emptyCellCol = pos_y;
-            }
-            else if (this.matrix[pos_x][pos_y] == 0) {
+            } else if (this.matrix[pos_x][pos_y] == 0) {
                 emptyCellRow = temp_x;
                 emptyCellCol = temp_y;
             }
@@ -187,39 +187,42 @@ public class GameMatrix {
         }
     }
 
-	/**
-	 * swap elements at given positions
-	 * @param r1 element 1 row
-	 * @param c1 element 1 column
-	 * @param r2 element 2 row
-	 * @param c2 element 2 column
-	 */
-    public void swap(int r1,int c1,int r2,int c2) {
+    /**
+     * swap elements at given positions
+     *
+     * @param r1 element 1 row
+     * @param c1 element 1 column
+     * @param r2 element 2 row
+     * @param c2 element 2 column
+     */
+    public void swap(int r1, int c1, int r2, int c2) {
         int temp = this.matrix[r1][c1];
         this.matrix[r1][c1] = this.matrix[r2][c2];
         this.matrix[r2][c2] = temp;
     }
 
-	/**
-	 * get element at given position
-	 * @param r element row
-	 * @param c element column
-	 * @return element
-	 */
-	public int get(int r, int c) {
+    /**
+     * get element at given position
+     *
+     * @param r element row
+     * @param c element column
+     * @return element
+     */
+    public int get(int r, int c) {
         return this.matrix[r][c];
     }
 
-	/**
-	 * set element at given position
-	 * @param r element row
-	 * @param c element column
-	 * @param value element value
-	 */
+    /**
+     * set element at given position
+     *
+     * @param r     element row
+     * @param c     element column
+     * @param value element value
+     */
     public void set(int r, int c, int value) {
         this.matrix[r][c] = value;
     }
-    
+
     public boolean isSolved() {
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
@@ -230,16 +233,16 @@ public class GameMatrix {
         return true;
     }
 
-	@NonNull
-	@Override
-	public String toString() {
-		StringBuilder stringBuilder = new StringBuilder();
-		for (int i = 0; i < this.size; ++i) {
-			for (int j = 0; j < this.size; ++j) {
-				stringBuilder.append(this.matrix[i][j]).append(COL_SEPARATOR);
-			}
-			stringBuilder.append(ROW_SEPARATOR);
-		}
-		return stringBuilder.toString();
-	}
+    @NonNull
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < this.size; ++i) {
+            for (int j = 0; j < this.size; ++j) {
+                stringBuilder.append(this.matrix[i][j]).append(COL_SEPARATOR);
+            }
+            stringBuilder.append(ROW_SEPARATOR);
+        }
+        return stringBuilder.toString();
+    }
 }

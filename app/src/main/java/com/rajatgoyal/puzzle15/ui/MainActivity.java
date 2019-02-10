@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient = null;
     private static final int RC_SIGN_IN = 9001;
 
-	private Button signInSignOutButton, resumeBtn;
+    private Button signInSignOutButton, resumeBtn;
     private boolean signedIn = false;
 
     private AchievementsClient mAchievementsClient;
@@ -81,13 +81,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-	    long prevGameTime = SharedPref.getGameTime();
-	    if (prevGameTime > 0) {
-		    resumeBtn.setVisibility(View.VISIBLE);
-	    } else {
-		    resumeBtn.setVisibility(View.GONE);
-	    }
-	    if (isSignedIn()) return;
+        long prevGameTime = SharedPref.getGameTime();
+        if (prevGameTime > 0) {
+            resumeBtn.setVisibility(View.VISIBLE);
+        } else {
+            resumeBtn.setVisibility(View.GONE);
+        }
+        if (isSignedIn()) return;
 
         signInSilently();
     }
@@ -229,48 +229,48 @@ public class MainActivity extends AppCompatActivity {
     public void init() {
         SharedPref.init(this);
 
-	    resumeBtn = findViewById(R.id.resumeGame);
-	    resumeBtn.setOnClickListener(new View.OnClickListener() {
-		    @Override
-		    public void onClick(View v) {
-			    Intent intent = new Intent(MainActivity.this, GameActivity.class);
-			    intent.putExtra("highScoreMoves", latestHighScore.getMoves());
-			    intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
-			    intent.putExtra("resumeGame", true);
-			    startActivity(intent);
-		    }
-	    });
+        resumeBtn = findViewById(R.id.resumeGame);
+        resumeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                intent.putExtra("highScoreMoves", latestHighScore.getMoves());
+                intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
+                intent.putExtra("resumeGame", true);
+                startActivity(intent);
+            }
+        });
 
 
         Button newGame = findViewById(R.id.newGame);
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-	            final Intent intent = new Intent(MainActivity.this, GameActivity.class);
-	            intent.putExtra("highScoreMoves", latestHighScore.getMoves());
-	            intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
-	            long prevGameTime = SharedPref.getGameTime();
-	            if (prevGameTime > 0) {
-		            String dialogTitle = getResources().getString(R.string.restart_game);
-		            String dialogYesText = getResources().getString(R.string.yes);
-		            String dialogNoText = getResources().getString(R.string.no);
-		            DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
-			            @Override
-			            public void onClick(DialogInterface dialog, int which) {
-				            startActivity(intent);
-			            }
-		            };
-		            DialogInterface.OnClickListener noListener = new DialogInterface.OnClickListener() {
-			            @Override
-			            public void onClick(DialogInterface dialog, int which) {
-				            dialog.cancel();
-			            }
-		            };
-		            showAlert(dialogTitle, dialogYesText, yesListener, dialogNoText, noListener);
+                final Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                intent.putExtra("highScoreMoves", latestHighScore.getMoves());
+                intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
+                long prevGameTime = SharedPref.getGameTime();
+                if (prevGameTime > 0) {
+                    String dialogTitle = getResources().getString(R.string.restart_game);
+                    String dialogYesText = getResources().getString(R.string.yes);
+                    String dialogNoText = getResources().getString(R.string.no);
+                    DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(intent);
+                        }
+                    };
+                    DialogInterface.OnClickListener noListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    };
+                    showAlert(dialogTitle, dialogYesText, yesListener, dialogNoText, noListener);
 
-	            } else {
-		            startActivity(intent);
-	            }
+                } else {
+                    startActivity(intent);
+                }
 
             }
         });
@@ -295,26 +295,26 @@ public class MainActivity extends AppCompatActivity {
         signInSignOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(signedIn) signOut();
+                if (signedIn) signOut();
                 else startSignInIntent();
             }
         });
     }
 
-	private void showAlert(String title, String yesText,
-	                       DialogInterface.OnClickListener yesListener, String noText,
-	                       DialogInterface.OnClickListener noListener) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+    private void showAlert(String title, String yesText,
+                           DialogInterface.OnClickListener yesListener, String noText,
+                           DialogInterface.OnClickListener noListener) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-		alertDialogBuilder.setTitle(title);
-		alertDialogBuilder.setPositiveButton(yesText, yesListener);
-		alertDialogBuilder.setNegativeButton(noText, noListener);
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setPositiveButton(yesText, yesListener);
+        alertDialogBuilder.setNegativeButton(noText, noListener);
 
-		AlertDialog dialog = alertDialogBuilder.create();
-		dialog.show();
-	}
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.show();
+    }
 
-	@SuppressLint("StaticFieldLeak")
+    @SuppressLint("StaticFieldLeak")
     public void showHighScore() {
         new HighScoreFetchTask(this) {
             @Override
