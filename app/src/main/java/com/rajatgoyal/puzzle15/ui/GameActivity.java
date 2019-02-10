@@ -174,6 +174,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void pauseTimer() {
+        prevTime = currTime;
         handler.removeCallbacks(runnable);
     }
 
@@ -181,19 +182,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         pauseTimer();
-        SharedPref.setGameMatrix(gameMatrix);
-        SharedPref.setMoves(moves);
-        SharedPref.setGameTime(currTime);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (!gameOver) {
-            updateBoard(SharedPref.getGameMatrix());
-            updateMoves(SharedPref.getMoves());
-            startTimer(SharedPref.getGameTime());
+            startTimer(prevTime);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPref.setGameMatrix(gameMatrix);
+        SharedPref.setMoves(moves);
+        SharedPref.setGameTime(currTime);
     }
 
     private void playClickSound() {
@@ -258,6 +262,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
         mp.start();
+
+        // invalidate save game data
+        SharedPref.setGameTime(0);
 
         // stop the timer
         gameOver = true;
