@@ -5,8 +5,8 @@ import java.util.Random;
 import androidx.annotation.NonNull;
 
 public class GameMatrix {
-    private static final String ROW_SEPARATOR = ",";
-    private static final String COL_SEPARATOR = ";";
+    private static final String ROW_SEPARATOR = ";";
+    private static final String COL_SEPARATOR = ",";
     private int[][] matrix;
     private int size, emptyCellRow, emptyCellCol;
 
