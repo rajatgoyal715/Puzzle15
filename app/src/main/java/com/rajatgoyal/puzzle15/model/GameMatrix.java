@@ -62,7 +62,7 @@ public class GameMatrix {
     public int[] get1DArray() {
         int[] arr = new int[(this.size * this.size)];
         for (int i = 0; i < this.size; i++) {
-            System.arraycopy(this.matrix[i], 0, arr, (i * this.size), this.size);
+            System.arraycopy(this.matrix[i], 0, arr, i * this.size, this.size);
         }
         return arr;
     }
