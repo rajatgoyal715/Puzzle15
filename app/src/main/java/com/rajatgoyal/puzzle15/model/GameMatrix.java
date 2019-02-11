@@ -238,9 +238,10 @@ public class GameMatrix {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < this.size; ++i) {
             for (int j = 0; j < this.size; ++j) {
-                stringBuilder.append(this.matrix[i][j]).append(COL_SEPARATOR);
+                stringBuilder.append(this.matrix[i][j]);
+                if (j < this.size - 1) stringBuilder.append(COL_SEPARATOR);
             }
-            stringBuilder.append(ROW_SEPARATOR);
+            if (i < this.size - 1) stringBuilder.append(ROW_SEPARATOR);
         }
         return stringBuilder.toString();
     }
