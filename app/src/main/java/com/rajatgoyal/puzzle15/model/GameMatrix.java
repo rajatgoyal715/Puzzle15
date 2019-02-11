@@ -214,6 +214,9 @@ public class GameMatrix {
         }
     }
 
+    /**
+     * @return matrix is solved or not
+     */
     public boolean isSolved() {
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
@@ -236,5 +239,14 @@ public class GameMatrix {
             if (i < this.size - 1) stringBuilder.append(ROW_SEPARATOR);
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * @param row    element row
+     * @param column element column
+     * @return element at given row and column is empty(zero) or not
+     */
+    public boolean isEmpty(int row, int column) {
+        return get(row, column) == 0;
     }
 }
