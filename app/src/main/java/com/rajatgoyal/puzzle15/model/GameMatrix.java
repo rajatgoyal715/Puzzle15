@@ -92,7 +92,6 @@ public class GameMatrix {
                 set(i, j, i * this.size + j);
             }
         }
-        this.emptyCellCol = this.emptyCellRow = 0;
     }
 
     /**
@@ -111,13 +110,6 @@ public class GameMatrix {
 
             swap(temp_x, temp_y, pos_x, pos_y);
 
-            if (get(temp_x, temp_y) == 0) {
-                emptyCellRow = pos_x;
-                emptyCellCol = pos_y;
-            } else if (get(pos_x, pos_y) == 0) {
-                emptyCellRow = temp_x;
-                emptyCellCol = temp_y;
-            }
             if (pos_y == 0) {
                 pos_x--;
                 pos_y = this.size - 1;
@@ -219,6 +211,11 @@ public class GameMatrix {
      */
     public void set(int row, int col, int value) {
         this.matrix[row][col] = value;
+
+        if (value == 0) {
+            emptyCellRow = row;
+            emptyCellCol = col;
+        }
     }
 
     public boolean isSolved() {
