@@ -109,10 +109,9 @@ public class GameMatrix {
             temp_x = temp / this.size;
             temp_y = (temp + this.size) % this.size;
 
-            swap = this.matrix[temp_x][temp_y];
-            this.matrix[temp_x][temp_y] = this.matrix[pos_x][pos_y];
-            this.matrix[pos_x][pos_y] = swap;
-            if (swap == 0) {
+            swap(temp_x, temp_y, pos_x, pos_y);
+
+            if (this.matrix[temp_x][temp_y] == 0) {
                 emptyCellRow = pos_x;
                 emptyCellCol = pos_y;
             } else if (this.matrix[pos_x][pos_y] == 0) {
