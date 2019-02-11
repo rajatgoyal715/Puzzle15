@@ -148,15 +148,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void updateBoard(GameMatrix gameMatrix) {
         this.gameMatrix = gameMatrix;
-        int[][] matrix = gameMatrix.getMatrix();
-        int size = matrix.length;
+        int size = gameMatrix.getSize();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (matrix[i][j] == 0) {
+                int value = gameMatrix.get(i, j);
+                if (value == 0) {
                     buttons[i][j].setText("");
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
                 } else {
-                    String text = matrix[i][j] + "";
+                    String text = value + "";
                     buttons[i][j].setText(text);
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
                 }

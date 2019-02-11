@@ -67,10 +67,6 @@ public class GameMatrix {
         return arr;
     }
 
-    public int[][] getMatrix() {
-        return this.matrix;
-    }
-
     public int getSize() {
         return this.size;
     }
@@ -99,7 +95,7 @@ public class GameMatrix {
      */
     private void shuffleMatrix() {
         int pos_x = this.size - 1, pos_y = this.size - 1;
-        int temp, temp_x, temp_y, swap;
+        int temp, temp_x, temp_y;
 
         Random rand = new Random();
 
