@@ -188,37 +188,37 @@ public class GameMatrix {
     /**
      * swap elements at given positions
      *
-     * @param r1 element 1 row
-     * @param c1 element 1 column
-     * @param r2 element 2 row
-     * @param c2 element 2 column
+     * @param row1 element 1 row
+     * @param col1 element 1 column
+     * @param row2 element 2 row
+     * @param col2 element 2 column
      */
-    public void swap(int r1, int c1, int r2, int c2) {
-        int temp = get(r1, c1);
-        set(r1, c1, get(r2, c2));
-        set(r2, c2, temp);
+    public void swap(int row1, int col1, int row2, int col2) {
+        int temp = get(row1, col1);
+        set(row1, col1, get(row2, col2));
+        set(row2, col2, temp);
     }
 
     /**
      * get element at given position
      *
-     * @param r element row
-     * @param c element column
+     * @param row element row
+     * @param col element column
      * @return element
      */
-    public int get(int r, int c) {
-        return this.matrix[r][c];
+    public int get(int row, int col) {
+        return this.matrix[row][col];
     }
 
     /**
      * set element at given position
      *
-     * @param r     element row
-     * @param c     element column
+     * @param row   element row
+     * @param col   element column
      * @param value element value
      */
-    public void set(int r, int c, int value) {
-        this.matrix[r][c] = value;
+    public void set(int row, int col, int value) {
+        this.matrix[row][col] = value;
     }
 
     public boolean isSolved() {
