@@ -89,7 +89,7 @@ public class GameMatrix {
     private void fillSeriesMatrix() {
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
-                this.matrix[i][j] = i * this.size + j;
+                set(i, j, i * this.size + j);
             }
         }
         this.emptyCellCol = this.emptyCellRow = 0;
@@ -111,10 +111,10 @@ public class GameMatrix {
 
             swap(temp_x, temp_y, pos_x, pos_y);
 
-            if (this.matrix[temp_x][temp_y] == 0) {
+            if (get(temp_x, temp_y) == 0) {
                 emptyCellRow = pos_x;
                 emptyCellCol = pos_y;
-            } else if (this.matrix[pos_x][pos_y] == 0) {
+            } else if (get(pos_x, pos_y) == 0) {
                 emptyCellRow = temp_x;
                 emptyCellCol = temp_y;
             }
@@ -169,13 +169,12 @@ public class GameMatrix {
      * which can be done easily by swapping two last positions
      */
     private void validateMatrix() {
-        int[][] matrix = this.matrix;
         int n1 = this.size - 1;
         int n2 = this.size - 2;
         int n3 = this.size - 3;
         if (!isValid()) {
-            if (matrix[n1][n1] != 0) {
-                if (matrix[n1][n2] != 0) {
+            if (get(n1, n1) != 0) {
+                if (get(n1, n2) != 0) {
                     swap(n1, n2, n1, n1);
                 } else {
                     swap(n1, n3, n1, n1);
@@ -195,9 +194,9 @@ public class GameMatrix {
      * @param c2 element 2 column
      */
     public void swap(int r1, int c1, int r2, int c2) {
-        int temp = this.matrix[r1][c1];
-        this.matrix[r1][c1] = this.matrix[r2][c2];
-        this.matrix[r2][c2] = temp;
+        int temp = get(r1, c1);
+        set(r1, c1, get(r2, c2));
+        set(r2, c2, temp);
     }
 
     /**
@@ -225,7 +224,7 @@ public class GameMatrix {
     public boolean isSolved() {
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
-                if (this.matrix[i][j] != ((this.size * i + j + 1) % (this.size * this.size)))
+                if (get(i, j) != this.size * i + j + 1)
                     return false;
             }
         }
@@ -238,7 +237,7 @@ public class GameMatrix {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < this.size; ++i) {
             for (int j = 0; j < this.size; ++j) {
-                stringBuilder.append(this.matrix[i][j]);
+                stringBuilder.append(get(i, j));
                 if (j < this.size - 1) stringBuilder.append(COL_SEPARATOR);
             }
             if (i < this.size - 1) stringBuilder.append(ROW_SEPARATOR);
