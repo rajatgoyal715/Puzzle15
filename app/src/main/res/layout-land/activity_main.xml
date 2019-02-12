@@ -32,7 +32,7 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/newGame"
+                android:id="@+id/new_game"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
@@ -43,7 +43,7 @@
                 android:textSize="20sp" />
 
             <Button
-                android:id="@+id/highScore"
+                android:id="@+id/high_score"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"

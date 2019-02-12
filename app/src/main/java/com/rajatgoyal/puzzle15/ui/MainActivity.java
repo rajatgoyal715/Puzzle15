@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
     public void init() {
         SharedPref.init(this);
 
-        resumeBtn = findViewById(R.id.resumeGame);
+        resumeBtn = findViewById(R.id.resume_game);
         resumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        Button newGame = findViewById(R.id.newGame);
+        Button newGame = findViewById(R.id.new_game);
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button highscore = findViewById(R.id.highScore);
+        Button highscore = findViewById(R.id.high_score);
         highscore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
