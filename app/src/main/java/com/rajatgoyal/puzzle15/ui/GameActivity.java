@@ -518,12 +518,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSwipeTop() {
-            makeMove(-1, 0);
+            makeMove(1, 0);
         }
 
         @Override
         public void onSwipeBottom() {
-            makeMove(1, 0);
+            makeMove(-1, 0);
         }
     }
 
