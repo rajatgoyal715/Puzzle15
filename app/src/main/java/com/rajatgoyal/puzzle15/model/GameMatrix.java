@@ -1,5 +1,8 @@
 package com.rajatgoyal.puzzle15.model;
 
+import android.text.TextUtils;
+
+import java.util.Arrays;
 import java.util.Random;
 
 import androidx.annotation.NonNull;
@@ -34,7 +37,11 @@ public class GameMatrix {
     }
 
     public GameMatrix(String matrixString, int size) {
-        this(getMatrixFromString(matrixString, size));
+        this(matrixString, size, false);
+    }
+
+    public GameMatrix(String matrixString, int size, boolean formatted) {
+        this(getMatrixFromString(matrixString, size, formatted));
     }
 
     /**
@@ -44,13 +51,22 @@ public class GameMatrix {
      * @param size         size of matrix
      * @return matrix
      */
-    private static int[][] getMatrixFromString(String matrixString, int size) {
-        String[] matrixStringRows = matrixString.split(ROW_SEPARATOR);
+    private static int[][] getMatrixFromString(String matrixString, int size, boolean formatted) {
         int[][] matrix = new int[size][size];
-        for (int i = 0; i < size; ++i) {
-            String[] matrixStringColumns = matrixStringRows[i].split(COL_SEPARATOR);
-            for (int j = 0; j < size; ++j) {
-                matrix[i][j] = Integer.parseInt(matrixStringColumns[j]);
+        if (formatted) {
+            String[] matrixStringRows = matrixString.split(ROW_SEPARATOR);
+            for (int i = 0; i < size; ++i) {
+                String[] matrixStringColumns = matrixStringRows[i].split(COL_SEPARATOR);
+                for (int j = 0; j < size; ++j) {
+                    matrix[i][j] = Integer.parseInt(matrixStringColumns[j]);
+                }
+            }
+        } else {
+            String[] matrixStringArray = matrixString.split(ROW_SEPARATOR);
+            for (int i = 0; i < size; ++i) {
+                for (int j = 0; j < size; ++j) {
+                    matrix[i][j] = Integer.parseInt(matrixStringArray[i * size + j]);
+                }
             }
         }
         return matrix;
@@ -121,17 +137,11 @@ public class GameMatrix {
         }
     }
 
-    /**
-     * @return flattened 1D matrix
-     */
-    public int[] getArray() {
-        int[] arr = new int[(this.size * this.size)];
-        for (int i = 0; i < this.size; i++) {
-            System.arraycopy(this.matrix[i], 0, arr, i * this.size, this.size);
-        }
-        return arr;
+    @NonNull
+    @Override
+    public String toString() {
+        return toString(false);
     }
-
 
     /**
      * Check if the matrix is valid according to following rules:
@@ -224,18 +234,30 @@ public class GameMatrix {
         return true;
     }
 
-    @NonNull
-    @Override
-    public String toString() {
+    /**
+     * @param formatted rows and columns are separated by different delimiters or by same one.
+     * @return game matrix string
+     */
+    public String toString(boolean formatted) {
+        if (!formatted) return TextUtils.join(COL_SEPARATOR, Arrays.asList(getArray()));
+
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < this.size; ++i) {
-            for (int j = 0; j < this.size; ++j) {
-                stringBuilder.append(get(i, j));
-                if (j < this.size - 1) stringBuilder.append(COL_SEPARATOR);
-            }
+            stringBuilder.append(TextUtils.join(COL_SEPARATOR, Arrays.asList(this.matrix[i])));
             if (i < this.size - 1) stringBuilder.append(ROW_SEPARATOR);
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * @return flattened 1D matrix
+     */
+    private int[] getArray() {
+        int[] arr = new int[(this.size * this.size)];
+        for (int i = 0; i < this.size; i++) {
+            System.arraycopy(this.matrix[i], 0, arr, i * this.size, this.size);
+        }
+        return arr;
     }
 
     /**
