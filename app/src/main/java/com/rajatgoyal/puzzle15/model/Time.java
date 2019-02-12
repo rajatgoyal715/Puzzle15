@@ -45,14 +45,14 @@ public class Time {
                 + ":" + String.format(Locale.US, "%02d", seconds);
     }
 
-    public boolean isLessThan(Time t) {
-        if (hours > t.hours)
+    public boolean isLessThan(Time time) {
+        if (hours > time.hours)
             return false;
-        else if (hours == t.hours) {
-            if (minutes > t.minutes)
+        else if (hours == time.hours) {
+            if (minutes > time.minutes)
                 return false;
-            else if (minutes == t.minutes) {
-                return seconds <= t.seconds;
+            else if (minutes == time.minutes) {
+                return seconds <= time.seconds;
             }
         }
         return true;
