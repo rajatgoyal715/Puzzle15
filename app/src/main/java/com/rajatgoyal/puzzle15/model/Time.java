@@ -24,34 +24,34 @@ public class Time {
     }
 
     public Time(int seconds) {
-        hours = seconds / (60 * 60);
+        this.hours = seconds / (60 * 60);
         seconds %= 60 * 60;
 
-        minutes = seconds / 60;
+        this.minutes = seconds / 60;
         seconds %= 60;
 
         this.seconds = seconds;
     }
 
     public int toSeconds() {
-        return hours * 3600 + minutes * 60 + seconds;
+        return this.hours * 3600 + this.minutes * 60 + this.seconds;
     }
 
     @NotNull
     @Override
     public String toString() {
-        return String.format(Locale.US, "%02d", hours)
-                + ":" + String.format(Locale.US, "%02d", minutes)
-                + ":" + String.format(Locale.US, "%02d", seconds);
+        return String.format(Locale.US, "%02d", this.hours)
+                + ":" + String.format(Locale.US, "%02d", this.minutes)
+                + ":" + String.format(Locale.US, "%02d", this.seconds);
     }
 
     public boolean isLessThan(Time time) {
-        if (hours > time.hours)
+        if (this.hours > time.hours)
             return false;
-        else if (hours == time.hours) {
-            if (minutes > time.minutes)
+        else if (this.hours == time.hours) {
+            if (this.minutes > time.minutes)
                 return false;
-            else if (minutes == time.minutes) {
+            else if (this.minutes == time.minutes) {
                 return seconds <= time.seconds;
             }
         }
