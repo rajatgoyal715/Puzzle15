@@ -32,6 +32,18 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/resume_game"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:background="@color/light"
+                android:text="@string/resume_game"
+                android:textAllCaps="false"
+                android:textColor="@color/background"
+                android:textSize="20sp"
+                android:visibility="gone" />
+
+            <Button
                 android:id="@+id/new_game"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
@@ -60,6 +72,17 @@
                 android:layout_margin="2dp"
                 android:background="@color/light"
                 android:text="@string/rules"
+                android:textAllCaps="false"
+                android:textColor="@color/background"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/signin_signout"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:background="@color/light"
+                android:text="@string/signIn"
                 android:textAllCaps="false"
                 android:textColor="@color/background"
                 android:textSize="20sp" />
