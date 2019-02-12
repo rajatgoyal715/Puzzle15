@@ -59,7 +59,7 @@ public class GameMatrix {
                 }
             }
         } else {
-            String[] matrixStringArray = matrixString.split(ROW_SEPARATOR);
+            String[] matrixStringArray = matrixString.split(COL_SEPARATOR);
             for (int i = 0; i < size; ++i) {
                 for (int j = 0; j < size; ++j) {
                     matrix[i][j] = Integer.parseInt(matrixStringArray[i * size + j]);
