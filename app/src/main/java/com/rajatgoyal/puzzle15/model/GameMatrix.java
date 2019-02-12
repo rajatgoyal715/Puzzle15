@@ -167,16 +167,19 @@ public class GameMatrix {
         int n1 = this.size - 1;
         int n2 = this.size - 2;
         int n3 = this.size - 3;
-        if (!isValid()) {
-            if (get(n1, n1) != 0) {
-                if (get(n1, n2) != 0) {
-                    swap(n1, n2, n1, n1);
-                } else {
-                    swap(n1, n3, n1, n1);
-                }
+
+        if (isValid()) {
+            return;
+        }
+
+        if (get(n1, n1) != 0) {
+            if (get(n1, n2) != 0) {
+                swap(n1, n2, n1, n1);
             } else {
-                swap(n1, n3, n1, n2);
+                swap(n1, n3, n1, n1);
             }
+        } else {
+            swap(n1, n3, n1, n2);
         }
     }
 
