@@ -1,8 +1,5 @@
 package com.rajatgoyal.puzzle15.model;
 
-import android.text.TextUtils;
-
-import java.util.Arrays;
 import java.util.Random;
 
 import androidx.annotation.NonNull;
@@ -242,12 +239,22 @@ public class GameMatrix {
      * @return game matrix string
      */
     public String toString(boolean formatted) {
-        if (!formatted) return TextUtils.join(COL_SEPARATOR, Arrays.asList(getArray()));
-
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < this.size; ++i) {
-            stringBuilder.append(TextUtils.join(COL_SEPARATOR, Arrays.asList(this.matrix[i])));
-            if (i < this.size - 1) stringBuilder.append(ROW_SEPARATOR);
+        if (formatted) {
+            for (int i = 0; i < this.size; ++i) {
+                if (i != 0) stringBuilder.append(ROW_SEPARATOR);
+                for (int j = 0; j < this.size; ++j) {
+                    if (j != 0) stringBuilder.append(COL_SEPARATOR);
+                    stringBuilder.append(get(i, j));
+                }
+            }
+            return stringBuilder.toString();
+        } else {
+            int[] array = getArray();
+            for (int i = 0; i < array.length; ++i) {
+                if (i != 0) stringBuilder.append(COL_SEPARATOR);
+                stringBuilder.append(array[i]);
+            }
         }
         return stringBuilder.toString();
     }
