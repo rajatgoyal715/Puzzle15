@@ -3,6 +3,7 @@ package com.rajatgoyal.puzzle15.ui;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -225,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
             this.latestHighScore = latestHighScore;
         }
     }
+
     public void init() {
         SharedPref.init(this);
 
@@ -243,9 +245,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 long prevGameTime = SharedPref.getGameTime();
                 if (prevGameTime > 0) {
-                    String dialogTitle = getResources().getString(R.string.restart_game);
-                    String dialogYesText = getResources().getString(R.string.yes);
-                    String dialogNoText = getResources().getString(R.string.no);
+                    Resources resources = getResources();
+
+                    String dialogTitle = resources.getString(R.string.restart_game);
+                    String dialogYesText = resources.getString(R.string.yes);
+                    String dialogNoText = resources.getString(R.string.no);
                     DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
