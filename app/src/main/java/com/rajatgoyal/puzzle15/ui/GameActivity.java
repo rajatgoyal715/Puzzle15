@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -369,46 +368,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     break label;
             }
         }
-
-        String n = buttons[i][j].getText().toString();
-        if (TextUtils.isEmpty(n)) {
-            // user clicked on the empty tile
-            return;
-        }
-
-        int num = Integer.parseInt(n);
-        int i1 = i, j1 = j;
-
-        if (isMoveValid(i - 1, j))
-            i--;
-        else if (isMoveValid(i + 1, j))
-            i++;
-        else if (isMoveValid(i, j - 1))
-            j--;
-        else if (isMoveValid(i, j + 1))
-            j++;
-        else {
-            // Invalid move
-            return;
-        }
-        updateMoves(++moves);
-        playClickSound();
-
-        // swapping of tiles
-        m[i][j] = num;
-        buttons[i][j].setText(String.format("%s", num));
-        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
-
-        m[i1][j1] = 0;
-        buttons[i1][j1].setText("");
-        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
-
-        emptyRowIndex = i1;
-        emptyColIndex = j1;
-
-        if (checkIfGameOver()) {
-            wonGame();
-        }
+        makeMove(i - emptyRowIndex, j - emptyColIndex);
     }
 
     public void wonGame() {
@@ -522,79 +482,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
     }
 
-
-    private void swipeHandler(SWIPE DIR) {
-        int i, j;
-        Timber.d("Swipe Handler called");
-
-        /*
-          Check if the 4 button around the empty cell is valid or not corresponding to the
-          swipe direction
-         */
-        if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(emptyRowIndex, emptyColIndex - 1)) {
-            Timber.d("Swiped Right");
-            i = emptyRowIndex;
-            j = emptyColIndex - 1;
-        } else if (DIR.equals(SWIPE.LEFT) && isSwipeValid(emptyRowIndex, emptyColIndex + 1)) {
-            Timber.d("Swiped Left");
-            i = emptyRowIndex;
-            j = emptyColIndex + 1;
-        } else if (DIR.equals(SWIPE.BOTTOM) && isSwipeValid(emptyRowIndex - 1, emptyColIndex)) {
-            Timber.d("Swiped Bottom");
-            i = emptyRowIndex - 1;
-            j = emptyColIndex;
-        } else if (DIR.equals(SWIPE.TOP) && isSwipeValid(emptyRowIndex + 1, emptyColIndex)) {
-            Timber.d("Swiped Top");
-            i = emptyRowIndex + 1;
-            j = emptyColIndex;
-        } else {
-            // Invalid move
-            return;
-        }
-
-        updateMoves(++moves);
-
-        // Todo: Make this click sound optional, give option from the setting to turn this on or off
-        playClickSound();
-
-        // swapping of tiles
-        int num = Integer.parseInt(buttons[i][j].getText().toString());
-        m[emptyRowIndex][emptyColIndex] = num;
-        buttons[emptyRowIndex][emptyColIndex].setText(String.format("%s", num));
-        buttons[emptyRowIndex][emptyColIndex].setBackgroundColor(getResources().getColor(R.color.background));
-
-        m[i][j] = 0;
-        buttons[i][j].setText("");
-        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
-
-        emptyRowIndex = i;
-        emptyColIndex = j;
-
-        if (checkIfGameOver()) {
-            wonGame();
-        }
-    }
-
     /**
-     * @param rowIndex row index of the surrounding buttons w.r.t to the empty cell
-     * @param colIndex column index of the surrounding buttons w.r.t to the empty cell
-     * @return if there exists a valid button around the empty cell corresponding to the
-     * swipe direction, returns true if it exists, false otherwise
+     * @param rowIndex row index
+     * @param colIndex column index
+     * @return if rowIndex and columnIndex are within bounds
      */
-    private boolean isSwipeValid(int rowIndex, int colIndex) {
-        return rowIndex >= 0 && rowIndex < size &&
-                colIndex >= 0 && colIndex < size && m[rowIndex][colIndex] != 0;
-    }
-
-    private boolean isMoveValid(int i, int j) {
-        return i >= 0 && i < size && j >= 0 && j < size && m[i][j] == 0;
-    }
-
-    public enum SWIPE {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT
+    private boolean isValidPosition(int rowIndex, int colIndex) {
+        return rowIndex >= 0 && rowIndex < size && colIndex >= 0 && colIndex < size;
     }
 
     public class OnSwipeTouchListener implements View.OnTouchListener,
@@ -614,22 +508,56 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSwipeRight() {
-            swipeHandler(SWIPE.RIGHT);
+            makeMove(0, -1);
         }
 
         @Override
         public void onSwipeLeft() {
-            swipeHandler(SWIPE.LEFT);
+            makeMove(0, 1);
         }
 
         @Override
         public void onSwipeTop() {
-            swipeHandler(SWIPE.TOP);
+            makeMove(-1, 0);
         }
 
         @Override
         public void onSwipeBottom() {
-            swipeHandler(SWIPE.BOTTOM);
+            makeMove(1, 0);
+        }
+    }
+
+    /**
+     * Move empty tile
+     * @param rowMove number of rows to move
+     * @param colMove number of columns to move
+     */
+    private void makeMove(int rowMove, int colMove) {
+        int newEmptyRowIndex = emptyRowIndex + rowMove;
+        int newEmptyColIndex = emptyColIndex + colMove;
+
+        if (!isValidPosition(newEmptyRowIndex, newEmptyColIndex)) return;
+
+        updateMoves(++moves);
+
+        // TODO Make this click sound optional, give option from the setting to turn this on or off
+        playClickSound();
+
+        // swapping of tiles
+        int i = emptyRowIndex, j = emptyColIndex;
+        m[i][j] = m[newEmptyRowIndex][newEmptyColIndex];
+        buttons[i][j].setText(String.format("%s", m[i][j]));
+        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
+
+        m[newEmptyRowIndex][newEmptyColIndex] = 0;
+        buttons[newEmptyRowIndex][newEmptyColIndex].setText("");
+        buttons[newEmptyRowIndex][newEmptyColIndex].setBackgroundColor(getResources().getColor(R.color.light));
+
+        emptyRowIndex = newEmptyRowIndex;
+        emptyColIndex = newEmptyColIndex;
+
+        if (checkIfGameOver()) {
+            wonGame();
         }
     }
 }
