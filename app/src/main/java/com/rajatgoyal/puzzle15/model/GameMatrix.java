@@ -57,14 +57,20 @@ public class GameMatrix {
     }
 
     /**
-     * @return flattened 1D matrix
+     * Calculate number of inversions in the matrix
+     *
+     * @return number of inversions
      */
-    public int[] get1DArray() {
-        int[] arr = new int[(this.size * this.size)];
-        for (int i = 0; i < this.size; i++) {
-            System.arraycopy(this.matrix[i], 0, arr, i * this.size, this.size);
+    private int getInversions() {
+        int arr[] = getArray();
+        int count = 0;
+        for (int i = 0; i < this.size * this.size; i++) {
+            if (arr[i] == 0) continue;
+            for (int j = i + 1; j < this.size * this.size; j++) {
+                if (arr[j] != 0 && arr[j] < arr[i]) count++;
+            }
         }
-        return arr;
+        return count;
     }
 
     public int getSize() {
@@ -116,23 +122,14 @@ public class GameMatrix {
     }
 
     /**
-     * Calculate number of inversions in the matrix
-     *
-     * @return number of inversions
+     * @return flattened 1D matrix
      */
-    private int getInversions() {
-        int arr[] = new int[this.size * this.size];
+    public int[] getArray() {
+        int[] arr = new int[(this.size * this.size)];
         for (int i = 0; i < this.size; i++) {
-            System.arraycopy(this.matrix[i], 0, arr, this.size * i, this.size);
+            System.arraycopy(this.matrix[i], 0, arr, i * this.size, this.size);
         }
-        int count = 0;
-        for (int i = 0; i < this.size * this.size; i++) {
-            if (arr[i] == 0) continue;
-            for (int j = i + 1; j < this.size * this.size; j++) {
-                if (arr[j] != 0 && arr[j] < arr[i]) count++;
-            }
-        }
-        return count;
+        return arr;
     }
 
 
