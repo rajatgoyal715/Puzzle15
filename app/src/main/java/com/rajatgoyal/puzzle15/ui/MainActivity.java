@@ -225,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
             this.latestHighScore = latestHighScore;
         }
     }
-
     public void init() {
         SharedPref.init(this);
 
@@ -233,11 +232,7 @@ public class MainActivity extends AppCompatActivity {
         resumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra("highScoreMoves", latestHighScore.getMoves());
-                intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
-                intent.putExtra("resumeGame", true);
-                startActivity(intent);
+                startGameActivity(true);
             }
         });
 
@@ -246,9 +241,6 @@ public class MainActivity extends AppCompatActivity {
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                intent.putExtra("highScoreMoves", latestHighScore.getMoves());
-                intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
                 long prevGameTime = SharedPref.getGameTime();
                 if (prevGameTime > 0) {
                     String dialogTitle = getResources().getString(R.string.restart_game);
@@ -257,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                     DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            startActivity(intent);
+                            startGameActivity(false);
                         }
                     };
                     DialogInterface.OnClickListener noListener = new DialogInterface.OnClickListener() {
@@ -269,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
                     showAlert(dialogTitle, dialogYesText, yesListener, dialogNoText, noListener);
 
                 } else {
-                    startActivity(intent);
+                    startGameActivity(false);
                 }
 
             }
@@ -299,6 +291,14 @@ public class MainActivity extends AppCompatActivity {
                 else startSignInIntent();
             }
         });
+    }
+
+    public void startGameActivity(boolean resume) {
+        Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("highScoreMoves", latestHighScore.getMoves());
+        intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
+        intent.putExtra("resumeGame", resume);
+        startActivity(intent);
     }
 
     private void showAlert(String title, String yesText,
