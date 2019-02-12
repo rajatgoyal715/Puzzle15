@@ -75,7 +75,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Timber.d("onCreate: ");
 
         Intent intent = getIntent();
-        boolean resumeGame = false;
+        boolean resumeGame = true;
         if (intent != null) {
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
@@ -195,6 +195,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStop() {
         super.onStop();
+        Timber.d("on stop");
         SharedPref.setGameMatrix(gameMatrix);
         SharedPref.setMoves(moves);
         SharedPref.setGameTime(currTime);
