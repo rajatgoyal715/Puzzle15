@@ -161,13 +161,13 @@ public class GameMatrix {
      * which can be done easily by swapping two last positions
      */
     private void validateMatrix() {
-        int n1 = this.size - 1;
-        int n2 = this.size - 2;
-        int n3 = this.size - 3;
-
         if (isValid()) {
             return;
         }
+
+        int n1 = this.size - 1;
+        int n2 = this.size - 2;
+        int n3 = this.size - 3;
 
         if (get(n1, n1) != 0) {
             if (get(n1, n2) != 0) {
