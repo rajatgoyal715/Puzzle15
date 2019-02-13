@@ -493,8 +493,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public class OnSwipeTouchListener implements View.OnTouchListener,
             SwipeGestureListener.OnSwipeInterface {
-
         private final GestureDetector gestureDetector;
+
+        private int[] rowMoves = {0, 0, 1, -1};
+		private int[] colMoves = {-1, 1, 0, 0};
 
         OnSwipeTouchListener(Context ctx) {
             Timber.d("Set OnSwipeTouchListener");
@@ -508,22 +510,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSwipeRight() {
-            makeMove(0, -1);
+            makeMove(rowMoves[0], colMoves[0]);
         }
 
         @Override
         public void onSwipeLeft() {
-            makeMove(0, 1);
+			makeMove(rowMoves[1], colMoves[1]);
         }
 
         @Override
         public void onSwipeTop() {
-            makeMove(1, 0);
+            makeMove(rowMoves[2], colMoves[2]);
         }
 
         @Override
         public void onSwipeBottom() {
-            makeMove(-1, 0);
+            makeMove(rowMoves[3], colMoves[3]);
         }
     }
 
