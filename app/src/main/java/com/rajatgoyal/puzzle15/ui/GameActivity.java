@@ -515,7 +515,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSwipeLeft() {
-			makeMove(rowMoves[1], colMoves[1]);
+            makeMove(rowMoves[1], colMoves[1]);
         }
 
         @Override
