@@ -496,7 +496,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         private final GestureDetector gestureDetector;
 
         private int[] rowMoves = {0, 0, 1, -1};
-		private int[] colMoves = {-1, 1, 0, 0};
+        private int[] colMoves = {-1, 1, 0, 0};
 
         OnSwipeTouchListener(Context ctx) {
             Timber.d("Set OnSwipeTouchListener");
