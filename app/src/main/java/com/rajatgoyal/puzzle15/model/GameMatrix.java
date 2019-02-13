@@ -1,5 +1,7 @@
 package com.rajatgoyal.puzzle15.model;
 
+import android.util.SparseBooleanArray;
+
 import java.util.Random;
 
 import androidx.annotation.NonNull;
@@ -10,7 +12,56 @@ public class GameMatrix {
     private int[][] matrix;
     private int size, emptyCellRow, emptyCellCol;
 
+    private static class HandleInvalid {
+        static final int MIN_SIZE = 3;
+
+        static void size(int size) {
+            if (size < MIN_SIZE) {
+                throw new Error("Size should be greater than 3");
+            }
+        }
+
+        static void matrix(int[][] matrix) {
+            int size = matrix.length;
+            HandleInvalid.size(size);
+
+            SparseBooleanArray map = new SparseBooleanArray();
+            for (int[] row : matrix) {
+                if (row.length != size) throw new Error("Matrix is not a square matrix");
+
+                for (int element : row) {
+                    if (map.get(element)) {
+                        throw new Error("Matrix contains duplicate element " + element);
+                    }
+                    map.append(element, true);
+                }
+            }
+            for (int i = 0; i < size * size; ++i) {
+                if (!map.get(i)) throw new Error("Matrix doesn't contains " + i);
+            }
+        }
+
+        static void array(int[] arr, int size) {
+            HandleInvalid.size(size);
+
+            if (arr.length != size * size)
+                throw new Error("length of array must be " + size * size);
+
+            SparseBooleanArray map = new SparseBooleanArray();
+            for (int element : arr) {
+                if (map.get(element)) {
+                    throw new Error("Array contains duplicate element " + element);
+                }
+                map.append(element, true);
+            }
+            for (int i = 0; i < size * size; ++i) {
+                if (!map.get(i)) throw new Error("Array doesn't contains " + i);
+            }
+        }
+    }
+
     public GameMatrix(int size) {
+        HandleInvalid.size(size);
         this.size = size;
         this.matrix = new int[size][size];
         fillSeriesMatrix();
@@ -19,12 +70,14 @@ public class GameMatrix {
     }
 
     private GameMatrix(int[][] matrix) {
+        HandleInvalid.matrix(matrix);
         this.matrix = matrix;
         this.size = matrix.length;
         validateMatrix();
     }
 
     public GameMatrix(int[] arr, int size) {
+        HandleInvalid.array(arr, size);
         this.matrix = new int[size][size];
         this.size = size;
         for (int i = 0; i < size; i++) {
