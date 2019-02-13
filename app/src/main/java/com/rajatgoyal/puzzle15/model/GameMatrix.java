@@ -152,12 +152,12 @@ public class GameMatrix {
     }
 
     /**
-     * Fill the matrix in ascending order
+     * Fill the matrix in ascending order from 1, and 0 at last
      */
     private void fillSeriesMatrix() {
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
-                set(i, j, i * this.size + j);
+                set(i, j, (i * this.size + j + 1) % (this.size * this.size));
             }
         }
     }
@@ -175,7 +175,6 @@ public class GameMatrix {
             temp = rand.nextInt(index);
             temp_x = temp / this.size;
             temp_y = (temp + this.size) % this.size;
-
             swap(temp_x, temp_y, pos_x, pos_y);
 
             if (pos_y == 0) {
@@ -280,7 +279,7 @@ public class GameMatrix {
     public boolean isSolved() {
         for (int i = 0; i < this.size; i++) {
             for (int j = 0; j < this.size; j++) {
-                if (get(i, j) != this.size * i + j + 1)
+                if (get(i, j) != (i * this.size + j + 1) % (this.size * this.size))
                     return false;
             }
         }
