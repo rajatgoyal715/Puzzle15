@@ -151,7 +151,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void fillMatrix() {
         seriesFill();
-        shuffle();
+//        shuffle();
         makeValidMatrix();
 
         updateBoard();
@@ -444,6 +444,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         });
         AlertDialog dialog = alertDialogBuilder.create();
         dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
         dialog.show();
     }
 
