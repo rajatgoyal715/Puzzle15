@@ -169,8 +169,8 @@ public class GameMatrix {
         int n2 = this.size - 2;
         int n3 = this.size - 3;
 
-        if (get(n1, n1) != 0) {
-            if (get(n1, n2) != 0) {
+        if (!isEmpty(n1, n1)) {
+            if (!isEmpty(n1, n2)) {
                 swap(n1, n2, n1, n1);
             } else {
                 swap(n1, n3, n1, n1);
@@ -215,7 +215,7 @@ public class GameMatrix {
     public void set(int row, int col, int value) {
         this.matrix[row][col] = value;
 
-        if (value == 0) {
+        if (isEmpty(row, col)) {
             emptyCellRow = row;
             emptyCellCol = col;
         }

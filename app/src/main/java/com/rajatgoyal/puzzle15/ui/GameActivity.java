@@ -151,12 +151,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         int size = gameMatrix.getSize();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                int value = gameMatrix.get(i, j);
-                if (value == 0) {
+                if (gameMatrix.isEmpty(i, j)) {
                     buttons[i][j].setText("");
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
                 } else {
-                    String text = value + "";
+                    String text = gameMatrix.get(i, j) + "";
                     buttons[i][j].setText(text);
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
                 }
@@ -397,7 +396,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private boolean isSwipeValid(int i, int j) {
-        return i >= 0 && i < size && j >= 0 && j < size && gameMatrix.get(i, j) == 0;
+        return i >= 0 && i < size && j >= 0 && j < size && gameMatrix.isEmpty(i, j);
     }
 
     public enum SWIPE {
