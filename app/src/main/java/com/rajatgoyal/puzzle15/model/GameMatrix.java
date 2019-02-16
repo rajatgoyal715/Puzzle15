@@ -141,11 +141,11 @@ public class GameMatrix {
         return this.size;
     }
 
-    private int getEmptyCellRow() {
+    public int getEmptyCellRow() {
         return this.emptyCellRow;
     }
 
-    private int getEmptyCellCol() {
+    public int getEmptyCellCol() {
         return this.emptyCellCol;
     }
 
