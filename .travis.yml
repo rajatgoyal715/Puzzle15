@@ -24,4 +24,7 @@ script:
     - ./gradlew build --stacktrace
 
 notifications:
-    slack: rajatgoyal715:aN1ypVFqeAeZdL400Kk4Fpub#puzzle15
+    slack:
+        rooms:
+            - rajatgoyal715:aN1ypVFqeAeZdL400Kk4Fpub#puzzle15
+            - nullifiers:1F2WfZJCnbVdUglvFJY9ok0v#puzzle15
