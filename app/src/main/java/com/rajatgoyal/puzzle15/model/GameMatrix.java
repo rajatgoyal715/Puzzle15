@@ -262,7 +262,7 @@ public class GameMatrix {
      * @param col   element column
      * @param value element value
      */
-    public void set(int row, int col, int value) {
+    private void set(int row, int col, int value) {
         this.matrix[row][col] = value;
 
         if (isEmpty(row, col)) {
