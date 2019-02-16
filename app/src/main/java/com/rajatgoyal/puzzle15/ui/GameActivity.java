@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -112,7 +111,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             for (int j = 0; j < size; j++) {
                 buttons[i][j] = findViewById(id[i][j]);
                 buttons[i][j].setOnClickListener(this);
-                buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this, buttons[i][j]));
+                buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
             }
         }
         prevTime = 0;
@@ -220,42 +219,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     break label;
             }
         }
-
-        String n = buttons[i][j].getText().toString();
-        if (TextUtils.isEmpty(n)) {
-            // user clicked on the empty tile
-            return;
-        }
-
-        int num = Integer.parseInt(n);
-        int i1 = i, j1 = j;
-
-        if (isSwipeValid(i - 1, j))
-            i--;
-        else if (isSwipeValid(i + 1, j))
-            i++;
-        else if (isSwipeValid(i, j - 1))
-            j--;
-        else if (isSwipeValid(i, j + 1))
-            j++;
-        else {
-            // Invalid move
-            return;
-        }
-        updateMoves(++moves);
-        playClickSound();
-
-        // swapping of tiles
-        gameMatrix.swap(i, j, i1, j1);
-        buttons[i][j].setText(String.format("%s", num));
-        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
-
-        buttons[i1][j1].setText("");
-        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
-
-        if (gameMatrix.isSolved()) {
-            wonGame();
-        }
+        makeMove(i - gameMatrix.getEmptyCellRow(), j - gameMatrix.getEmptyCellCol());
     }
 
     public void wonGame() {
@@ -333,6 +297,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         AlertDialog dialog = alertDialogBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
         dialog.show();
     }
 
@@ -341,80 +307,25 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         this.moves = moves;
     }
 
-    private void swipeHandler(View view, SWIPE DIR) {
-        int i, j = 0;
-
-        // Get button's coordinates using id matrix
-        label:
-        for (i = 0; i < size; i++) {
-            for (j = 0; j < size; j++) {
-                if (view.getId() == id[i][j])
-                    break label;
-            }
-        }
-
-        String buttonText = buttons[i][j].getText().toString();
-        if (TextUtils.isEmpty(buttonText)) {
-            // user clicked on the empty tile
-            return;
-        }
-
-        int num = Integer.parseInt(buttonText);
-        int i1 = i, j1 = j;
-
-        if (DIR.equals(SWIPE.RIGHT) && isSwipeValid(i, j + 1)) {
-            Timber.d("Swiped Right");
-            j++;
-        } else if (DIR.equals(SWIPE.LEFT) && isSwipeValid(i, j - 1)) {
-            Timber.d("Swiped Left");
-            j--;
-        } else if (DIR.equals(SWIPE.BOTTOM) && isSwipeValid(i + 1, j)) {
-            Timber.d("Swiped Bottom");
-            i++;
-        } else if (DIR.equals(SWIPE.TOP) && isSwipeValid(i - 1, j)) {
-            Timber.d("Swiped Top");
-            i--;
-        } else {
-            // Invalid move
-            return;
-        }
-
-        updateMoves(++moves);
-        playClickSound();
-
-        // swapping of tiles
-        gameMatrix.swap(i, j, i1, j1);
-        buttons[i][j].setText(String.format("%s", num));
-        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
-
-        buttons[i1][j1].setText("");
-        buttons[i1][j1].setBackgroundColor(getResources().getColor(R.color.light));
-
-        if (gameMatrix.isSolved()) {
-            wonGame();
-        }
-    }
-
-    private boolean isSwipeValid(int i, int j) {
-        return i >= 0 && i < size && j >= 0 && j < size && gameMatrix.isEmpty(i, j);
-    }
-
-    public enum SWIPE {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT
+    /**
+     * @param rowIndex row index
+     * @param colIndex column index
+     * @return if rowIndex and columnIndex are within bounds
+     */
+    private boolean isValidPosition(int rowIndex, int colIndex) {
+        return rowIndex >= 0 && rowIndex < size && colIndex >= 0 && colIndex < size;
     }
 
     public class OnSwipeTouchListener implements View.OnTouchListener,
             SwipeGestureListener.OnSwipeInterface {
-
         private final GestureDetector gestureDetector;
-        View view;
 
-        OnSwipeTouchListener(Context ctx, View view) {
+        private int[] rowMoves = {0, 0, 1, -1};
+        private int[] colMoves = {-1, 1, 0, 0};
+
+        OnSwipeTouchListener(Context ctx) {
+            Timber.d("Set OnSwipeTouchListener");
             gestureDetector = new GestureDetector(ctx, new SwipeGestureListener(this));
-            this.view = view;
         }
 
         @Override
@@ -424,22 +335,53 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onSwipeRight() {
-            swipeHandler(view, SWIPE.RIGHT);
+            makeMove(rowMoves[0], colMoves[0]);
         }
 
         @Override
         public void onSwipeLeft() {
-            swipeHandler(view, SWIPE.LEFT);
+            makeMove(rowMoves[1], colMoves[1]);
         }
 
         @Override
         public void onSwipeTop() {
-            swipeHandler(view, SWIPE.TOP);
+            makeMove(rowMoves[2], colMoves[2]);
         }
 
         @Override
         public void onSwipeBottom() {
-            swipeHandler(view, SWIPE.BOTTOM);
+            makeMove(rowMoves[3], colMoves[3]);
+        }
+    }
+
+    /**
+     * Move empty tile
+     * @param rowMove number of rows to move
+     * @param colMove number of columns to move
+     */
+    private void makeMove(int rowMove, int colMove) {
+        int newEmptyRowIndex = gameMatrix.getEmptyCellRow() + rowMove;
+        int newEmptyColIndex = gameMatrix.getEmptyCellCol() + colMove;
+
+        if (!isValidPosition(newEmptyRowIndex, newEmptyColIndex)) return;
+        updateMoves(++moves);
+
+        // TODO Make this click sound optional, give option from the setting to turn this on or off
+        playClickSound();
+
+        // swapping of tiles
+        int i = gameMatrix.getEmptyCellRow(), j = gameMatrix.getEmptyCellCol();
+
+        buttons[i][j].setText(String.format("%s", gameMatrix.get(newEmptyRowIndex, newEmptyColIndex)));
+        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
+
+        buttons[newEmptyRowIndex][newEmptyColIndex].setText("");
+        buttons[newEmptyRowIndex][newEmptyColIndex].setBackgroundColor(getResources().getColor(R.color.light));
+
+        gameMatrix.swap(i, j, newEmptyRowIndex, newEmptyColIndex);
+
+        if (gameMatrix.isSolved()) {
+            wonGame();
         }
     }
 }
