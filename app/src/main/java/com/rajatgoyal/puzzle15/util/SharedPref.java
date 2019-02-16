@@ -52,9 +52,7 @@ public class SharedPref {
      * @return saved game matrix
      */
     public static GameMatrix getGameMatrix() {
-        int matrixSize = gamePref.getInt(GAME_MATRIX_SIZE, 0);
-        String matrixString = gamePref.getString(GAME_MATRIX, "");
-        return new GameMatrix(matrixString, matrixSize);
+        return new GameMatrix(gamePref.getString(GAME_MATRIX, ""));
     }
 
     /**
@@ -63,10 +61,7 @@ public class SharedPref {
      * @param gameMatrix game matrix
      */
     public static void setGameMatrix(GameMatrix gameMatrix) {
-        SharedPreferences.Editor editor = gamePref.edit();
-        editor.putInt(GAME_MATRIX_SIZE, gameMatrix.getSize());
-        editor.putString(GAME_MATRIX, gameMatrix.toString());
-        editor.apply();
+        gamePref.edit().putString(GAME_MATRIX, gameMatrix.toString()).apply();
     }
 
     /**

@@ -84,40 +84,51 @@ public class GameMatrix {
         validateMatrix();
     }
 
-    public GameMatrix(String matrixString, int size) {
-        this(matrixString, size, false);
-    }
-
-    public GameMatrix(String matrixString, int size, boolean formatted) {
-        this(getMatrixFromString(matrixString, size, formatted));
+    public GameMatrix(String matrixString) {
+        this(matrixString, false);
     }
 
     /**
-     * get matrix from string
+     * make game matrix from string
      *
-     * @param matrixString matrix string obtained by {toString} method
-     * @param size         size of matrix
-     * @return matrix
+     * @param matrixString matrix string obtained by toString method
+     * @param formatted    string formatted or not
      */
-    private static int[][] getMatrixFromString(String matrixString, int size, boolean formatted) {
-        int[][] matrix = new int[size][size];
+    private GameMatrix(String matrixString, boolean formatted) {
+        try {
         if (formatted) {
             String[] matrixStringRows = matrixString.split(ROW_SEPARATOR);
+
+            int size = matrixStringRows.length;
+            
+            this.matrix = new int[size][size];
+            this.size = size;
+
             for (int i = 0; i < size; ++i) {
                 String[] matrixStringColumns = matrixStringRows[i].split(COL_SEPARATOR);
                 for (int j = 0; j < size; ++j) {
-                    matrix[i][j] = Integer.parseInt(matrixStringColumns[j]);
+                        set(i, j, Integer.parseInt(matrixStringColumns[j]));
                 }
             }
         } else {
             String[] matrixStringArray = matrixString.split(COL_SEPARATOR);
+            
+            int size = (int) Math.sqrt(matrixStringArray.length);
+        
+            this.matrix = new int[size][size];
+            this.size = size;
+
             for (int i = 0; i < size; ++i) {
                 for (int j = 0; j < size; ++j) {
-                    matrix[i][j] = Integer.parseInt(matrixStringArray[i * size + j]);
+                        set(i, j, Integer.parseInt(matrixStringArray[i * size + j]));
+                    }
                 }
             }
+            HandleInvalid.matrix(this.matrix);
+            validateMatrix();
+        } catch (Exception e) {
+            throw new Error("Invalid matrix string");
         }
-        return matrix;
     }
 
     /**
