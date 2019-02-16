@@ -16,7 +16,7 @@ public class GameMatrix {
 
         static void size(int size) {
             if (size < MIN_SIZE) {
-                throw new Error("Size should be greater than 3");
+                throw new Error("Size should not be less than " + MIN_SIZE);
             }
         }
 
