@@ -14,12 +14,21 @@ public class GameMatrix {
     private static class HandleInvalid {
         static final int MIN_SIZE = 3;
 
+        /**
+         * check size
+         *
+         * @param size size
+         */
         static void size(int size) {
             if (size < MIN_SIZE) {
                 throw new Error("Size should not be less than " + MIN_SIZE);
             }
         }
 
+        /**
+         * check matrix
+         * @param matrix matrix
+         */
         static void matrix(int[][] matrix) {
             int size = matrix.length;
             HandleInvalid.size(size);
@@ -40,6 +49,12 @@ public class GameMatrix {
             }
         }
 
+        /**
+         * check array
+         *
+         * @param arr array
+         */
+        static void array(int[] arr) {
             double size = Math.sqrt(arr.length);
             if (size % 1 != 0)
                 throw new Error("Length of array must be a perfect square");
@@ -57,6 +72,10 @@ public class GameMatrix {
         }
     }
 
+    /**
+     * make game matrix of given size
+     * @param size size of matrix
+     */
     public GameMatrix(int size) {
         HandleInvalid.size(size);
         this.size = size;
@@ -66,6 +85,10 @@ public class GameMatrix {
         validateMatrix();
     }
 
+    /**
+     * make game matrix from matrix
+     * @param matrix matrix
+     */
     private GameMatrix(int[][] matrix) {
         HandleInvalid.matrix(matrix);
         this.matrix = matrix;
@@ -73,6 +96,11 @@ public class GameMatrix {
         validateMatrix();
     }
 
+    /**
+     * make game matrix from array
+     *
+     * @param arr array
+     */
     public GameMatrix(int[] arr) {
         HandleInvalid.array(arr);
         int size = (int) Math.sqrt(arr.length);
@@ -84,6 +112,11 @@ public class GameMatrix {
         validateMatrix();
     }
 
+    /**
+     * make game matrix from string
+     *
+     * @param matrixString matrix as a string
+     */
     public GameMatrix(String matrixString) {
         this(matrixString, false);
     }
