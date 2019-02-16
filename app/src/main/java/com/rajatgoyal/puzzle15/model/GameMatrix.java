@@ -40,8 +40,9 @@ public class GameMatrix {
             }
         }
 
-        static void array(int[] arr, int size) {
-            HandleInvalid.size(size);
+            double size = Math.sqrt(arr.length);
+            if (size % 1 != 0)
+                throw new Error("Length of array must be a perfect square");
 
             HashSet<Integer> set = new HashSet<>();
             for (int element : arr) {
@@ -72,8 +73,9 @@ public class GameMatrix {
         validateMatrix();
     }
 
-    public GameMatrix(int[] arr, int size) {
-        HandleInvalid.array(arr, size);
+    public GameMatrix(int[] arr) {
+        HandleInvalid.array(arr);
+        int size = (int) Math.sqrt(arr.length);
         this.matrix = new int[size][size];
         this.size = size;
         for (int i = 0; i < size; i++) {
