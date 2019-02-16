@@ -301,8 +301,9 @@ public class GameMatrix {
             return stringBuilder.toString();
         } else {
             int[] array = getArray();
-            for (int i = 0; i < array.length; ++i) {
-                if (i != 0) stringBuilder.append(COL_SEPARATOR);
+            stringBuilder.append(array[0]);
+            for (int i = 1; i < array.length; ++i) {
+                stringBuilder.append(COL_SEPARATOR);
                 stringBuilder.append(array[i]);
             }
         }
