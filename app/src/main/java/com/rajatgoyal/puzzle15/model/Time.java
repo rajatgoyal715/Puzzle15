@@ -52,7 +52,7 @@ public class Time {
             if (this.minutes > time.minutes)
                 return false;
             else if (this.minutes == time.minutes) {
-                return seconds <= time.seconds;
+                return this.seconds <= time.seconds;
             }
         }
         return true;
