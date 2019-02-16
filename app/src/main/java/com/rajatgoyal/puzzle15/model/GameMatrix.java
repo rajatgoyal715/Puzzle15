@@ -1,7 +1,6 @@
 package com.rajatgoyal.puzzle15.model;
 
-import android.util.SparseBooleanArray;
-
+import java.util.HashSet;
 import java.util.Random;
 
 import androidx.annotation.NonNull;
@@ -25,37 +24,34 @@ public class GameMatrix {
             int size = matrix.length;
             HandleInvalid.size(size);
 
-            SparseBooleanArray map = new SparseBooleanArray();
+            HashSet<Integer> set = new HashSet<>();
             for (int[] row : matrix) {
                 if (row.length != size) throw new Error("Matrix is not a square matrix");
 
                 for (int element : row) {
-                    if (map.get(element)) {
+                    if (set.contains(element)) {
                         throw new Error("Matrix contains duplicate element " + element);
                     }
-                    map.append(element, true);
+                    set.add(element);
                 }
             }
             for (int i = 0; i < size * size; ++i) {
-                if (!map.get(i)) throw new Error("Matrix doesn't contains " + i);
+                if (!set.contains(i)) throw new Error("Matrix doesn't contains " + i);
             }
         }
 
         static void array(int[] arr, int size) {
             HandleInvalid.size(size);
 
-            if (arr.length != size * size)
-                throw new Error("length of array must be " + size * size);
-
-            SparseBooleanArray map = new SparseBooleanArray();
+            HashSet<Integer> set = new HashSet<>();
             for (int element : arr) {
-                if (map.get(element)) {
+                if (set.contains(element)) {
                     throw new Error("Array contains duplicate element " + element);
                 }
-                map.append(element, true);
+                set.add(element);
             }
             for (int i = 0; i < size * size; ++i) {
-                if (!map.get(i)) throw new Error("Array doesn't contains " + i);
+                if (!set.contains(i)) throw new Error("Array doesn't contain " + i);
             }
         }
     }
