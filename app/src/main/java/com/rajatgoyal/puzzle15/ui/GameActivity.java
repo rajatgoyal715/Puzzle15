@@ -37,7 +37,7 @@ import timber.log.Timber;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int size = 4;
-    private int moves, hours, minutes, seconds;
+    private int moves;
     private boolean gameOver;
     private GameMatrix gameMatrix;
     private int[][] id;
@@ -45,20 +45,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private Handler handler;
     private TextView timerTextView, movesTextView;
-    private long startTime, currTime, prevTime;
+    private Time currTime;
+    private long startTime, prevTime;
     public Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            currTime = SystemClock.uptimeMillis() - startTime + prevTime;
-            long time = currTime;
-            time /= 1000;
-            seconds = (int) time % 60;
-            time /= 60;
-            minutes = (int) time % 60;
-            time /= 60;
-            hours = (int) time % 24;
+            long currTimeMillis = SystemClock.uptimeMillis() - startTime + prevTime;
+            currTime = new Time(currTimeMillis);
 
-            timerTextView.setText(new Time(hours, minutes, seconds).toString());
+            timerTextView.setText(currTime.toString());
 
             handler.postDelayed(this, 1000);
         }
@@ -172,7 +167,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void pauseTimer() {
-        prevTime = currTime;
+        prevTime = currTime.toMillis();
         handler.removeCallbacks(runnable);
     }
 
@@ -196,7 +191,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Timber.d("on stop");
         SharedPref.setGameMatrix(gameMatrix);
         SharedPref.setMoves(moves);
-        SharedPref.setGameTime(currTime);
+        SharedPref.setGameTime(currTime.toMillis());
     }
 
     private void playClickSound() {
@@ -258,13 +253,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean isHighScore() {
-        Time currentTime = new Time(hours, minutes, seconds);
-        return (currentTime.isLessThan(new Time(highScoreTime))) && (moves < highScoreMoves);
+        return (currTime.isLessThan(new Time(highScoreTime))) && (moves < highScoreMoves);
     }
 
     public void addHighScore() {
         int moves = this.moves;
-        int time = new Time(hours, minutes, seconds).toSeconds();
+        int time = currTime.toSeconds();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(GameContract.GameEntry.COLUMN_MOVES, moves);
