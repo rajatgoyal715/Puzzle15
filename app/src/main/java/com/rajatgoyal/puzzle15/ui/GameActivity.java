@@ -537,6 +537,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
      * @param colMove number of columns to move
      */
     private void makeMove(int rowMove, int colMove) {
+        // abs sum ensures that only one of the rowMove or colMove is 1 or -1
+        if (Math.abs(rowMove) + Math.abs(colMove) != 1) return;
+
         int newEmptyRowIndex = emptyRowIndex + rowMove;
         int newEmptyColIndex = emptyColIndex + colMove;
 
