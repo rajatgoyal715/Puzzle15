@@ -46,11 +46,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Handler handler;
     private TextView timerTextView, movesTextView;
     private Time currTime;
-    private long startTime, prevTime;
+    private long startTimeMillis, prevTimeMillis;
     public Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            long currTimeMillis = SystemClock.uptimeMillis() - startTime + prevTime;
+            long currTimeMillis = SystemClock.uptimeMillis() - startTimeMillis + prevTimeMillis;
             currTime = new Time(currTimeMillis);
 
             timerTextView.setText(currTime.toString());
@@ -109,7 +109,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
             }
         }
-        prevTime = 0;
+        prevTimeMillis = 0;
     }
 
     public void fillIdMatrix(int[][] id) {
@@ -157,17 +157,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void startTimer(long prevTime) {
+    public void startTimer(long prevTimeMillis) {
         if (this.handler == null) {
             this.handler = new Handler();
         }
-        this.startTime = SystemClock.uptimeMillis();
-        this.prevTime = prevTime;
+        this.startTimeMillis = SystemClock.uptimeMillis();
+        this.prevTimeMillis = prevTimeMillis;
         this.handler.postDelayed(runnable, 0);
     }
 
     public void pauseTimer() {
-        prevTime = currTime.toMillis();
+        prevTimeMillis = currTime.toMillis();
         handler.removeCallbacks(runnable);
     }
 
@@ -181,7 +181,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         if (!gameOver) {
-            startTimer(prevTime);
+            startTimer(prevTimeMillis);
         }
     }
 
