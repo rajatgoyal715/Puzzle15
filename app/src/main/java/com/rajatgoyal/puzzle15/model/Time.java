@@ -36,6 +36,9 @@ public class Time {
     public int toSeconds() {
         return this.hours * 3600 + this.minutes * 60 + this.seconds;
     }
+    public long toMillis() {
+        return toSeconds()*1000;
+    }
 
     @NotNull
     @Override
