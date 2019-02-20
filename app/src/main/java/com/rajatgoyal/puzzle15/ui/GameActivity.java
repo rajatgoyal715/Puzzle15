@@ -73,7 +73,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (intent != null) {
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
-            resumeGame = intent.getBooleanExtra("resumeGame", false);
+            resumeGame = intent.getBooleanExtra("resumeGame", true);
         }
 
         init();
