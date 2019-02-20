@@ -245,9 +245,9 @@ public class GameMatrix {
      */
     private boolean isValid() {
         int inv = getInversions();
-        int emptyCellRow = getEmptyCellRow();
+        int emptyCellRowFromBottom = this.size - getEmptyCellRow();
 
-        return (emptyCellRow % 2 == 0 && inv % 2 != 0) || (emptyCellRow % 2 != 0 && inv % 2 == 0);
+        return (emptyCellRowFromBottom % 2 == 0 && inv % 2 != 0) || (emptyCellRowFromBottom % 2 != 0 && inv % 2 == 0);
     }
 
     /**
