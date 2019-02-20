@@ -20,10 +20,11 @@ import android.widget.Toast;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
+import com.rajatgoyal.puzzle15.model.GameMatrix;
 import com.rajatgoyal.puzzle15.model.Time;
+import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.Locale;
-import java.util.Random;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,40 +37,30 @@ import timber.log.Timber;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int size = 4;
-    private int moves, hours, minutes, seconds;
+    private int moves;
     private boolean gameOver;
-    private int m[][], id[][];
-    private Button buttons[][];
+    private GameMatrix gameMatrix;
+    private int[][] id;
+    private Button[][] buttons;
 
     private Handler handler;
     private TextView timerTextView, movesTextView;
-    private long startTime, currTime, lastTime;
+    private Time currTime;
+    private long startTimeMillis, prevTimeMillis;
     public Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            currTime = SystemClock.uptimeMillis() - startTime + lastTime;
-            long time = currTime;
-            time /= 1000;
-            seconds = (int) time % 60;
-            time /= 60;
-            minutes = (int) time % 60;
-            time /= 60;
-            hours = (int) time % 24;
+            long currTimeMillis = SystemClock.uptimeMillis() - startTimeMillis + prevTimeMillis;
+            currTime = new Time(currTimeMillis);
 
-            timerTextView.setText(new Time((int) (currTime / 1000)).toString());
+            timerTextView.setText(currTime.toString());
 
-            handler.postDelayed(this, 0);
+            handler.postDelayed(this, 1000);
         }
     };
 
     private int highScoreMoves, highScoreTime;
     private MediaPlayer clickMP;
-    /**
-     * Empty Row Index: stores the row number of the empty cell
-     * Empty Col Index: stores the column number of the empty cell
-     */
-    private int emptyRowIndex = 0;
-    private int emptyColIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,28 +69,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Timber.d("onCreate: ");
 
         Intent intent = getIntent();
+        boolean resumeGame = true;
         if (intent != null) {
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
+            resumeGame = intent.getBooleanExtra("resumeGame", true);
         }
 
         init();
-
-        if (savedInstanceState == null) {
-            fillMatrix();
+        if (resumeGame) {
+            updateBoard(SharedPref.getGameMatrix());
+            updateMoves(SharedPref.getMoves());
+            startTimer(SharedPref.getGameTime());
         } else {
-            m[0] = savedInstanceState.getIntArray("matrix_row_0");
-            m[1] = savedInstanceState.getIntArray("matrix_row_1");
-            m[2] = savedInstanceState.getIntArray("matrix_row_2");
-            m[3] = savedInstanceState.getIntArray("matrix_row_3");
-
-            updateBoard();
-
-            moves = savedInstanceState.getInt("moves");
-            updateMoves(moves);
-
-            lastTime = savedInstanceState.getLong("currTime");
-            resumeTimer();
+            updateBoard(new GameMatrix(size));
+            updateMoves(0);
+            startTimer(0);
         }
 
     }
@@ -108,13 +93,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void init() {
         moves = 0;
         gameOver = false;
-        m = new int[size][size];
         id = new int[size][size];
 
         timerTextView = findViewById(R.id.timer);
         movesTextView = findViewById(R.id.moves);
 
-        fillIdMatrix();
+        fillIdMatrix(id);
 
         buttons = new Button[size][size];
 
@@ -125,9 +109,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
             }
         }
+        prevTimeMillis = 0;
     }
 
-    public void fillIdMatrix() {
+    public void fillIdMatrix(int[][] id) {
         id[0][0] = R.id.btn00;
         id[0][1] = R.id.btn01;
         id[0][2] = R.id.btn02;
@@ -149,174 +134,40 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         id[3][3] = R.id.btn33;
     }
 
-    public void fillMatrix() {
-        seriesFill();
-        shuffle();
-        makeValidMatrix();
-
-        updateBoard();
-        postInit();
-    }
-
-    /**
-     * Fill the matrix in ascending order
-     */
-    public void seriesFill() {
-        int temp;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                temp = (i * size + j + 1) % 16;
-                m[i][j] = temp;
-            }
-        }
-    }
-
-    /**
-     * Fill the matrix in random order
-     */
-    public void shuffle() {
-        int pos_x = size - 1, pos_y = size - 1;
-        int temp, temp_x, temp_y, swap;
-
-        Random rand = new Random();
-
-        for (int index = size * size - 1; index > 1; index--) {
-            temp = rand.nextInt(index);
-            temp_x = temp / size;
-            temp_y = (temp + size) % size;
-
-            swap = m[temp_x][temp_y];
-            m[temp_x][temp_y] = m[pos_x][pos_y];
-            m[pos_x][pos_y] = swap;
-
-            if (pos_y == 0) {
-                pos_x--;
-                pos_y = size - 1;
-            } else {
-                pos_y--;
-            }
-        }
-    }
 
     /**
      * Update the board according to the matrix
+     *
+     * @param gameMatrix game matrix
      */
-    public void updateBoard() {
+    public void updateBoard(GameMatrix gameMatrix) {
+        this.gameMatrix = gameMatrix;
+        int size = gameMatrix.getSize();
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (m[i][j] == 0) {
-                    emptyRowIndex = i;
-                    emptyColIndex = j;
+                if (gameMatrix.isEmpty(i, j)) {
                     buttons[i][j].setText("");
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
                 } else {
-                    String num = m[i][j] + "";
-                    buttons[i][j].setText(num);
+                    String text = gameMatrix.get(i, j) + "";
+                    buttons[i][j].setText(text);
                     buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
                 }
             }
         }
     }
 
-    /**
-     * Calculate number of inversions in the matrix
-     *
-     * @return number of inversions
-     */
-    public int findInversions() {
-        int arr[] = new int[size * size];
-        for (int i = 0; i < size; i++) {
-            System.arraycopy(m[i], 0, arr, size * i, size);
+    public void startTimer(long prevTimeMillis) {
+        if (this.handler == null) {
+            this.handler = new Handler();
         }
-        int count = 0;
-        for (int i = 0; i < size * size; i++) {
-            if (arr[i] == 0) continue;
-            for (int j = i + 1; j < size * size; j++) {
-                if (arr[j] != 0 && arr[j] < arr[i]) count++;
-            }
-        }
-        return count;
-    }
-
-    private int findEmptyCellPosition() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (m[i][j] == 0) return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Check if the matrix is valid according to following rules:
-     * If n is even, then the matrix is solvable if:
-     * 1. blank is on even row counting from the bottom and no of inversions is odd.
-     * 2. blank is on odd row from the bottom and no of inversions is even.
-     * If n is odd, then the matrix is solvable if no. of inversions is even.
-     *
-     * @return validity of matrix
-     */
-    public boolean isValid() {
-        int inv = findInversions();
-        int empty_cell_pos_x = findEmptyCellPosition();
-
-        return (empty_cell_pos_x % 2 == 0 && inv % 2 != 0) || (empty_cell_pos_x % 2 != 0 && inv % 2 == 0);
-    }
-
-    /**
-     * If puzzle is not solvable, make it solvable by decreasing one inversion
-     * which can be done easily by swapping two last positions
-     */
-    public void makeValidMatrix() {
-        if (!isValid()) {
-            if (m[size - 1][size - 1] != 0) {
-                if (m[size - 1][size - 2] != 0) {
-                    int temp = m[size - 1][size - 2];
-                    m[size - 1][size - 2] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 2].setText(String.format("%s", m[size - 1][size - 2]));
-                    m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(String.format("%s", m[size - 1][size - 1]));
-                } else {
-                    int temp = m[size - 1][size - 3];
-                    m[size - 1][size - 3] = m[size - 1][size - 1];
-                    buttons[size - 1][size - 3].setText(String.format("%s", m[size - 1][size - 3]));
-                    m[size - 1][size - 1] = temp;
-                    buttons[size - 1][size - 1].setText(String.format("%s", m[size - 1][size - 1]));
-                }
-            } else {
-                int temp = m[size - 1][size - 3];
-                m[size - 1][size - 3] = m[size - 1][size - 2];
-                buttons[size - 1][size - 3].setText(String.format("%s", m[size - 1][size - 3]));
-                m[size - 1][size - 2] = temp;
-                buttons[size - 1][size - 2].setText(String.format("%s", m[size - 1][size - 2]));
-            }
-        }
-    }
-
-    public void postInit() {
-        handler = new Handler();
-        startTimer();
-    }
-
-    public void startTimer() {
-        if (handler == null) {
-            handler = new Handler();
-        }
-        startTime = SystemClock.uptimeMillis();
-        lastTime = 0;
-        handler.postDelayed(runnable, 0);
-    }
-
-    public void resumeTimer() {
-        if (handler == null) {
-            handler = new Handler();
-        }
-        startTime = SystemClock.uptimeMillis();
-        handler.postDelayed(runnable, 0);
+        this.startTimeMillis = SystemClock.uptimeMillis();
+        this.prevTimeMillis = prevTimeMillis;
+        this.handler.postDelayed(runnable, 0);
     }
 
     public void pauseTimer() {
-        lastTime = currTime;
+        prevTimeMillis = currTime.toMillis();
         handler.removeCallbacks(runnable);
     }
 
@@ -330,22 +181,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         if (!gameOver) {
-            resumeTimer();
+            startTimer(prevTimeMillis);
         }
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    protected void onStop() {
+        super.onStop();
+        Timber.d("on stop");
 
-        outState.putIntArray("matrix_row_0", m[0]);
-        outState.putIntArray("matrix_row_1", m[1]);
-        outState.putIntArray("matrix_row_2", m[2]);
-        outState.putIntArray("matrix_row_3", m[3]);
-
-        outState.putInt("moves", moves);
-
-        outState.putLong("currTime", currTime);
+        if(!gameOver) {
+            SharedPref.setGameMatrix(gameMatrix);
+            SharedPref.setMoves(moves);
+            SharedPref.setGameTime(currTime.toMillis());
+        }
     }
 
     private void playClickSound() {
@@ -368,13 +217,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     break label;
             }
         }
-        makeMove(i - emptyRowIndex, j - emptyColIndex);
+        makeMove(i - gameMatrix.getEmptyCellRow(), j - gameMatrix.getEmptyCellCol());
     }
 
     public void wonGame() {
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
         mp.start();
+
+        // invalidate save game data
+        SharedPref.setGameTime(0);
 
         // stop the timer
         gameOver = true;
@@ -404,13 +256,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean isHighScore() {
-        Time currentTime = new Time(hours, minutes, seconds);
-        return (currentTime.isLessThan(new Time(highScoreTime))) && (moves < highScoreMoves);
+        return (currTime.isLessThan(new Time(highScoreTime))) && (moves < highScoreMoves);
     }
 
     public void addHighScore() {
         int moves = this.moves;
-        int time = new Time(hours, minutes, seconds).toSeconds();
+        int time = currTime.toSeconds();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(GameContract.GameEntry.COLUMN_MOVES, moves);
@@ -429,10 +280,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                fillMatrix();
-
+                updateBoard(new GameMatrix(size));
                 //updating the moves
                 updateMoves(0);
+                startTimer(0);
             }
         });
         alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -448,40 +299,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         dialog.show();
     }
 
-    public void updateMoves(int move) {
-        movesTextView.setText(String.format(Locale.US, "%d", move));
-        moves = move;
-    }
-
-    public boolean checkIfGameOver() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (m[i][j] != ((size * i + j + 1) % (size * size)))
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle(getResources().getString(R.string.quit_the_game));
-        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        AlertDialog dialog = alertDialogBuilder.create();
-        dialog.show();
+    public void updateMoves(int moves) {
+        movesTextView.setText(String.format(Locale.US, "%d", moves));
+        this.moves = moves;
     }
 
     /**
@@ -539,31 +359,28 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void makeMove(int rowMove, int colMove) {
         // abs sum ensures that only one of the rowMove or colMove is 1 or -1
         if (Math.abs(rowMove) + Math.abs(colMove) != 1) return;
-
-        int newEmptyRowIndex = emptyRowIndex + rowMove;
-        int newEmptyColIndex = emptyColIndex + colMove;
+      
+        int newEmptyRowIndex = gameMatrix.getEmptyCellRow() + rowMove;
+        int newEmptyColIndex = gameMatrix.getEmptyCellCol() + colMove;
 
         if (!isValidPosition(newEmptyRowIndex, newEmptyColIndex)) return;
-
         updateMoves(++moves);
 
         // TODO Make this click sound optional, give option from the setting to turn this on or off
         playClickSound();
 
         // swapping of tiles
-        int i = emptyRowIndex, j = emptyColIndex;
-        m[i][j] = m[newEmptyRowIndex][newEmptyColIndex];
-        buttons[i][j].setText(String.format("%s", m[i][j]));
+        int i = gameMatrix.getEmptyCellRow(), j = gameMatrix.getEmptyCellCol();
+
+        buttons[i][j].setText(String.format("%s", gameMatrix.get(newEmptyRowIndex, newEmptyColIndex)));
         buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
 
-        m[newEmptyRowIndex][newEmptyColIndex] = 0;
         buttons[newEmptyRowIndex][newEmptyColIndex].setText("");
         buttons[newEmptyRowIndex][newEmptyColIndex].setBackgroundColor(getResources().getColor(R.color.light));
 
-        emptyRowIndex = newEmptyRowIndex;
-        emptyColIndex = newEmptyColIndex;
+        gameMatrix.swap(i, j, newEmptyRowIndex, newEmptyColIndex);
 
-        if (checkIfGameOver()) {
+        if (gameMatrix.isSolved()) {
             wonGame();
         }
     }
