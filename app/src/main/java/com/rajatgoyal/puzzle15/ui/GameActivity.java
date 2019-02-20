@@ -189,9 +189,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         Timber.d("on stop");
-        SharedPref.setGameMatrix(gameMatrix);
-        SharedPref.setMoves(moves);
-        SharedPref.setGameTime(currTime.toMillis());
+
+        if(!gameOver) {
+            SharedPref.setGameMatrix(gameMatrix);
+            SharedPref.setMoves(moves);
+            SharedPref.setGameTime(currTime.toMillis());
+        }
     }
 
     private void playClickSound() {
