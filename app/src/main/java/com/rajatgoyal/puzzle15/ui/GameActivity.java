@@ -85,15 +85,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateBoard(new GameMatrix(size));
             updateMoves(0);
             startTimer(0);
+            SharedPref.incrementPlayedGames();
+            int playedGames = SharedPref.getPlayedGames();
+            Toast.makeText(this, "Played: " + playedGames, Toast.LENGTH_SHORT).show();
         }
 
     }
 
     @SuppressLint("ClickableViewAccessibility")
     public void init() {
-        int playedGames = SharedPref.incrementPlayedGames();
-        Toast.makeText(this, "Played Games: " + playedGames, Toast.LENGTH_SHORT).show();
-
         moves = 0;
         gameOver = false;
         id = new int[size][size];
@@ -223,8 +223,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void wonGame() {
-        int completedGames = SharedPref.incrementCompletedGames();
-        Toast.makeText(this, "Completed Games: " + completedGames, Toast.LENGTH_SHORT).show();
+        SharedPref.incrementCompletedGames();
+        int completedGames = SharedPref.getCompletedGames();
+        Toast.makeText(this, "Completed: " + completedGames, Toast.LENGTH_SHORT).show();
 
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
@@ -364,7 +365,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void makeMove(int rowMove, int colMove) {
         // abs sum ensures that only one of the rowMove or colMove is 1 or -1
         if (Math.abs(rowMove) + Math.abs(colMove) != 1) return;
-      
         int newEmptyRowIndex = gameMatrix.getEmptyCellRow() + rowMove;
         int newEmptyColIndex = gameMatrix.getEmptyCellCol() + colMove;
 
