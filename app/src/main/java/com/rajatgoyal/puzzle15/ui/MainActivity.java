@@ -22,6 +22,7 @@ import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.Player;
 import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.adapter.HighScoresAdapter;
@@ -295,6 +296,29 @@ public class MainActivity extends AppCompatActivity {
                 else startSignInIntent();
             }
         });
+
+        Button viewAchievements = findViewById(R.id.view_achievements);
+        viewAchievements.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAchievements();
+            }
+        });
+    }
+
+    public void showAchievements() {
+        if(!isSignedIn()) {
+            Toast.makeText(this, "Please signin first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this))
+            .getAchievementsIntent()
+            .addOnSuccessListener(new OnSuccessListener<Intent>() {
+                @Override
+                public void onSuccess(Intent intent) {
+                    startActivityForResult(intent, 9003);
+                }
+            });
     }
 
     public void startGameActivity(boolean resume) {
