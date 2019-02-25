@@ -34,7 +34,7 @@ import timber.log.Timber;
  * Created by rajat on 15/9/17.
  */
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+public class GameActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int size = 4;
     private int moves;

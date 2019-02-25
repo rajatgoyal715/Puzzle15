@@ -12,15 +12,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.games.AchievementsClient;
-import com.google.android.gms.games.EventsClient;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.Player;
-import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,7 +29,6 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
@@ -45,38 +37,19 @@ import timber.log.Timber;
  * Created by rajat on 15/9/17.
  */
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends BaseActivity {
     private ArrayList<HighScore> highScores;
     private HighScore latestHighScore;
 
-    private GoogleSignInClient googleSignInClient = null;
-    private static final int RC_SIGN_IN = 9001;
-
     private Button signInSignOutButton, resumeBtn;
-    private boolean signedIn = false;
-
-    private AchievementsClient mAchievementsClient;
-    private LeaderboardsClient mLeaderboardsClient;
-    private EventsClient mEventsClient;
-    private PlayersClient mPlayersClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        firebaseInit();
         init();
         getLatestHighScore();
-    }
-
-    private void firebaseInit() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-                .requestServerAuthCode(getString(R.string.default_web_client_id))
-                .build();
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     @Override
@@ -89,124 +62,47 @@ public class MainActivity extends AppCompatActivity {
         } else {
             resumeBtn.setVisibility(View.GONE);
         }
-        if (isSignedIn()) return;
-
-        signInSilently();
-    }
-
-    private boolean isSignedIn() {
-        return GoogleSignIn.getLastSignedInAccount(this) != null;
-    }
-
-    public void signInSilently() {
-        Timber.d("signInSilently()");
-
-        googleSignInClient.silentSignIn().addOnCompleteListener(this,
-                new OnCompleteListener<GoogleSignInAccount>() {
-                    @Override
-                    public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                        if (task.isSuccessful()) {
-                            Timber.d("signInSilently(): success");
-                            onConnected(task.getResult());
-                        } else {
-                            Timber.d("signInSilently(): failure");
-                            onDisconnected();
-                        }
-                    }
-                });
-    }
-
-    private void startSignInIntent() {
-        startActivityForResult(googleSignInClient.getSignInIntent(), RC_SIGN_IN);
-    }
-
-    private void signOut() {
-        Timber.d("signOut()");
-
-        if (!isSignedIn()) {
-            Timber.d("signOut() called, but was not signed in!");
-            return;
-        }
-
-        googleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        boolean successful = task.isSuccessful();
-                        Timber.d("signOut(): " + (successful ? "success" : "failed"));
-
-                        onDisconnected();
-                    }
-                });
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task =
-                    GoogleSignIn.getSignedInAccountFromIntent(intent);
-
-            try {
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                onConnected(account);
-            } catch (ApiException apiException) {
-                String message = apiException.getMessage();
-                if (message == null || message.isEmpty()) {
-                    message = "Sign In Failed Message";
-                }
-                Timber.d(message);
-                onDisconnected();
-            }
-        }
+    public void signInSilently() {
+        super.signInSilently();
     }
 
-    GoogleSignInAccount signedInAccount;
+    @Override
+    protected void startSignInIntent() {
+        super.startSignInIntent();
+    }
 
-    private void onConnected(GoogleSignInAccount googleSignInAccount) {
-        Timber.d("onConnected(): connected to Google APIs");
-        signedIn = true;
+    @Override
+    protected void onConnected(GoogleSignInAccount googleSignInAccount) {
+        super.onConnected(googleSignInAccount);
         updateSignInSignOutButton();
 
-        if (signedInAccount != googleSignInAccount) {
-            signedInAccount = googleSignInAccount;
-        }
-
-        mAchievementsClient = Games.getAchievementsClient(this, googleSignInAccount);
-        mLeaderboardsClient = Games.getLeaderboardsClient(this, googleSignInAccount);
-        mEventsClient = Games.getEventsClient(this, googleSignInAccount);
-        mPlayersClient = Games.getPlayersClient(this, googleSignInAccount);
-
-        // Set the greeting appropriately on main menu
-        mPlayersClient.getCurrentPlayer()
-                .addOnCompleteListener(new OnCompleteListener<Player>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Player> task) {
-                        String displayName;
-                        if (task.isSuccessful()) {
-                            displayName = task.getResult().getDisplayName();
-                        } else {
-                            Exception e = task.getException();
-                            displayName = "???";
-                        }
-                        Toast.makeText(MainActivity.this, displayName, Toast.LENGTH_SHORT).show();
+        Games.getPlayersClient(this, googleSignInAccount)
+            .getCurrentPlayer()
+            .addOnCompleteListener(new OnCompleteListener<Player>() {
+                @Override
+                public void onComplete(@NonNull Task<Player> task) {
+                    String displayName;
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        displayName = task.getResult().getDisplayName();
+                    } else {
+                        displayName = "???";
                     }
-                });
+                    Toast.makeText(MainActivity.this, displayName, Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
+    @Override
     public void onDisconnected() {
-        Timber.d("onDisconnected()");
-        signedIn = false;
+        super.onDisconnected();
         updateSignInSignOutButton();
-
-        mAchievementsClient = null;
-        mLeaderboardsClient = null;
-        mEventsClient = null;
-        mPlayersClient = null;
     }
 
     public void updateSignInSignOutButton() {
-        signInSignOutButton.setText(signedIn ? R.string.signOut : R.string.signIn);
+        signInSignOutButton.setText(isSignedIn() ? R.string.signOut : R.string.signIn);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -292,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         signInSignOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (signedIn) signOut();
+                if (isSignedIn()) signOut();
                 else startSignInIntent();
             }
         });
