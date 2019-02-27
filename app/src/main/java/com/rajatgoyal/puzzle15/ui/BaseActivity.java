@@ -12,6 +12,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.games.AchievementsClient;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.rajatgoyal.puzzle15.R;
@@ -22,7 +25,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 	private GoogleSignInClient googleSignInClient = null;
 	private static final int RC_SIGN_IN = 9001;
 
-	GoogleSignInAccount signedInAccount;
+	private GoogleSignInAccount signedInAccount;
+	private AchievementsClient achievementsClient;
+	private PlayersClient playersClient;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -121,9 +126,19 @@ public abstract class BaseActivity extends AppCompatActivity {
 		if (signedInAccount != googleSignInAccount) {
 			signedInAccount = googleSignInAccount;
 		}
+		achievementsClient = Games.getAchievementsClient(this, signedInAccount);
+		playersClient = Games.getPlayersClient(this, signedInAccount);
 	}
 
-	public void onDisconnected() {
+	protected void onDisconnected() {
 		Timber.d("onDisconnected()");
+	}
+
+	protected AchievementsClient getAchievementsClient() {
+		return achievementsClient;
+	}
+
+	protected PlayersClient getPlayersClient() {
+		return playersClient;
 	}
 }

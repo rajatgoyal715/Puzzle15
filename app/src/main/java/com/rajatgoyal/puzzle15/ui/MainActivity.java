@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity {
         super.onConnected(googleSignInAccount);
         updateSignInSignOutButton();
 
-        Games.getPlayersClient(this, googleSignInAccount)
+        super.getPlayersClient()
             .getCurrentPlayer()
             .addOnCompleteListener(new OnCompleteListener<Player>() {
                 @Override
