@@ -10,19 +10,19 @@ import com.rajatgoyal.puzzle15.R;
  */
 public class AchievementHandler {
 
-	private void unlockOnUIThread(final AchievementsClient achievementsClient, Activity activity, final String achievementSring) {
+	private void unlockOnUIThread(final AchievementsClient achievementsClient, final Activity activity, final int achievementId) {
 		activity.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				achievementsClient.unlock(achievementSring);
+				achievementsClient.unlock(activity.getString(achievementId));
 			}
 		});
 	}
 
 	public void checkPlayedGames(AchievementsClient achievementsClient, Activity activity) {
 		int playedGames = SharedPref.getPlayedGames();
-		if (playedGames >= 1){
-			unlockOnUIThread(achievementsClient, activity, activity.getString(R.string.achievement_play_your_first_game));
+		if (playedGames >= 1) {
+			unlockOnUIThread(achievementsClient, activity, R.string.achievement_play_your_first_game);
 		}
 	}
 }
