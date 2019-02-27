@@ -27,7 +27,6 @@ import com.rajatgoyal.puzzle15.util.SharedPref;
 import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
 /**

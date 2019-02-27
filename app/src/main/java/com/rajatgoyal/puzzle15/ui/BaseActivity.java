@@ -15,6 +15,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.rajatgoyal.puzzle15.R;
+import com.rajatgoyal.puzzle15.util.SharedPref;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
@@ -26,6 +27,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		init();
+	}
+
+	private void init() {
+		SharedPref.init(this);
 
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 				.requestServerAuthCode(getString(R.string.default_web_client_id))

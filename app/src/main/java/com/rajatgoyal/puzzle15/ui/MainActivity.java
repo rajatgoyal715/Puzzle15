@@ -125,8 +125,6 @@ public class MainActivity extends BaseActivity {
     }
 
     public void init() {
-        SharedPref.init(this);
-
         resumeBtn = findViewById(R.id.resume_game);
         resumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
