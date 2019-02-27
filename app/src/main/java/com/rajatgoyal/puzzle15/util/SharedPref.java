@@ -24,6 +24,7 @@ public class SharedPref {
     }
 
     public static void init(Context context) {
+    	if (gamePref != null) return;
         gamePref = context.getSharedPreferences(GAME_PREF, Context.MODE_PRIVATE);
     }
 
