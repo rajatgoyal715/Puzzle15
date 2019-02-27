@@ -17,7 +17,6 @@ public class SharedPref {
     private static final String GAME_MOVES = "GAME_MOVES";
     private static final String GAME_TIME = "GAME_TIME";
 
-
     private static SharedPreferences gamePref;
 
     private SharedPref() {

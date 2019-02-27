@@ -18,6 +18,7 @@ import com.google.android.gms.games.PlayersClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.rajatgoyal.puzzle15.R;
+import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -29,6 +30,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 	private AchievementsClient achievementsClient;
 	private PlayersClient playersClient;
 
+	private AchievementHandler achievementHandler;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,6 +41,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private void init() {
 		SharedPref.init(this);
+		achievementHandler = new AchievementHandler();
 
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 				.requestServerAuthCode(getString(R.string.default_web_client_id))
@@ -140,5 +144,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	protected PlayersClient getPlayersClient() {
 		return playersClient;
+	}
+
+	protected AchievementHandler getAchievementHandler() {
+		return achievementHandler;
 	}
 }
