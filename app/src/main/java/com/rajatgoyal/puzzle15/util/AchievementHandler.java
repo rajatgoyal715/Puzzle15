@@ -28,7 +28,7 @@ public class AchievementHandler {
 		});
 	}
 
-	public void checkPlayedGames(Activity activity) {
+	public void unlockPlayedGamesAchievements(Activity activity) {
 		if(this.client == null) {
 			Timber.d("Please login first");
 			return;
@@ -37,5 +37,9 @@ public class AchievementHandler {
 		if (playedGames >= 1) {
 			unlockOnUIThread(activity, R.string.achievement_play_your_first_game);
 		}
+	}
+
+	public void unlockRulesAChievements(Activity activity) {
+		unlockOnUIThread(activity, R.string.achievement_knower);
 	}
 }

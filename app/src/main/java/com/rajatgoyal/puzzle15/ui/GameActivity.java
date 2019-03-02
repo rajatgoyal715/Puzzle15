@@ -22,7 +22,6 @@ import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.GameMatrix;
 import com.rajatgoyal.puzzle15.model.Time;
-import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.Locale;
@@ -87,7 +86,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             startTimer(0);
 
             SharedPref.incrementPlayedGames();
-            getAchievementHandler().checkPlayedGames(this);
+            getAchievementHandler().unlockPlayedGamesAchievements(this);
 
             int playedGames = SharedPref.getPlayedGames();
             Toast.makeText(this, "Played: " + playedGames, Toast.LENGTH_SHORT).show();

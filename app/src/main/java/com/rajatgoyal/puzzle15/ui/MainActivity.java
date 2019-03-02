@@ -283,5 +283,7 @@ public class MainActivity extends BaseActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+
+        getAchievementHandler().unlockRulesAChievements(this);
     }
 }
