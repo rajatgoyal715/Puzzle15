@@ -41,7 +41,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 	private void init() {
 		SharedPref.init(this);
-		achievementHandler = new AchievementHandler();
 
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 				.requestServerAuthCode(getString(R.string.default_web_client_id))
@@ -132,6 +131,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 		}
 		achievementsClient = Games.getAchievementsClient(this, signedInAccount);
 		playersClient = Games.getPlayersClient(this, signedInAccount);
+		achievementHandler = new AchievementHandler(achievementsClient);
 	}
 
 	protected void onDisconnected() {

@@ -87,7 +87,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             startTimer(0);
 
             SharedPref.incrementPlayedGames();
-            getAchievementHandler().checkPlayedGames(getAchievementsClient(), this);
+            getAchievementHandler().checkPlayedGames(this);
 
             int playedGames = SharedPref.getPlayedGames();
             Toast.makeText(this, "Played: " + playedGames, Toast.LENGTH_SHORT).show();
