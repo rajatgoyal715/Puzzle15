@@ -22,6 +22,7 @@ import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.GameMatrix;
 import com.rajatgoyal.puzzle15.model.Time;
+import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.Locale;
@@ -85,11 +86,14 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             updateMoves(0);
             startTimer(0);
 
+            // increment number of played games
             SharedPref.incrementPlayedGames();
-            getAchievementHandler().unlockPlayedGamesAchievements(this);
-
             int playedGames = SharedPref.getPlayedGames();
             Toast.makeText(this, "Played: " + playedGames, Toast.LENGTH_SHORT).show();
+
+            // check if any achievement is unlocked
+            AchievementHandler achievementHandler = getAchievementHandler();
+            if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
         }
 
     }
@@ -225,9 +229,14 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void wonGame() {
+        // increment number of completed games
         SharedPref.incrementCompletedGames();
         int completedGames = SharedPref.getCompletedGames();
         Toast.makeText(this, "Completed: " + completedGames, Toast.LENGTH_SHORT).show();
+
+        // check if any achievement is unlocked
+        AchievementHandler achievementHandler = getAchievementHandler();
+        if (achievementHandler != null) achievementHandler.unlockCompletedGamesAchievements(this);
 
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);

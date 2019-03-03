@@ -23,6 +23,7 @@ import com.rajatgoyal.puzzle15.model.HighScore;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
 import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
+import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.ArrayList;
@@ -284,6 +285,7 @@ public class MainActivity extends BaseActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
 
-        getAchievementHandler().unlockRulesAChievements(this);
+        AchievementHandler achievementHandler = getAchievementHandler();
+        if (achievementHandler != null) achievementHandler.unlockRulesAchievements(this);
     }
 }
