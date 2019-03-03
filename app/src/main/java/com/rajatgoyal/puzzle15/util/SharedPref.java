@@ -12,7 +12,6 @@ public class SharedPref {
 
     private static final String GAME_PREF = "GAME_PREF";
     private static final String PLAYED_GAMES = "PLAYED_GAMES";
-    private static final String GAME_MATRIX_SIZE = "GAME_MATRIX_SIZE";
     private static final String GAME_MATRIX = "GAME_MATRIX";
     private static final String GAME_MOVES = "GAME_MOVES";
     private static final String GAME_TIME = "GAME_TIME";
