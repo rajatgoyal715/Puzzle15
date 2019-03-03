@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        long prevGameTime = SharedPref.getGameTime();
-        if (prevGameTime > 0) {
+        boolean resumeGame = SharedPref.getResumeGame();
+        if (resumeGame) {
             resumeBtn.setVisibility(View.VISIBLE);
         } else {
             resumeBtn.setVisibility(View.GONE);
@@ -243,8 +243,8 @@ public class MainActivity extends AppCompatActivity {
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long prevGameTime = SharedPref.getGameTime();
-                if (prevGameTime > 0) {
+                boolean resumeGame = SharedPref.getResumeGame();
+                if (resumeGame) {
                     Resources resources = getResources();
 
                     String dialogTitle = resources.getString(R.string.restart_game);

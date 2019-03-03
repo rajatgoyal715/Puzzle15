@@ -87,6 +87,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             startTimer(0);
         }
 
+        if (!resumeGame) {
+            SharedPref.setResumeGame(true);
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -226,7 +229,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mp.start();
 
         // invalidate save game data
-        SharedPref.setGameTime(0);
+        SharedPref.setResumeGame(false);
 
         // stop the timer
         gameOver = true;
