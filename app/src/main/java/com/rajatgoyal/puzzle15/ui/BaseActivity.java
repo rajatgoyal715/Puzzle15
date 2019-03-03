@@ -52,8 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		if (isSignedIn()) return;
 		signInSilently();
 	}
 
@@ -132,6 +130,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 		achievementsClient = Games.getAchievementsClient(this, signedInAccount);
 		playersClient = Games.getPlayersClient(this, signedInAccount);
 		achievementHandler = new AchievementHandler(achievementsClient);
+
+		Games.getGamesClient(this, signedInAccount).setViewForPopups(findViewById(R.id.gps_popup));
 	}
 
 	protected void onDisconnected() {

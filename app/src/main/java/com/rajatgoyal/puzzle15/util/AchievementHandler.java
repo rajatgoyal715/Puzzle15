@@ -1,6 +1,7 @@
 package com.rajatgoyal.puzzle15.util;
 
 import android.app.Activity;
+import android.widget.Toast;
 
 import com.google.android.gms.games.AchievementsClient;
 import com.rajatgoyal.puzzle15.R;
@@ -35,6 +36,7 @@ public class AchievementHandler {
 
 	private void unlockOnUIThread(final Activity activity, final int achievementId) {
         if (this.client == null) {
+            Toast.makeText(activity, "Achievement Client is null.", Toast.LENGTH_SHORT).show();
             Timber.d("Please login first");
             return;
         }
@@ -49,6 +51,7 @@ public class AchievementHandler {
 
 	private void incrementAchievement(final Activity activity, final int achievementId) {
         if (this.client == null) {
+            Toast.makeText(activity, "Achievement Client is null.", Toast.LENGTH_SHORT).show();
             Timber.d("Please login first");
             return;
         }

@@ -81,7 +81,7 @@ public class GameMatrix {
         this.size = size;
         this.matrix = new int[size][size];
         fillSeriesMatrix();
-        shuffleMatrix();
+//        shuffleMatrix();
         validateMatrix();
     }
 

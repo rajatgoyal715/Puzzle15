@@ -94,6 +94,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             // check if any achievement is unlocked
             AchievementHandler achievementHandler = getAchievementHandler();
             if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
+            else Toast.makeText(this, "Achievement Handler is null.", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -237,6 +238,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         // check if any achievement is unlocked
         AchievementHandler achievementHandler = getAchievementHandler();
         if (achievementHandler != null) achievementHandler.unlockCompletedGamesAchievements(this);
+        else Toast.makeText(this, "Achievement Handler is null.", Toast.LENGTH_SHORT).show();
 
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
