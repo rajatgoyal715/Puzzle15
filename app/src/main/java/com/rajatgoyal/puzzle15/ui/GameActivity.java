@@ -85,9 +85,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateBoard(new GameMatrix(size));
             updateMoves(0);
             startTimer(0);
-        }
-
-        if (!resumeGame) {
             SharedPref.setResumeGame(true);
         }
     }
