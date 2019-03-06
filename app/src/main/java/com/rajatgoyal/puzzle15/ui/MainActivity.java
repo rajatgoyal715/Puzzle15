@@ -253,6 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            SharedPref.setResumeGame(false);
                             startGameActivity();
                         }
                     };
