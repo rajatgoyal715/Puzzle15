@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         resumeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startGameActivity(true);
+                startGameActivity();
             }
         });
 
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            startGameActivity(false);
+                            startGameActivity();
                         }
                     };
                     DialogInterface.OnClickListener noListener = new DialogInterface.OnClickListener() {
@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                     showAlert(dialogTitle, dialogYesText, yesListener, dialogNoText, noListener);
 
                 } else {
-                    startGameActivity(false);
+                    startGameActivity();
                 }
 
             }
@@ -297,11 +297,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startGameActivity(boolean resume) {
+    public void startGameActivity() {
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("highScoreMoves", latestHighScore.getMoves());
         intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
-        intent.putExtra("resumeGame", resume);
         startActivity(intent);
     }
 

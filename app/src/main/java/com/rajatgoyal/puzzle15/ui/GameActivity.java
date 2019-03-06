@@ -69,14 +69,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Timber.d("onCreate: ");
 
         Intent intent = getIntent();
-        boolean resumeGame = true;
         if (intent != null) {
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
-            resumeGame = intent.getBooleanExtra("resumeGame", true);
         }
 
         init();
+
+        boolean resumeGame = SharedPref.getResumeGame();
         if (resumeGame) {
             updateBoard(SharedPref.getGameMatrix());
             updateMoves(SharedPref.getMoves());
