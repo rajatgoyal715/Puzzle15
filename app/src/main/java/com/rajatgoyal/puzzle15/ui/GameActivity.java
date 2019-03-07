@@ -76,7 +76,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         init();
 
-        boolean resumeGame = SharedPref.getResumeGame();
+        boolean resumeGame = SharedPref.getResumeFlag();
         if (resumeGame) {
             updateBoard(SharedPref.getGameMatrix());
             updateMoves(SharedPref.getMoves());
@@ -85,7 +85,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateBoard(new GameMatrix(size));
             updateMoves(0);
             startTimer(0);
-            SharedPref.setResumeGame(true);
+            SharedPref.setResumeFlag(true);
         }
     }
 
@@ -226,7 +226,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mp.start();
 
         // invalidate save game data
-        SharedPref.setResumeGame(false);
+        SharedPref.setResumeFlag(false);
 
         // stop the timer
         gameOver = true;

@@ -15,7 +15,7 @@ public class SharedPref {
     private static final String GAME_MATRIX = "GAME_MATRIX";
     private static final String GAME_MOVES = "GAME_MOVES";
     private static final String GAME_TIME = "GAME_TIME";
-    private static final String RESUME_GAME = "RESUME_GAME";
+    private static final String RESUME_FLAG = "RESUME_FLAG";
 
 
     private static SharedPreferences gamePref;
@@ -96,11 +96,11 @@ public class SharedPref {
         gamePref.edit().putLong(GAME_TIME, gameTime).apply();
     }
 
-    public static boolean getResumeGame() {
-        return gamePref.getBoolean(RESUME_GAME, false);
+    public static boolean getResumeFlag() {
+        return gamePref.getBoolean(RESUME_FLAG, false);
     }
 
-    public static void setResumeGame(boolean resumeGame) {
-        gamePref.edit().putBoolean(RESUME_GAME, resumeGame).apply();
+    public static void setResumeFlag(boolean resumeFlag) {
+        gamePref.edit().putBoolean(RESUME_FLAG, resumeFlag).apply();
     }
 }

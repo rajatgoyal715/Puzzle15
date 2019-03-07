@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        boolean resumeGame = SharedPref.getResumeGame();
+        boolean resumeGame = SharedPref.getResumeFlag();
         if (resumeGame) {
             resumeBtn.setVisibility(View.VISIBLE);
         } else {
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         newGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean resumeGame = SharedPref.getResumeGame();
+                boolean resumeGame = SharedPref.getResumeFlag();
                 if (resumeGame) {
                     Resources resources = getResources();
 
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     DialogInterface.OnClickListener yesListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            SharedPref.setResumeGame(false);
+                            SharedPref.setResumeFlag(false);
                             startGameActivity();
                         }
                     };
