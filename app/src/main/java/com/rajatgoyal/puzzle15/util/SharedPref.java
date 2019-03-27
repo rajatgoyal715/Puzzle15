@@ -11,6 +11,7 @@ import com.rajatgoyal.puzzle15.model.GameMatrix;
 public class SharedPref {
     private static final String GAME_PREF = "GAME_PREF";
     private static final String PLAYED_GAMES = "PLAYED_GAMES";
+    private static final String COMPLETED_GAMES = "COMPLETED_GAMES";
     private static final String GAME_MATRIX = "GAME_MATRIX";
     private static final String GAME_MOVES = "GAME_MOVES";
     private static final String GAME_TIME = "GAME_TIME";
@@ -57,7 +58,6 @@ public class SharedPref {
 
 	/**
 	 * Increment number of completed games
-	 * @return number of completed games after increment
 	 */
 	public static void incrementCompletedGames() {
 		int alreadyCompletedGames = getCompletedGames();
