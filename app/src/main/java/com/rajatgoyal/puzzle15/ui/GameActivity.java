@@ -69,14 +69,14 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         Timber.d("onCreate: ");
 
         Intent intent = getIntent();
-        boolean resumeGame = true;
         if (intent != null) {
             highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
             highScoreTime = intent.getIntExtra("highScoreTime", 0);
-            resumeGame = intent.getBooleanExtra("resumeGame", true);
         }
 
         init();
+
+        boolean resumeGame = SharedPref.getResumeFlag();
         if (resumeGame) {
             updateBoard(SharedPref.getGameMatrix());
             updateMoves(SharedPref.getMoves());
@@ -85,6 +85,8 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             updateBoard(new GameMatrix(size));
             updateMoves(0);
             startTimer(0);
+
+            SharedPref.setResumeFlag(true);
 
             // increment number of played games
             SharedPref.incrementPlayedGames();
@@ -96,7 +98,6 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
             else Toast.makeText(this, "Achievement Handler is null.", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -249,7 +250,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         mp.start();
 
         // invalidate save game data
-        SharedPref.setGameTime(0);
+        SharedPref.setResumeFlag(false);
 
         // stop the timer
         gameOver = true;
