@@ -21,7 +21,7 @@ import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
-public abstract class BaseActivity extends AppCompatActivity {
+abstract class BaseActivity extends AppCompatActivity {
 
 	private GoogleSignInClient googleSignInClient = null;
 	private static final int RC_SIGN_IN = 9001;
