@@ -17,6 +17,7 @@ import com.google.android.gms.games.Player;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.adapter.HighScoresAdapter;
 import com.rajatgoyal.puzzle15.model.HighScore;
@@ -33,6 +34,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 /**
  * Created by rajat on 15/9/17.
@@ -91,7 +94,7 @@ public class MainActivity extends BaseActivity {
                     } else {
                         displayName = "???";
                     }
-                    Toast.makeText(MainActivity.this, displayName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, displayName, LENGTH_SHORT).show();
                 }
             });
     }
@@ -204,7 +207,8 @@ public class MainActivity extends BaseActivity {
 
     public void showAchievements() {
         if(!isSignedIn()) {
-            Toast.makeText(this, "Please signin first.", Toast.LENGTH_SHORT).show();
+            View layout = findViewById(R.id.main_layout);
+            Snackbar.make(layout, "Please sign in first", Snackbar.LENGTH_SHORT).show();
             return;
         }
         Games.getAchievementsClient(this, GoogleSignIn.getLastSignedInAccount(this))
@@ -245,7 +249,7 @@ public class MainActivity extends BaseActivity {
                 super.onPostExecute(highScores);
                 fillHighScores(highScores);
                 if (highScores == null) {
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.no_high_score), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getResources().getString(R.string.no_high_score), LENGTH_SHORT).show();
                 } else {
                     openDialog();
                 }
