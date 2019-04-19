@@ -1,11 +1,9 @@
 package com.rajatgoyal.puzzle15.task;
 
-import android.content.ContentProvider;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.model.HighScore;
@@ -20,6 +18,7 @@ import java.util.ArrayList;
 public class HighScoreFetchTask extends AsyncTask<Void, Void, ArrayList<HighScore>>{
 
     private Context context;
+    private static final int LIMIT = 10;
 
     public HighScoreFetchTask(Context context) {
         this.context = context;
@@ -29,14 +28,9 @@ public class HighScoreFetchTask extends AsyncTask<Void, Void, ArrayList<HighScor
     protected ArrayList<HighScore> doInBackground(Void... params) {
         Uri uri = GameContract.GameEntry.CONTENT_URI;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if(cursor == null) return null;
 
-        int count = cursor.getCount();
-
-        if (count == 0) {
-            return null;
-        }
-
-        ArrayList<HighScore> highScores = new ArrayList<>(cursor.getCount());
+        ArrayList<HighScore> highScores = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
@@ -44,7 +38,7 @@ public class HighScoreFetchTask extends AsyncTask<Void, Void, ArrayList<HighScor
                 int time_in_seconds = cursor.getInt(cursor.getColumnIndex(GameContract.GameEntry.COLUMN_TIME));
 
                 highScores.add(new HighScore(moves, new Time(time_in_seconds)));
-            } while (cursor.moveToNext());
+            } while (cursor.moveToNext() && highScores.size() < LIMIT);
         }
 
         cursor.close();

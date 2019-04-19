@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(ArrayList<HighScore> highScores) {
                 super.onPostExecute(highScores);
-                if (highScores == null) {
+                if (highScores == null || highScores.size() == 0) {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.no_high_score), Toast.LENGTH_SHORT).show();
                 } else {
                     openHighScoresDialog(highScores);
