@@ -272,8 +272,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button highscore = findViewById(R.id.high_score);
-        highscore.setOnClickListener(new View.OnClickListener() {
+        Button highScore = findViewById(R.id.high_score);
+        highScore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showHighScore();
