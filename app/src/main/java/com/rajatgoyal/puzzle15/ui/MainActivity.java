@@ -46,7 +46,6 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<HighScore> highScores;
     private HighScore latestHighScore;
 
     private GoogleSignInClient googleSignInClient = null;
@@ -324,21 +323,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(ArrayList<HighScore> highScores) {
                 super.onPostExecute(highScores);
-                fillHighScores(highScores);
                 if (highScores == null) {
                     Toast.makeText(MainActivity.this, getResources().getString(R.string.no_high_score), Toast.LENGTH_SHORT).show();
                 } else {
-                    openDialog();
+                    openHighScoresDialog(highScores);
                 }
             }
         }.execute();
     }
 
-    private void fillHighScores(ArrayList<HighScore> highScores) {
-        this.highScores = highScores;
-    }
-
-    public void openDialog() {
+    public void openHighScoresDialog(ArrayList<HighScore> highScores) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.dialog_high_score, null);
 
