@@ -42,6 +42,9 @@ import static android.widget.Toast.LENGTH_SHORT;
  */
 
 public class MainActivity extends BaseActivity {
+
+    private static final int RC_GAMES_ACHIEVEMENTS = 9003;
+
     private ArrayList<HighScore> highScores;
     private HighScore latestHighScore;
 
@@ -216,7 +219,7 @@ public class MainActivity extends BaseActivity {
             .addOnSuccessListener(new OnSuccessListener<Intent>() {
                 @Override
                 public void onSuccess(Intent intent) {
-                    startActivityForResult(intent, 9003);
+                    startActivityForResult(intent, RC_GAMES_ACHIEVEMENTS);
                 }
             });
     }
