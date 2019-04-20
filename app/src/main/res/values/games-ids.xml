@@ -8,36 +8,48 @@ Save this file as res/values/games-ids.xml in your project.
     <string name="app_id" translatable="false">205774853151</string>
     <!-- package_name -->
     <string name="package_name" translatable="false">com.rajatgoyal.puzzle15</string>
-    <!-- achievement Play your first game -->
-    <string name="achievement_play_your_first_game" translatable="false">CgkIn6iMyf4FEAIQAQ</string>
     <!-- achievement Knower -->
     <string name="achievement_knower" translatable="false">CgkIn6iMyf4FEAIQAg</string>
-    <!-- achievement 5 Games -->
-    <string name="achievement_5_games" translatable="false">CgkIn6iMyf4FEAIQAw</string>
-    <!-- achievement 10 Games -->
-    <string name="achievement_10_games" translatable="false">CgkIn6iMyf4FEAIQBA</string>
-    <!-- achievement 15 Games -->
-    <string name="achievement_15_games" translatable="false">CgkIn6iMyf4FEAIQBQ</string>
-    <!-- achievement Complete a game within 5 minutes -->
-    <string name="achievement_complete_a_game_within_5_minutes" translatable="false">CgkIn6iMyf4FEAIQBg</string>
-    <!-- achievement Complete a game within 2 minutes -->
-    <string name="achievement_complete_a_game_within_2_minutes" translatable="false">CgkIn6iMyf4FEAIQBw</string>
-    <!-- achievement Complete a game within 1 minute 30 seconds -->
-    <string name="achievement_complete_a_game_within_1_minute_30_seconds" translatable="false">CgkIn6iMyf4FEAIQCA</string>
-    <!-- achievement Complete a game within 1 minute -->
-    <string name="achievement_complete_a_game_within_1_minute" translatable="false">CgkIn6iMyf4FEAIQCQ</string>
-    <!-- achievement Complete a game within 300 moves -->
-    <string name="achievement_complete_a_game_within_300_moves" translatable="false">CgkIn6iMyf4FEAIQCg</string>
-    <!-- achievement Complete a game within 250 moves -->
-    <string name="achievement_complete_a_game_within_250_moves" translatable="false">CgkIn6iMyf4FEAIQCw</string>
-    <!-- achievement Complete a game within 200 moves -->
-    <string name="achievement_complete_a_game_within_200_moves" translatable="false">CgkIn6iMyf4FEAIQDA</string>
-    <!-- achievement Complete a game within 150 moves -->
-    <string name="achievement_complete_a_game_within_150_moves" translatable="false">CgkIn6iMyf4FEAIQDQ</string>
-    <!-- achievement Complete a game within 100 moves -->
-    <string name="achievement_complete_a_game_within_100_moves" translatable="false">CgkIn6iMyf4FEAIQDg</string>
-    <!-- achievement Complete 20 games -->
-    <string name="achievement_complete_20_games" translatable="false">CgkIn6iMyf4FEAIQDw</string>
+    <!-- achievement Newbie -->
+    <string name="achievement_newbie" translatable="false">CgkIn6iMyf4FEAIQAQ</string>
+    <!-- achievement Novice · 1 Game -->
+    <string name="achievement_novice__1_game" translatable="false">CgkIn6iMyf4FEAIQEw</string>
+    <!-- achievement Beginner · 5 Games -->
+    <string name="achievement_beginner__5_games" translatable="false">CgkIn6iMyf4FEAIQAw</string>
+    <!-- achievement Skilled · 10 Games -->
+    <string name="achievement_skilled__10_games" translatable="false">CgkIn6iMyf4FEAIQBA</string>
+    <!-- achievement Proficient · 15 Games -->
+    <string name="achievement_proficient__15_games" translatable="false">CgkIn6iMyf4FEAIQBQ</string>
+    <!-- achievement Experienced · 20 games -->
+    <string name="achievement_experienced__20_games" translatable="false">CgkIn6iMyf4FEAIQDw</string>
+    <!-- achievement Advanced · 30 Games -->
+    <string name="achievement_advanced__30_games" translatable="false">CgkIn6iMyf4FEAIQFQ</string>
+    <!-- achievement Expert · 50 Games -->
+    <string name="achievement_expert__50_games" translatable="false">CgkIn6iMyf4FEAIQFg</string>
+    <!-- achievement Master · 80 Games -->
+    <string name="achievement_master__80_games" translatable="false">CgkIn6iMyf4FEAIQFw</string>
+    <!-- achievement Legend · 100 Games -->
+    <string name="achievement_legend__100_games" translatable="false">CgkIn6iMyf4FEAIQFA</string>
+    <!-- achievement Snail · 10 min -->
+    <string name="achievement_snail__10_min" translatable="false">CgkIn6iMyf4FEAIQEg</string>
+    <!-- achievement Tortoise · 5 min -->
+    <string name="achievement_tortoise__5_min" translatable="false">CgkIn6iMyf4FEAIQBg</string>
+    <!-- achievement Rabbit · 2 min -->
+    <string name="achievement_rabbit__2_min" translatable="false">CgkIn6iMyf4FEAIQBw</string>
+    <!-- achievement Deer · 1 min 30 secs -->
+    <string name="achievement_deer__1_min_30_secs" translatable="false">CgkIn6iMyf4FEAIQCA</string>
+    <!-- achievement Cheetah · 1 min -->
+    <string name="achievement_cheetah__1_min" translatable="false">CgkIn6iMyf4FEAIQCQ</string>
+    <!-- achievement Wood · 300 Moves -->
+    <string name="achievement_wood__300_moves" translatable="false">CgkIn6iMyf4FEAIQCg</string>
+    <!-- achievement Copper · 250 Moves -->
+    <string name="achievement_copper__250_moves" translatable="false">CgkIn6iMyf4FEAIQCw</string>
+    <!-- achievement Silver · 200 Moves -->
+    <string name="achievement_silver__200_moves" translatable="false">CgkIn6iMyf4FEAIQDA</string>
+    <!-- achievement Gold · 150 Moves -->
+    <string name="achievement_gold__150_moves" translatable="false">CgkIn6iMyf4FEAIQDQ</string>
+    <!-- achievement Diamond · 100 Moves -->
+    <string name="achievement_diamond__100_moves" translatable="false">CgkIn6iMyf4FEAIQDg</string>
     <!-- leaderboard Time Leaderboard -->
     <string name="leaderboard_time_leaderboard" translatable="false">CgkIn6iMyf4FEAIQEA</string>
     <!-- leaderboard Moves Leaderboard -->

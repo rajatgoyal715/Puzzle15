@@ -22,19 +22,19 @@ import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.GameMatrix;
 import com.rajatgoyal.puzzle15.model.Time;
+import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
 /**
  * Created by rajat on 15/9/17.
  */
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+public class GameActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int size = 4;
     private int moves;
@@ -85,7 +85,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateBoard(new GameMatrix(size));
             updateMoves(0);
             startTimer(0);
+
             SharedPref.setResumeFlag(true);
+
+            // increment number of played games
+            SharedPref.incrementPlayedGames();
+            int playedGames = SharedPref.getPlayedGames();
+            Timber.d("Played Games: " + playedGames);
+
+            // check if any achievement is unlocked
+            AchievementHandler achievementHandler = getAchievementHandler();
+            if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
+            else {
+                Timber.d("Achievement Handler is null");
+            }
         }
     }
 
@@ -133,7 +146,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         id[3][2] = R.id.btn32;
         id[3][3] = R.id.btn33;
     }
-
 
     /**
      * Update the board according to the matrix
@@ -221,6 +233,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void wonGame() {
+        // increment number of completed games
+        SharedPref.incrementCompletedGames();
+        int completedGames = SharedPref.getCompletedGames();
+        Timber.d("Completed games: " + completedGames);
+
+        // check if any achievement is unlocked
+        AchievementHandler achievementHandler = getAchievementHandler();
+        if (achievementHandler != null) {
+            achievementHandler.unlockCompletedGamesAchievements(this);
+            achievementHandler.unlockTimeBasedAchievements(this, currTime.toSeconds());
+            achievementHandler.unlockMovesBasedAchievements(this, moves);
+        } else {
+            Timber.d("Achievement Handler is null.");
+        }
+
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
         mp.start();
@@ -359,7 +386,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void makeMove(int rowMove, int colMove) {
         // abs sum ensures that only one of the rowMove or colMove is 1 or -1
         if (Math.abs(rowMove) + Math.abs(colMove) != 1) return;
-      
         int newEmptyRowIndex = gameMatrix.getEmptyCellRow() + rowMove;
         int newEmptyColIndex = gameMatrix.getEmptyCellCol() + colMove;
 
