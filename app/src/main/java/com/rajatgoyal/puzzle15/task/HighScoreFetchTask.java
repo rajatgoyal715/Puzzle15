@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.rajatgoyal.puzzle15.data.GameContract;
-import com.rajatgoyal.puzzle15.model.HighScore;
+import com.rajatgoyal.puzzle15.model.GamePlay;
 import com.rajatgoyal.puzzle15.model.Time;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Created by rajat on 15/9/17.
  */
 
-public class HighScoreFetchTask extends AsyncTask<Void, Void, ArrayList<HighScore>>{
+public class HighScoreFetchTask extends AsyncTask<Void, Void, ArrayList<GamePlay>> {
 
     private Context context;
     private static final int LIMIT = 10;
@@ -25,23 +25,24 @@ public class HighScoreFetchTask extends AsyncTask<Void, Void, ArrayList<HighScor
     }
 
     @Override
-    protected ArrayList<HighScore> doInBackground(Void... params) {
+    protected ArrayList<GamePlay> doInBackground(Void... params) {
         Uri uri = GameContract.GameEntry.CONTENT_URI;
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        String sortOrder = GameContract.GameEntry.COLUMN_SCORE + " DESC";
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, sortOrder);
         if(cursor == null) return null;
 
-        ArrayList<HighScore> highScores = new ArrayList<>();
+        ArrayList<GamePlay> gamePlays = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
                 int moves = cursor.getInt(cursor.getColumnIndex(GameContract.GameEntry.COLUMN_MOVES));
                 int time_in_seconds = cursor.getInt(cursor.getColumnIndex(GameContract.GameEntry.COLUMN_TIME));
 
-                highScores.add(new HighScore(moves, new Time(time_in_seconds)));
-            } while (cursor.moveToNext() && highScores.size() < LIMIT);
+                gamePlays.add(new GamePlay(moves, new Time(time_in_seconds)));
+            } while (cursor.moveToNext() && gamePlays.size() < LIMIT);
         }
 
         cursor.close();
-        return highScores;
+        return gamePlays;
     }
 }
