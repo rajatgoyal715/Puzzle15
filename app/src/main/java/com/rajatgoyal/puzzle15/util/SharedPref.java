@@ -9,14 +9,13 @@ import com.rajatgoyal.puzzle15.model.GameMatrix;
  * Created by rajatgoyal715 on 6/2/19.
  */
 public class SharedPref {
-
     private static final String GAME_PREF = "GAME_PREF";
     private static final String PLAYED_GAMES = "PLAYED_GAMES";
+    private static final String COMPLETED_GAMES = "COMPLETED_GAMES";
     private static final String GAME_MATRIX = "GAME_MATRIX";
     private static final String GAME_MOVES = "GAME_MOVES";
     private static final String GAME_TIME = "GAME_TIME";
     private static final String RESUME_FLAG = "RESUME_FLAG";
-
 
     private static SharedPreferences gamePref;
 
@@ -24,6 +23,7 @@ public class SharedPref {
     }
 
     public static void init(Context context) {
+    	if (gamePref != null) return;
         gamePref = context.getSharedPreferences(GAME_PREF, Context.MODE_PRIVATE);
     }
 
@@ -34,7 +34,7 @@ public class SharedPref {
      *
      * @return number of played games
      */
-    private static int getPlayedGames() {
+    public static int getPlayedGames() {
         return gamePref.getInt(PLAYED_GAMES, 0);
     }
 
@@ -46,6 +46,24 @@ public class SharedPref {
         SharedPreferences.Editor editor = gamePref.edit();
         editor.putInt(PLAYED_GAMES, alreadyPlayedGames + 1);
         editor.apply();
+    }
+
+	/**
+	 * Get number of already completed games using gamePref
+	 * @return number of completed games
+	 */
+	public static int getCompletedGames() {
+		return gamePref.getInt(COMPLETED_GAMES, 0);
+	}
+
+	/**
+	 * Increment number of completed games
+	 */
+	public static void incrementCompletedGames() {
+		int alreadyCompletedGames = getCompletedGames();
+		SharedPreferences.Editor editor = gamePref.edit();
+		editor.putInt(COMPLETED_GAMES, alreadyCompletedGames + 1);
+		editor.apply();
     }
 
     /**

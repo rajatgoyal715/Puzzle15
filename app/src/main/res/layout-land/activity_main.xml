@@ -87,6 +87,17 @@
                 android:textColor="@color/background"
                 android:textSize="20sp" />
 
+            <Button
+                android:id="@+id/view_achievements"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="2dp"
+                android:background="@color/light"
+                android:text="@string/view_achievements"
+                android:textAllCaps="false"
+                android:textColor="@color/background"
+                android:textSize="20sp" />
+
         </LinearLayout>
 
     </LinearLayout>
