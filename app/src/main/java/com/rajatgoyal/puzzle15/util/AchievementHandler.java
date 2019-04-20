@@ -89,8 +89,8 @@ public class AchievementHandler {
         if (completedGames >= 1) {
             unlockOnUIThread(activity, COMPLETED_IDS[0]);
         }
-        for (int id = 0; id < COMPLETED_IDS.length; id++) {
-            incrementAchievement(activity, COMPLETED_IDS[id]);
+        for (int completedId : COMPLETED_IDS) {
+            incrementAchievement(activity, completedId);
         }
     }
 
