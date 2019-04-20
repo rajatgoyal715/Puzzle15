@@ -91,12 +91,14 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             // increment number of played games
             SharedPref.incrementPlayedGames();
             int playedGames = SharedPref.getPlayedGames();
-            Toast.makeText(this, "Played: " + playedGames, Toast.LENGTH_SHORT).show();
+            Timber.d("Played Games: " + playedGames);
 
             // check if any achievement is unlocked
             AchievementHandler achievementHandler = getAchievementHandler();
             if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
-            else Toast.makeText(this, "Achievement Handler is null.", Toast.LENGTH_SHORT).show();
+            else {
+                Timber.d("Achievement Handler is null");
+            }
         }
     }
 
@@ -234,7 +236,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         // increment number of completed games
         SharedPref.incrementCompletedGames();
         int completedGames = SharedPref.getCompletedGames();
-        Toast.makeText(this, "Completed: " + completedGames, Toast.LENGTH_SHORT).show();
+        Timber.d("Completed games: " + completedGames);
 
         // check if any achievement is unlocked
         AchievementHandler achievementHandler = getAchievementHandler();
@@ -242,8 +244,9 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             achievementHandler.unlockCompletedGamesAchievements(this);
             achievementHandler.unlockTimeBasedAchievements(this, currTime.toSeconds());
             achievementHandler.unlockMovesBasedAchievements(this, moves);
+        } else {
+            Timber.d("Achievement Handler is null.");
         }
-        else Toast.makeText(this, "Achievement Handler is null.", Toast.LENGTH_SHORT).show();
 
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
