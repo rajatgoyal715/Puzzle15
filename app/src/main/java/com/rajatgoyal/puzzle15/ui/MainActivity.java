@@ -251,8 +251,9 @@ public class MainActivity extends BaseActivity {
             protected void onPostExecute(ArrayList<HighScore> highScores) {
                 super.onPostExecute(highScores);
                 fillHighScores(highScores);
-                if (highScores == null) {
-                    Toast.makeText(MainActivity.this, getResources().getString(R.string.no_high_score), LENGTH_SHORT).show();
+                if (highScores == null || highScores.size() == 0) {
+                    View layout = findViewById(R.id.main_layout);
+                    Snackbar.make(layout, "Please sign in first", Snackbar.LENGTH_SHORT).show();
                 } else {
                     openDialog();
                 }
