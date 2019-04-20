@@ -25,7 +25,7 @@
         <activity android:name=".ui.GameActivity" />
 
         <provider
-            android:authorities="com.rajatgoyal.puzzle15"
+            android:authorities="${applicationId}.provider"
             android:name=".data.GameContentProvider"
             android:exported="false" />
 
