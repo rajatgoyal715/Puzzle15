@@ -253,7 +253,7 @@ public class MainActivity extends BaseActivity {
                 fillHighScores(highScores);
                 if (highScores == null || highScores.size() == 0) {
                     View layout = findViewById(R.id.main_layout);
-                    Snackbar.make(layout, "Please sign in first", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(layout, "No high scores yet", Snackbar.LENGTH_SHORT).show();
                 } else {
                     openDialog();
                 }
