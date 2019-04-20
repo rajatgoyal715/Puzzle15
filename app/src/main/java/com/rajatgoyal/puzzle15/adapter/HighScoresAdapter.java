@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.rajatgoyal.puzzle15.R;
-import com.rajatgoyal.puzzle15.model.HighScore;
+import com.rajatgoyal.puzzle15.model.GamePlay;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -18,23 +20,26 @@ import java.util.ArrayList;
 
 public class HighScoresAdapter extends RecyclerView.Adapter<HighScoresAdapter.HighScoreViewHolder> {
 
-    private ArrayList<HighScore> highScores;
+    private ArrayList<GamePlay> gamePlays;
     private int count;
-    private Context context;
 
+    @NotNull
     @Override
-    public HighScoreViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context = parent.getContext();
+    public HighScoreViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.high_score_list_item, parent, false);
         return new HighScoreViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(HighScoreViewHolder holder, int position) {
-        position = count - 1 - position;
-        String movesString = Integer.toString(highScores.get(position).getMoves());
+    public void onBindViewHolder(@NotNull HighScoreViewHolder holder, int position) {
+        GamePlay gamePlay = gamePlays.get(position);
+        String movesString = Integer.toString(gamePlay.getMoves());
+        String scoreString = Integer.toString(gamePlay.getScore());
+
+        holder.score.setText(scoreString);
         holder.moves.setText(movesString);
-        holder.timer.setText(highScores.get(position).getTime().toString());
+        holder.timer.setText(gamePlay.getTime().toString());
     }
 
     @Override
@@ -42,20 +47,21 @@ public class HighScoresAdapter extends RecyclerView.Adapter<HighScoresAdapter.Hi
         return count;
     }
 
-    public void setHighScores(ArrayList<HighScore> highScores) {
-        this.highScores = highScores;
-        this.count = highScores.size();
+    public void setHighScores(ArrayList<GamePlay> gamePlays) {
+        this.gamePlays = gamePlays;
+        this.count = gamePlays.size();
     }
 
     class HighScoreViewHolder extends RecyclerView.ViewHolder {
 
-        TextView moves, timer;
+        TextView moves, timer, score;
 
-        public HighScoreViewHolder(View itemView) {
+        HighScoreViewHolder(View itemView) {
             super(itemView);
 
-            moves = (TextView) itemView.findViewById(R.id.moves_hs);
-            timer = (TextView) itemView.findViewById(R.id.timer_hs);
+            moves = itemView.findViewById(R.id.moves_hs);
+            timer = itemView.findViewById(R.id.timer_hs);
+            score = itemView.findViewById(R.id.score);
         }
     }
 }

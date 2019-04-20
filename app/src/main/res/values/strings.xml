@@ -22,6 +22,7 @@
     <string name="moves">Moves</string>
     <string name="time">Time</string>
 
+    <string name="score_label">Score : </string>
     <string name="moves_label">Moves : </string>
     <string name="time_label">Time : </string>
 

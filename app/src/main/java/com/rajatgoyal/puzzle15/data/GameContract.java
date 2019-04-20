@@ -14,16 +14,16 @@ public class GameContract {
 
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
-    public static final String PATH_HIGH_SCORES = "high_score";
+    public static final String PATH_GAME_PLAY = "GamePlay";
 
     public static final class GameEntry implements BaseColumns {
 
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_HIGH_SCORES).build();
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GAME_PLAY).build();
 
-        public static final String TABLE_NAME = "high_score";
+        public static final String TABLE_NAME = "GamePlay";
 
+        public static final String COLUMN_SCORE = "score";
         public static final String COLUMN_MOVES = "moves";
         public static final String COLUMN_TIME = "time";
-
     }
 }
