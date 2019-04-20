@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity {
                     } else {
                         displayName = "???";
                     }
-                    Toast.makeText(MainActivity.this, displayName, LENGTH_SHORT).show();
+                    Timber.d("User signed in with display name: " + displayName);
                 }
             });
     }
