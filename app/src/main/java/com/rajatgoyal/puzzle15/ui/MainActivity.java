@@ -240,7 +240,7 @@ public class MainActivity extends BaseActivity {
         highScoresList.setLayoutManager(layoutManager);
 
         HighScoresAdapter adapter = new HighScoresAdapter();
-        adapter.setHighScores(gamePlays);
+        adapter.setGamePlays(gamePlays);
 
         highScoresList.setAdapter(adapter);
 

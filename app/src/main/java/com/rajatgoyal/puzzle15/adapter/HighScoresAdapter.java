@@ -58,7 +58,7 @@ public class HighScoresAdapter extends RecyclerView.Adapter<HighScoresAdapter.Hi
         return count;
     }
 
-    public void setHighScores(ArrayList<GamePlay> gamePlays) {
+    public void setGamePlays(ArrayList<GamePlay> gamePlays) {
         this.gamePlays = gamePlays;
         this.count = gamePlays.size();
     }
