@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
@@ -91,14 +92,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             // increment number of played games
             SharedPref.incrementPlayedGames();
             int playedGames = SharedPref.getPlayedGames();
-            Timber.d("Played Games: " + playedGames);
-
-            // check if any achievement is unlocked
-            AchievementHandler achievementHandler = getAchievementHandler();
-            if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
-            else {
-                Timber.d("Achievement Handler is null");
-            }
+            Timber.d("Played Games: %s", playedGames);
         }
     }
 
@@ -123,6 +117,17 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
             }
         }
         prevTimeMillis = 0;
+    }
+
+    @Override
+    protected void onConnected(GoogleSignInAccount googleSignInAccount) {
+        super.onConnected(googleSignInAccount);
+
+        AchievementHandler achievementHandler = getAchievementHandler();
+        if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
+        else {
+            Timber.d("Achievement Handler is null");
+        }
     }
 
     public void fillIdMatrix(int[][] id) {
@@ -236,7 +241,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         // increment number of completed games
         SharedPref.incrementCompletedGames();
         int completedGames = SharedPref.getCompletedGames();
-        Timber.d("Completed games: " + completedGames);
+        Timber.d("Completed games: %s", completedGames);
 
         // check if any achievement is unlocked
         AchievementHandler achievementHandler = getAchievementHandler();
