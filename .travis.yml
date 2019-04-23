@@ -21,7 +21,7 @@ install:
     - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
 
 script:
-    - ./gradlew app:assembleDebug app:check
+    - ./gradlew build --stacktrace
 
 notifications:
     slack:
