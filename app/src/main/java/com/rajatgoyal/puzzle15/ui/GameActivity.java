@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +21,7 @@ import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.GameMatrix;
+import com.rajatgoyal.puzzle15.model.GamePlay;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
@@ -60,7 +60,6 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         }
     };
 
-    private int highScoreMoves, highScoreTime;
     private MediaPlayer clickMP;
 
     @Override
@@ -68,12 +67,6 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         Timber.d("onCreate: ");
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
-            highScoreTime = intent.getIntExtra("highScoreTime", 0);
-        }
 
         init();
 
@@ -264,11 +257,8 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         gameOver = true;
         handler.removeCallbacks(runnable);
 
-        // Compare with high score
-        if (isHighScore()) {
-            //show user that he got high score
-            addHighScore();
-        }
+        // save game play with moves, time and score
+        saveGamePlay();
 
         Toast.makeText(this, getResources().getString(R.string.game_won), Toast.LENGTH_LONG).show();
 
@@ -287,21 +277,17 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
         }, 2000);
     }
 
-    public boolean isHighScore() {
-        return (currTime.isLessThan(new Time(highScoreTime))) && (moves < highScoreMoves);
-    }
-
-    public void addHighScore() {
-        int moves = this.moves;
-        int time = currTime.toSeconds();
+    private void saveGamePlay() {
+        GamePlay gamePlay = new GamePlay(moves, currTime);
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(GameContract.GameEntry.COLUMN_MOVES, moves);
-        contentValues.put(GameContract.GameEntry.COLUMN_TIME, time);
+        contentValues.put(GameContract.GameEntry.COLUMN_SCORE, gamePlay.getScore());
+        contentValues.put(GameContract.GameEntry.COLUMN_MOVES, gamePlay.getMoves());
+        contentValues.put(GameContract.GameEntry.COLUMN_TIME, gamePlay.getTime().toSeconds());
 
         Uri uri = getContentResolver().insert(GameContract.GameEntry.CONTENT_URI, contentValues);
-        if (uri != null) {
-            Timber.d("addHighScore: High Score added");
+        if(uri != null) {
+            Timber.d("Game Play saved");
         }
     }
 

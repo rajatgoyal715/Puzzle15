@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -20,10 +19,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.adapter.HighScoresAdapter;
-import com.rajatgoyal.puzzle15.model.HighScore;
-import com.rajatgoyal.puzzle15.model.Time;
+import com.rajatgoyal.puzzle15.model.GamePlay;
 import com.rajatgoyal.puzzle15.task.HighScoreFetchTask;
-import com.rajatgoyal.puzzle15.task.LatestHighScoreFetchTask;
 import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
@@ -35,8 +32,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import timber.log.Timber;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
 /**
  * Created by rajat on 15/9/17.
  */
@@ -44,9 +39,6 @@ import static android.widget.Toast.LENGTH_SHORT;
 public class MainActivity extends BaseActivity {
 
     private static final int RC_GAMES_ACHIEVEMENTS = 9003;
-
-    private ArrayList<HighScore> highScores;
-    private HighScore latestHighScore;
 
     private Button signInSignOutButton, resumeBtn;
 
@@ -56,7 +48,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         init();
-        getLatestHighScore();
     }
 
     @Override
@@ -112,25 +103,6 @@ public class MainActivity extends BaseActivity {
         signInSignOutButton.setText(isSignedIn() ? R.string.signOut : R.string.signIn);
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public void getLatestHighScore() {
-        new LatestHighScoreFetchTask(this) {
-            @Override
-            protected void onPostExecute(HighScore highScore) {
-                super.onPostExecute(highScore);
-                setLatestHighScore(highScore);
-            }
-        }.execute();
-    }
-
-    public void setLatestHighScore(HighScore latestHighScore) {
-        if (latestHighScore == null) {
-            this.latestHighScore = new HighScore(Integer.MAX_VALUE, new Time(Integer.MAX_VALUE));
-        } else {
-            this.latestHighScore = latestHighScore;
-        }
-    }
-
     public void init() {
         resumeBtn = findViewById(R.id.resume_game);
         resumeBtn.setOnClickListener(new View.OnClickListener() {
@@ -174,8 +146,8 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        Button highscore = findViewById(R.id.high_score);
-        highscore.setOnClickListener(new View.OnClickListener() {
+        Button highScore = findViewById(R.id.high_score);
+        highScore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showHighScore();
@@ -226,8 +198,6 @@ public class MainActivity extends BaseActivity {
 
     public void startGameActivity() {
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("highScoreMoves", latestHighScore.getMoves());
-        intent.putExtra("highScoreTime", latestHighScore.getTime().toSeconds());
         startActivity(intent);
     }
 
@@ -248,24 +218,19 @@ public class MainActivity extends BaseActivity {
     public void showHighScore() {
         new HighScoreFetchTask(this) {
             @Override
-            protected void onPostExecute(ArrayList<HighScore> highScores) {
-                super.onPostExecute(highScores);
-                fillHighScores(highScores);
-                if (highScores == null || highScores.size() == 0) {
+            protected void onPostExecute(ArrayList<GamePlay> gamePlays) {
+                super.onPostExecute(gamePlays);
+                if (gamePlays == null || gamePlays.size() == 0) {
                     View layout = findViewById(R.id.main_layout);
                     Snackbar.make(layout, "No high scores yet", Snackbar.LENGTH_SHORT).show();
                 } else {
-                    openDialog();
+                    openHighScoresDialog(gamePlays);
                 }
             }
         }.execute();
     }
 
-    private void fillHighScores(ArrayList<HighScore> highScores) {
-        this.highScores = highScores;
-    }
-
-    public void openDialog() {
+    public void openHighScoresDialog(ArrayList<GamePlay> gamePlays) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.dialog_high_score, null);
 
@@ -275,7 +240,7 @@ public class MainActivity extends BaseActivity {
         highScoresList.setLayoutManager(layoutManager);
 
         HighScoresAdapter adapter = new HighScoresAdapter();
-        adapter.setHighScores(highScores);
+        adapter.setGamePlays(gamePlays);
 
         highScoresList.setAdapter(adapter);
 
