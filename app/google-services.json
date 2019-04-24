@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "205774853151-l9jd9bgvo77976e5ubnlk9bu1bib6lqd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rajatgoyal.puzzle15",
+            "certificate_hash": "51dc2bc2d8694fbff98ba2a67aedc8ca3d505e18"
+          }
+        },
+        {
           "client_id": "205774853151-3kutqgaf4i31m1u9mlveb2r21kksu8fq.apps.googleusercontent.com",
           "client_type": 3
         }
