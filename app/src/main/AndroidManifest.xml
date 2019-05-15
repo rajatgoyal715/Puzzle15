@@ -25,14 +25,13 @@
         <activity android:name=".ui.GameActivity" />
 
         <provider
-            android:authorities="com.rajatgoyal.puzzle15"
+            android:authorities="${applicationId}.provider"
             android:name=".data.GameContentProvider"
             android:exported="false" />
 
-        <meta-data android:name="com.google.android.gms.games.APP_ID"
+        <meta-data
+            android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/app_id" />
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

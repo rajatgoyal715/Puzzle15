@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,24 +16,26 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.rajatgoyal.puzzle15.R;
 import com.rajatgoyal.puzzle15.data.GameContract;
 import com.rajatgoyal.puzzle15.listener.SwipeGestureListener;
 import com.rajatgoyal.puzzle15.model.GameMatrix;
+import com.rajatgoyal.puzzle15.model.GamePlay;
 import com.rajatgoyal.puzzle15.model.Time;
+import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
 
 import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import timber.log.Timber;
 
 /**
  * Created by rajat on 15/9/17.
  */
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+public class GameActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int size = 4;
     private int moves;
@@ -59,7 +60,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private int highScoreMoves, highScoreTime;
     private MediaPlayer clickMP;
 
     @Override
@@ -67,12 +67,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         Timber.d("onCreate: ");
-
-        Intent intent = getIntent();
-        if (intent != null) {
-            highScoreMoves = intent.getIntExtra("highScoreMoves", 0);
-            highScoreTime = intent.getIntExtra("highScoreTime", 0);
-        }
 
         init();
 
@@ -85,7 +79,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateBoard(new GameMatrix(size));
             updateMoves(0);
             startTimer(0);
+
             SharedPref.setResumeFlag(true);
+
+            // increment number of played games
+            SharedPref.incrementPlayedGames();
+            int playedGames = SharedPref.getPlayedGames();
+            Timber.d("Played Games: %s", playedGames);
         }
     }
 
@@ -112,6 +112,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         prevTimeMillis = 0;
     }
 
+    @Override
+    protected void onConnected(GoogleSignInAccount googleSignInAccount) {
+        super.onConnected(googleSignInAccount);
+
+        AchievementHandler achievementHandler = getAchievementHandler();
+        if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
+        else {
+            Timber.d("Achievement Handler is null");
+        }
+    }
+
     public void fillIdMatrix(int[][] id) {
         id[0][0] = R.id.btn00;
         id[0][1] = R.id.btn01;
@@ -133,7 +144,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         id[3][2] = R.id.btn32;
         id[3][3] = R.id.btn33;
     }
-
 
     /**
      * Update the board according to the matrix
@@ -221,6 +231,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void wonGame() {
+        // increment number of completed games
+        SharedPref.incrementCompletedGames();
+        int completedGames = SharedPref.getCompletedGames();
+        Timber.d("Completed games: %s", completedGames);
+
+        // check if any achievement is unlocked
+        AchievementHandler achievementHandler = getAchievementHandler();
+        if (achievementHandler != null) {
+            achievementHandler.unlockCompletedGamesAchievements(this);
+            achievementHandler.unlockTimeBasedAchievements(this, currTime.toSeconds());
+            achievementHandler.unlockMovesBasedAchievements(this, moves);
+        } else {
+            Timber.d("Achievement Handler is null.");
+        }
+
         // play win sound
         MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
         mp.start();
@@ -232,11 +257,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         gameOver = true;
         handler.removeCallbacks(runnable);
 
-        // Compare with high score
-        if (isHighScore()) {
-            //show user that he got high score
-            addHighScore();
-        }
+        // save game play with moves, time and score
+        saveGamePlay();
 
         Toast.makeText(this, getResources().getString(R.string.game_won), Toast.LENGTH_LONG).show();
 
@@ -255,21 +277,17 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }, 2000);
     }
 
-    public boolean isHighScore() {
-        return (currTime.isLessThan(new Time(highScoreTime))) && (moves < highScoreMoves);
-    }
-
-    public void addHighScore() {
-        int moves = this.moves;
-        int time = currTime.toSeconds();
+    private void saveGamePlay() {
+        GamePlay gamePlay = new GamePlay(moves, currTime);
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(GameContract.GameEntry.COLUMN_MOVES, moves);
-        contentValues.put(GameContract.GameEntry.COLUMN_TIME, time);
+        contentValues.put(GameContract.GameEntry.COLUMN_SCORE, gamePlay.getScore());
+        contentValues.put(GameContract.GameEntry.COLUMN_MOVES, gamePlay.getMoves());
+        contentValues.put(GameContract.GameEntry.COLUMN_TIME, gamePlay.getTime().toSeconds());
 
         Uri uri = getContentResolver().insert(GameContract.GameEntry.CONTENT_URI, contentValues);
-        if (uri != null) {
-            Timber.d("addHighScore: High Score added");
+        if(uri != null) {
+            Timber.d("Game Play saved");
         }
     }
 
@@ -359,7 +377,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void makeMove(int rowMove, int colMove) {
         // abs sum ensures that only one of the rowMove or colMove is 1 or -1
         if (Math.abs(rowMove) + Math.abs(colMove) != 1) return;
-      
         int newEmptyRowIndex = gameMatrix.getEmptyCellRow() + rowMove;
         int newEmptyColIndex = gameMatrix.getEmptyCellCol() + colMove;
 

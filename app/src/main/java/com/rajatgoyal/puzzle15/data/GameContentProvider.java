@@ -12,15 +12,13 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import timber.log.Timber;
-
 /**
  * Created by rajat on 15/9/17.
  */
 
 public class GameContentProvider extends ContentProvider {
 
-    public static final int HIGH_SCORES = 100;
+    public static final int GAME_PLAYS_CODE = 100;
 
     private GameDbHelper mGameDbHelper;
 
@@ -28,9 +26,7 @@ public class GameContentProvider extends ContentProvider {
 
     public static UriMatcher buildUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-        uriMatcher.addURI(GameContract.AUTHORITY, GameContract.PATH_HIGH_SCORES, HIGH_SCORES);
-
+        uriMatcher.addURI(GameContract.AUTHORITY, GameContract.PATH_GAME_PLAY, GAME_PLAYS_CODE);
         return uriMatcher;
     }
 
@@ -47,16 +43,15 @@ public class GameContentProvider extends ContentProvider {
         final SQLiteDatabase db = mGameDbHelper.getReadableDatabase();
 
         int match = sUriMatcher.match(uri);
-        Cursor retCursor;
 
         switch (match) {
-            case HIGH_SCORES:
+            case GAME_PLAYS_CODE:
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri : " + uri);
         }
 
-        retCursor = db.query(GameContract.GameEntry.TABLE_NAME,
+        Cursor retCursor = db.query(GameContract.GameEntry.TABLE_NAME,
                 projection,
                 selection,
                 selectionArgs,
@@ -81,9 +76,8 @@ public class GameContentProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         Uri returnUri;
         switch (match) {
-            case HIGH_SCORES:
+            case GAME_PLAYS_CODE:
                 long id = db.insert(GameContract.GameEntry.TABLE_NAME, null, values);
-                Timber.d("insert: " + id);
                 if (id > 0) {
                     returnUri = ContentUris.withAppendedId(uri, id);
                 } else {

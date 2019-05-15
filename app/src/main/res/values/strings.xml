@@ -7,6 +7,7 @@
     <string name="high_scores">High Scores</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="rules">Rules</string>
+    <string name="view_achievements">View Achievements</string>
 
     <string name="signIn">Sign In</string>
     <string name="signOut">Sign Out</string>
@@ -20,7 +21,9 @@
 
     <string name="moves">Moves</string>
     <string name="time">Time</string>
+    <string name="score">Score</string>
 
+    <string name="score_label">Score : </string>
     <string name="moves_label">Moves : </string>
     <string name="time_label">Time : </string>
 
@@ -30,7 +33,7 @@
     <string name="no_leaderboard">No leaderboard yet.</string>
 
     <string name="quit_the_game">Are you sure you want to quit the game?</string>
-    <string name="play_new_game">Want to play a new game?</string>
+    <string name="play_new_game">Do you want to start a new game?</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -42,5 +45,5 @@
     <string name="minutes">minutes</string>
     <string name="seconds">seconds</string>
     <string name="resume_game">Resume Game</string>
-    <string name="restart_game">You have a previously saved game. Do you want to start a new game?</string>
+    <string name="restart_game">Do you want to override an already saved game?</string>
 </resources>

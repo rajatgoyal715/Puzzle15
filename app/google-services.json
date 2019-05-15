@@ -15,35 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "205774853151-uu6hu0fdcnko2k829qnbkrgc913gsl9v.apps.googleusercontent.com",
+          "client_id": "205774853151-qccdjth2v4s1avhks4fg87vhbf0dk63d.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.rajatgoyal.puzzle15",
-            "certificate_hash": "f8d388aeac5a43a23d0baeeb913c9440888359d9"
+            "certificate_hash": "4f727de8232c2b9a3513dd399dc2d50315e879c9"
           }
         },
         {
-          "client_id": "205774853151-hfev2mvr5dka4q0hpt37mrtrh0luh308.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rajatgoyal.puzzle15",
-            "certificate_hash": "20c297d03f9b634e506c0d75916a820f20a7794e"
-          }
-        },
-        {
-          "client_id": "205774853151-3a9v339ua1qeh877v2kt0pj1rugkb60m.apps.googleusercontent.com",
+          "client_id": "205774853151-l9jd9bgvo77976e5ubnlk9bu1bib6lqd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.rajatgoyal.puzzle15",
             "certificate_hash": "51dc2bc2d8694fbff98ba2a67aedc8ca3d505e18"
-          }
-        },
-        {
-          "client_id": "205774853151-ilkvm64m7b0rv1l64tt6v92feauf1va4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.rajatgoyal.puzzle15",
-            "certificate_hash": "37cd9073cb22ec12a1f891ef2bbc129eaba07a7b"
           }
         },
         {
@@ -57,23 +41,53 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "205774853151-3kutqgaf4i31m1u9mlveb2r21kksu8fq.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       },
       "admob_app_id": "ca-app-pub-1519820590645303~1870944874"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205774853151:android:f5902e043727c2ba",
+        "android_client_info": {
+          "package_name": "com.rajatgoyal.puzzle15.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205774853151-kuk3ib3om3imlj97gld4higv1qgt0sga.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rajatgoyal.puzzle15.debug",
+            "certificate_hash": "c7f3955bf89890ac9fa1c74f5bbf60352b5377e4"
+          }
+        },
+        {
+          "client_id": "205774853151-3kutqgaf4i31m1u9mlveb2r21kksu8fq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL1vbc9xTMBWuPJEaECqwx76hz8lQ16HI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205774853151-3kutqgaf4i31m1u9mlveb2r21kksu8fq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
