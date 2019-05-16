@@ -45,5 +45,5 @@
     <string name="minutes">minutes</string>
     <string name="seconds">seconds</string>
     <string name="resume_game">Resume Game</string>
-    <string name="restart_game">Do you want to override an already saved game?</string>
+    <string name="restart_game">Any progress will be lost. Want to start a new game?</string>
 </resources>

@@ -40,7 +40,7 @@ public class MainActivity extends BaseActivity {
 
     private static final int RC_GAMES_ACHIEVEMENTS = 9003;
 
-    private Button signInSignOutButton, resumeBtn;
+    private Button loginButton, resumeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onConnected(GoogleSignInAccount googleSignInAccount) {
         super.onConnected(googleSignInAccount);
-        updateSignInSignOutButton();
+        updateLoginButton();
 
         super.getPlayersClient()
             .getCurrentPlayer()
@@ -96,11 +96,11 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onDisconnected() {
         super.onDisconnected();
-        updateSignInSignOutButton();
+        updateLoginButton();
     }
 
-    public void updateSignInSignOutButton() {
-        signInSignOutButton.setText(isSignedIn() ? R.string.signOut : R.string.signIn);
+    public void updateLoginButton() {
+        loginButton.setText(isSignedIn() ? R.string.signOut : R.string.signIn);
     }
 
     public void init() {
@@ -162,8 +162,8 @@ public class MainActivity extends BaseActivity {
             }
         });
 
-        signInSignOutButton = findViewById(R.id.signin_signout);
-        signInSignOutButton.setOnClickListener(new View.OnClickListener() {
+        loginButton = findViewById(R.id.login);
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isSignedIn()) signOut();
@@ -239,8 +239,7 @@ public class MainActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         highScoresList.setLayoutManager(layoutManager);
 
-        HighScoresAdapter adapter = new HighScoresAdapter();
-        adapter.setGamePlays(gamePlays);
+        HighScoresAdapter adapter = new HighScoresAdapter(gamePlays);
 
         highScoresList.setAdapter(adapter);
 

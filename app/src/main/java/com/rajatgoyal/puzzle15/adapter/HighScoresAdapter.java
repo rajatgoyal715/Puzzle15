@@ -23,9 +23,12 @@ import java.util.ArrayList;
 public class HighScoresAdapter extends RecyclerView.Adapter<HighScoresAdapter.HighScoreViewHolder> {
 
     private ArrayList<GamePlay> gamePlays;
-    private int count;
 
     private Resources resources;
+
+    public HighScoresAdapter(ArrayList<GamePlay> gamePlays) {
+        this.gamePlays = gamePlays;
+    }
 
     @NotNull
     @Override
@@ -55,12 +58,7 @@ public class HighScoresAdapter extends RecyclerView.Adapter<HighScoresAdapter.Hi
 
     @Override
     public int getItemCount() {
-        return count;
-    }
-
-    public void setGamePlays(ArrayList<GamePlay> gamePlays) {
-        this.gamePlays = gamePlays;
-        this.count = gamePlays.size();
+        return gamePlays.size();
     }
 
     class HighScoreViewHolder extends RecyclerView.ViewHolder {
