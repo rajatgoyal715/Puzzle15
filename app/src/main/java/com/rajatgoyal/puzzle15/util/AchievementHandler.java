@@ -3,6 +3,8 @@ package com.rajatgoyal.puzzle15.util;
 import android.app.Activity;
 import android.widget.Toast;
 
+import androidx.annotation.StringRes;
+
 import com.google.android.gms.games.AchievementsClient;
 import com.rajatgoyal.puzzle15.R;
 
@@ -15,10 +17,10 @@ public class AchievementHandler {
 
     private AchievementsClient client;
 
-    private static int[] PLAYED_IDS = {
+    private static @StringRes int[] PLAYED_IDS = {
             R.string.achievement_newbie,
     };
-    private static int[] COMPLETED_IDS = {
+    private static @StringRes int[] COMPLETED_IDS = {
             R.string.achievement_novice__1_game,
             R.string.achievement_beginner__5_games,
             R.string.achievement_skilled__10_games,
@@ -31,7 +33,7 @@ public class AchievementHandler {
     };
 
     private static int[] TIMES = {600, 300, 120, 90, 60};
-    private static int[] TIME_IDS = {
+    private static @StringRes int[] TIME_IDS = {
             R.string.achievement_snail__10_min,
             R.string.achievement_tortoise__5_min,
             R.string.achievement_rabbit__2_min,
@@ -41,7 +43,7 @@ public class AchievementHandler {
 
 
     private static int[] MOVES = {300, 250, 200, 150, 100};
-    private static int[] MOVES_IDS = {
+    private static @StringRes int[] MOVES_IDS = {
             R.string.achievement_wood__300_moves,
             R.string.achievement_copper__250_moves,
             R.string.achievement_silver__200_moves,
