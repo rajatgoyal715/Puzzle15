@@ -239,8 +239,7 @@ public class MainActivity extends BaseActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(view.getContext());
         highScoresList.setLayoutManager(layoutManager);
 
-        HighScoresAdapter adapter = new HighScoresAdapter();
-        adapter.setGamePlays(gamePlays);
+        HighScoresAdapter adapter = new HighScoresAdapter(gamePlays);
 
         highScoresList.setAdapter(adapter);
 
