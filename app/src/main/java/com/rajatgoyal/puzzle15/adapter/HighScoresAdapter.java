@@ -1,6 +1,7 @@
 package com.rajatgoyal.puzzle15.adapter;
 
 import android.content.Context;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.res.Resources;
@@ -22,57 +23,57 @@ import java.util.ArrayList;
 
 public class HighScoresAdapter extends RecyclerView.Adapter<HighScoresAdapter.HighScoreViewHolder> {
 
-    private ArrayList<GamePlay> gamePlays;
+	private ArrayList<GamePlay> gamePlays;
 
-    private Resources resources;
+	private Resources resources;
 
-    public HighScoresAdapter(ArrayList<GamePlay> gamePlays) {
-        this.gamePlays = gamePlays;
-    }
+	public HighScoresAdapter(ArrayList<GamePlay> gamePlays) {
+		this.gamePlays = gamePlays;
+	}
 
-    @NotNull
-    @Override
-    public HighScoreViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        resources = context.getResources();
-        View view = LayoutInflater.from(context).inflate(R.layout.high_score_list_item, parent, false);
-        return new HighScoreViewHolder(view);
-    }
+	@NotNull
+	@Override
+	public HighScoreViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+		Context context = parent.getContext();
+		resources = context.getResources();
+		View view = LayoutInflater.from(context).inflate(R.layout.high_score_list_item, parent, false);
+		return new HighScoreViewHolder(view);
+	}
 
-    @Override
-    public void onBindViewHolder(@NotNull HighScoreViewHolder holder, int position) {
-        GamePlay gamePlay = gamePlays.get(position);
-        String movesString = Integer.toString(gamePlay.getMoves());
-        String scoreString = Integer.toString(gamePlay.getScore());
+	@Override
+	public void onBindViewHolder(@NotNull HighScoreViewHolder holder, int position) {
+		GamePlay gamePlay = gamePlays.get(position);
+		String movesString = Integer.toString(gamePlay.getMoves());
+		String scoreString = Integer.toString(gamePlay.getScore());
 
-        holder.score.setText(scoreString);
-        holder.moves.setText(movesString);
-        holder.timer.setText(gamePlay.getTime().toString());
+		holder.score.setText(scoreString);
+		holder.moves.setText(movesString);
+		holder.timer.setText(gamePlay.getTime().toString());
 
-        if (position % 2 == 0) {
-            holder.layout.setBackgroundColor(resources.getColor(R.color.colorPrimary));
-        } else {
-            holder.layout.setBackgroundColor(resources.getColor(R.color.light));
-        }
-    }
+		if (position % 2 == 0) {
+			holder.layout.setBackgroundColor(resources.getColor(R.color.colorPrimary));
+		} else {
+			holder.layout.setBackgroundColor(resources.getColor(R.color.light));
+		}
+	}
 
-    @Override
-    public int getItemCount() {
-        return gamePlays.size();
-    }
+	@Override
+	public int getItemCount() {
+		return gamePlays.size();
+	}
 
-    class HighScoreViewHolder extends RecyclerView.ViewHolder {
+	class HighScoreViewHolder extends RecyclerView.ViewHolder {
 
-        View layout;
-        TextView moves, timer, score;
+		View layout;
+		TextView moves, timer, score;
 
-        HighScoreViewHolder(View itemView) {
-            super(itemView);
+		HighScoreViewHolder(View itemView) {
+			super(itemView);
 
-            layout = itemView.findViewById(R.id.high_score_list_item_layout);
-            moves = itemView.findViewById(R.id.moves_hs);
-            timer = itemView.findViewById(R.id.timer_hs);
-            score = itemView.findViewById(R.id.score);
-        }
-    }
+			layout = itemView.findViewById(R.id.high_score_list_item_layout);
+			moves = itemView.findViewById(R.id.moves_hs);
+			timer = itemView.findViewById(R.id.timer_hs);
+			score = itemView.findViewById(R.id.score);
+		}
+	}
 }

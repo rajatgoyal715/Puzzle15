@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:orientation="horizontal"
-    android:id="@+id/high_score_list_item_layout"
-    android:weightSum="3">
+	android:id="@+id/high_score_list_item_layout"
+	android:layout_width="match_parent"
+	android:layout_height="50dp"
+	android:orientation="horizontal"
+	android:weightSum="3">
 
-    <TextView
-        android:id="@+id/score"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="18sp" />
+	<TextView
+		android:id="@+id/score"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:gravity="center"
+		android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/moves_hs"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="18sp" />
+	<TextView
+		android:id="@+id/moves_hs"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:gravity="center"
+		android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/timer_hs"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:textSize="18sp" />
+	<TextView
+		android:id="@+id/timer_hs"
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:layout_weight="1"
+		android:gravity="center"
+		android:textSize="18sp" />
 
 </LinearLayout>

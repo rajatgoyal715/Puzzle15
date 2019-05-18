@@ -2,6 +2,7 @@ package com.rajatgoyal.puzzle15.ui;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import timber.log.Timber;
 
 import android.content.Intent;

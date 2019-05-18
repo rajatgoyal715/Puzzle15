@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -18,86 +19,86 @@ import androidx.annotation.Nullable;
 
 public class GameContentProvider extends ContentProvider {
 
-    public static final int GAME_PLAYS_CODE = 100;
+	public static final int GAME_PLAYS_CODE = 100;
 
-    private GameDbHelper mGameDbHelper;
+	private GameDbHelper mGameDbHelper;
 
-    private static final UriMatcher sUriMatcher = buildUriMatcher();
+	private static final UriMatcher sUriMatcher = buildUriMatcher();
 
-    public static UriMatcher buildUriMatcher() {
-        UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(GameContract.AUTHORITY, GameContract.PATH_GAME_PLAY, GAME_PLAYS_CODE);
-        return uriMatcher;
-    }
+	public static UriMatcher buildUriMatcher() {
+		UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+		uriMatcher.addURI(GameContract.AUTHORITY, GameContract.PATH_GAME_PLAY, GAME_PLAYS_CODE);
+		return uriMatcher;
+	}
 
-    @Override
-    public boolean onCreate() {
-        Context context = getContext();
-        mGameDbHelper = new GameDbHelper(context);
-        return true;
-    }
+	@Override
+	public boolean onCreate() {
+		Context context = getContext();
+		mGameDbHelper = new GameDbHelper(context);
+		return true;
+	}
 
-    @Nullable
-    @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        final SQLiteDatabase db = mGameDbHelper.getReadableDatabase();
+	@Nullable
+	@Override
+	public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+		final SQLiteDatabase db = mGameDbHelper.getReadableDatabase();
 
-        int match = sUriMatcher.match(uri);
+		int match = sUriMatcher.match(uri);
 
-        switch (match) {
-            case GAME_PLAYS_CODE:
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri : " + uri);
-        }
+		switch (match) {
+			case GAME_PLAYS_CODE:
+				break;
+			default:
+				throw new UnsupportedOperationException("Unknown uri : " + uri);
+		}
 
-        Cursor retCursor = db.query(GameContract.GameEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder);
-        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+		Cursor retCursor = db.query(GameContract.GameEntry.TABLE_NAME,
+				projection,
+				selection,
+				selectionArgs,
+				null,
+				null,
+				sortOrder);
+		retCursor.setNotificationUri(getContext().getContentResolver(), uri);
 
-        return retCursor;
-    }
+		return retCursor;
+	}
 
-    @Nullable
-    @Override
-    public String getType(@NonNull Uri uri) {
-        return null;
-    }
+	@Nullable
+	@Override
+	public String getType(@NonNull Uri uri) {
+		return null;
+	}
 
-    @Nullable
-    @Override
-    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-        final SQLiteDatabase db = mGameDbHelper.getWritableDatabase();
-        int match = sUriMatcher.match(uri);
-        Uri returnUri;
-        switch (match) {
-            case GAME_PLAYS_CODE:
-                long id = db.insert(GameContract.GameEntry.TABLE_NAME, null, values);
-                if (id > 0) {
-                    returnUri = ContentUris.withAppendedId(uri, id);
-                } else {
-                    throw new SQLException("Failed to insert row into " + uri);
-                }
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri : " + uri);
-        }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return returnUri;
-    }
+	@Nullable
+	@Override
+	public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+		final SQLiteDatabase db = mGameDbHelper.getWritableDatabase();
+		int match = sUriMatcher.match(uri);
+		Uri returnUri;
+		switch (match) {
+			case GAME_PLAYS_CODE:
+				long id = db.insert(GameContract.GameEntry.TABLE_NAME, null, values);
+				if (id > 0) {
+					returnUri = ContentUris.withAppendedId(uri, id);
+				} else {
+					throw new SQLException("Failed to insert row into " + uri);
+				}
+				break;
+			default:
+				throw new UnsupportedOperationException("Unknown uri : " + uri);
+		}
+		getContext().getContentResolver().notifyChange(uri, null);
+		return returnUri;
+	}
 
-    @Override
-    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
-    }
+	@Override
+	public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+		return 0;
+	}
 
-    @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
-    }
+	@Override
+	public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+		return 0;
+	}
 }
