@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:background="@color/white"
-        android:gravity="center_horizontal">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="@color/white"
+		android:gravity="center_horizontal"
+		android:orientation="vertical"
+		android:padding="10dp">
 
-        <TextView
-            android:text="@string/rule1"
-            android:textSize="20sp"
-            android:layout_margin="10dp"
-            android:textColor="@color/background"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"
+			android:text="@string/rule1"
+			android:textColor="@color/background"
+			android:textSize="20sp" />
 
-        <ImageView
-            android:contentDescription="@string/rule1"
-            android:src="@drawable/empty"
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp" />
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
+			android:layout_margin="10dp"
+			android:contentDescription="@string/rule1"
+			android:src="@drawable/empty" />
 
-        <TextView
-            android:text="@string/rule2"
-            android:textSize="20sp"
-            android:layout_margin="10dp"
-            android:textColor="@color/background"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_margin="10dp"
+			android:text="@string/rule2"
+			android:textColor="@color/background"
+			android:textSize="20sp" />
 
-        <ImageView
-            android:contentDescription="@string/rule2"
-            android:src="@drawable/sorted"
-            android:layout_margin="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp" />
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="200dp"
+			android:layout_margin="10dp"
+			android:contentDescription="@string/rule2"
+			android:src="@drawable/sorted" />
 
-    </LinearLayout>
+	</LinearLayout>
 
 </ScrollView>

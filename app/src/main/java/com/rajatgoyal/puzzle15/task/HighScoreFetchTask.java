@@ -17,32 +17,32 @@ import java.util.ArrayList;
 
 public class HighScoreFetchTask extends AsyncTask<Void, Void, ArrayList<GamePlay>> {
 
-    private Context context;
-    private static final int LIMIT = 10;
+	private Context context;
+	private static final int LIMIT = 10;
 
-    public HighScoreFetchTask(Context context) {
-        this.context = context;
-    }
+	public HighScoreFetchTask(Context context) {
+		this.context = context;
+	}
 
-    @Override
-    protected ArrayList<GamePlay> doInBackground(Void... params) {
-        Uri uri = GameContract.GameEntry.CONTENT_URI;
-        String sortOrder = GameContract.GameEntry.COLUMN_SCORE + " DESC";
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, sortOrder);
-        if(cursor == null) return null;
+	@Override
+	protected ArrayList<GamePlay> doInBackground(Void... params) {
+		Uri uri = GameContract.GameEntry.CONTENT_URI;
+		String sortOrder = GameContract.GameEntry.COLUMN_SCORE + " DESC";
+		Cursor cursor = context.getContentResolver().query(uri, null, null, null, sortOrder);
+		if (cursor == null) return null;
 
-        ArrayList<GamePlay> gamePlays = new ArrayList<>();
+		ArrayList<GamePlay> gamePlays = new ArrayList<>();
 
-        if (cursor.moveToFirst()) {
-            do {
-                int moves = cursor.getInt(cursor.getColumnIndex(GameContract.GameEntry.COLUMN_MOVES));
-                int time_in_seconds = cursor.getInt(cursor.getColumnIndex(GameContract.GameEntry.COLUMN_TIME));
+		if (cursor.moveToFirst()) {
+			do {
+				int moves = cursor.getInt(cursor.getColumnIndex(GameContract.GameEntry.COLUMN_MOVES));
+				int time_in_seconds = cursor.getInt(cursor.getColumnIndex(GameContract.GameEntry.COLUMN_TIME));
 
-                gamePlays.add(new GamePlay(moves, new Time(time_in_seconds)));
-            } while (cursor.moveToNext() && gamePlays.size() < LIMIT);
-        }
+				gamePlays.add(new GamePlay(moves, new Time(time_in_seconds)));
+			} while (cursor.moveToNext() && gamePlays.size() < LIMIT);
+		}
 
-        cursor.close();
-        return gamePlays;
-    }
+		cursor.close();
+		return gamePlays;
+	}
 }

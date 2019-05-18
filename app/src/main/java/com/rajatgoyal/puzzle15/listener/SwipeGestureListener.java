@@ -54,8 +54,11 @@ public class SwipeGestureListener extends GestureDetector.SimpleOnGestureListene
 
 	public interface OnSwipeInterface {
 		void onSwipeRight();
+
 		void onSwipeLeft();
+
 		void onSwipeTop();
+
 		void onSwipeBottom();
 	}
 }
