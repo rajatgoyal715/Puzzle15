@@ -12,7 +12,6 @@ import android.os.SystemClock;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +24,7 @@ import com.rajatgoyal.puzzle15.model.GamePlay;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
+import com.rajatgoyal.puzzle15.view.Tile;
 
 import java.util.Locale;
 
@@ -43,7 +43,7 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
 	private boolean gameOver;
 	private GameMatrix gameMatrix;
 	private int[][] id;
-	private Button[][] buttons;
+	private Tile[][] tiles;
 
 	private Handler handler;
 	private TextView timerTextView, movesTextView;
@@ -101,13 +101,13 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
 
 		fillIdMatrix(id);
 
-		buttons = new Button[size][size];
+		tiles = new Tile[size][size];
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				buttons[i][j] = findViewById(id[i][j]);
-				buttons[i][j].setOnClickListener(this);
-				buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
+				tiles[i][j] = findViewById(id[i][j]);
+				tiles[i][j].setOnClickListener(this);
+				tiles[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
 			}
 		}
 		prevTimeMillis = 0;
@@ -147,6 +147,35 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
 	}
 
 	/**
+	 * Update the tile at positionX, positionY with value
+	 *
+	 * @param positionX position on the x-axis
+	 * @param positionY position on the y-axis
+	 * @param value     new value of the tile
+	 */
+	private void updateTile(int positionX, int positionY, int value) {
+		int lightColor = getResources().getColor(R.color.light);
+		int backgroundColor = getResources().getColor(R.color.background);
+
+		String text, altText;
+		int color;
+
+		if (value == 0) {
+			text = "";
+			altText = "Empty Tile";
+			color = lightColor;
+		} else {
+			text = value + "";
+			altText = "Tile " + value;
+			color = backgroundColor;
+		}
+
+		tiles[positionX][positionY].setText(text);
+		tiles[positionX][positionY].setBackgroundColor(color);
+		tiles[positionX][positionY].setContentDescription(altText);
+	}
+
+	/**
 	 * Update the board according to the matrix
 	 *
 	 * @param gameMatrix game matrix
@@ -157,12 +186,9 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				if (gameMatrix.isEmpty(i, j)) {
-					buttons[i][j].setText("");
-					buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
+					updateTile(i, j, 0);
 				} else {
-					String text = gameMatrix.get(i, j) + "";
-					buttons[i][j].setText(text);
-					buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
+					updateTile(i, j, gameMatrix.get(i, j));
 				}
 			}
 		}
@@ -391,11 +417,8 @@ public class GameActivity extends BaseActivity implements View.OnClickListener {
 		// swapping of tiles
 		int i = gameMatrix.getEmptyCellRow(), j = gameMatrix.getEmptyCellCol();
 
-		buttons[i][j].setText(String.format("%s", gameMatrix.get(newEmptyRowIndex, newEmptyColIndex)));
-		buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
-
-		buttons[newEmptyRowIndex][newEmptyColIndex].setText("");
-		buttons[newEmptyRowIndex][newEmptyColIndex].setBackgroundColor(getResources().getColor(R.color.light));
+		updateTile(i, j, gameMatrix.get(newEmptyRowIndex, newEmptyColIndex));
+		updateTile(newEmptyRowIndex, newEmptyColIndex, 0);
 
 		gameMatrix.swap(i, j, newEmptyRowIndex, newEmptyColIndex);
 
