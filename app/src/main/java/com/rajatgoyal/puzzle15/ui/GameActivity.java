@@ -12,7 +12,6 @@ import android.os.SystemClock;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,10 +24,12 @@ import com.rajatgoyal.puzzle15.model.GamePlay;
 import com.rajatgoyal.puzzle15.model.Time;
 import com.rajatgoyal.puzzle15.util.AchievementHandler;
 import com.rajatgoyal.puzzle15.util.SharedPref;
+import com.rajatgoyal.puzzle15.view.Tile;
 
 import java.util.Locale;
 
 import androidx.appcompat.app.AlertDialog;
+
 import timber.log.Timber;
 
 /**
@@ -37,368 +38,392 @@ import timber.log.Timber;
 
 public class GameActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final int size = 4;
-    private int moves;
-    private boolean gameOver;
-    private GameMatrix gameMatrix;
-    private int[][] id;
-    private Button[][] buttons;
+	private static final int size = 4;
+	private int moves;
+	private boolean gameOver;
+	private GameMatrix gameMatrix;
+	private int[][] id;
+	private Tile[][] tiles;
 
-    private Handler handler;
-    private TextView timerTextView, movesTextView;
-    private Time currTime;
-    private long startTimeMillis, prevTimeMillis;
-    public Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            long currTimeMillis = SystemClock.uptimeMillis() - startTimeMillis + prevTimeMillis;
-            currTime = new Time(currTimeMillis);
+	private Handler handler;
+	private TextView timerTextView, movesTextView;
+	private Time currTime;
+	private long startTimeMillis, prevTimeMillis;
+	public Runnable runnable = new Runnable() {
+		@Override
+		public void run() {
+			long currTimeMillis = SystemClock.uptimeMillis() - startTimeMillis + prevTimeMillis;
+			currTime = new Time(currTimeMillis);
 
-            timerTextView.setText(currTime.toString());
+			timerTextView.setText(currTime.toString());
 
-            handler.postDelayed(this, 1000);
-        }
-    };
+			handler.postDelayed(this, 1000);
+		}
+	};
 
-    private MediaPlayer clickMP;
+	private MediaPlayer clickMP;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
-        Timber.d("onCreate: ");
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_game);
+		Timber.d("onCreate: ");
 
-        init();
+		init();
 
-        boolean resumeGame = SharedPref.getResumeFlag();
-        if (resumeGame) {
-            updateBoard(SharedPref.getGameMatrix());
-            updateMoves(SharedPref.getMoves());
-            startTimer(SharedPref.getGameTime());
-        } else {
-            updateBoard(new GameMatrix(size));
-            updateMoves(0);
-            startTimer(0);
+		boolean resumeGame = SharedPref.getResumeFlag();
+		if (resumeGame) {
+			updateBoard(SharedPref.getGameMatrix());
+			updateMoves(SharedPref.getMoves());
+			startTimer(SharedPref.getGameTime());
+		} else {
+			updateBoard(new GameMatrix(size));
+			updateMoves(0);
+			startTimer(0);
 
-            SharedPref.setResumeFlag(true);
+			SharedPref.setResumeFlag(true);
 
-            // increment number of played games
-            SharedPref.incrementPlayedGames();
-            int playedGames = SharedPref.getPlayedGames();
-            Timber.d("Played Games: %s", playedGames);
-        }
-    }
+			// increment number of played games
+			SharedPref.incrementPlayedGames();
+			int playedGames = SharedPref.getPlayedGames();
+			Timber.d("Played Games: %s", playedGames);
+		}
+	}
 
-    @SuppressLint("ClickableViewAccessibility")
-    public void init() {
-        moves = 0;
-        gameOver = false;
-        id = new int[size][size];
+	@SuppressLint("ClickableViewAccessibility")
+	public void init() {
+		moves = 0;
+		gameOver = false;
+		id = new int[size][size];
 
-        timerTextView = findViewById(R.id.timer);
-        movesTextView = findViewById(R.id.moves);
+		timerTextView = findViewById(R.id.timer);
+		movesTextView = findViewById(R.id.moves);
 
-        fillIdMatrix(id);
+		fillIdMatrix(id);
 
-        buttons = new Button[size][size];
+		tiles = new Tile[size][size];
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                buttons[i][j] = findViewById(id[i][j]);
-                buttons[i][j].setOnClickListener(this);
-                buttons[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
-            }
-        }
-        prevTimeMillis = 0;
-    }
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				tiles[i][j] = findViewById(id[i][j]);
+				tiles[i][j].setOnClickListener(this);
+				tiles[i][j].setOnTouchListener(new OnSwipeTouchListener(this));
+			}
+		}
+		prevTimeMillis = 0;
+	}
 
-    @Override
-    protected void onConnected(GoogleSignInAccount googleSignInAccount) {
-        super.onConnected(googleSignInAccount);
+	@Override
+	protected void onConnected(GoogleSignInAccount googleSignInAccount) {
+		super.onConnected(googleSignInAccount);
 
-        AchievementHandler achievementHandler = getAchievementHandler();
-        if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
-        else {
-            Timber.d("Achievement Handler is null");
-        }
-    }
+		AchievementHandler achievementHandler = getAchievementHandler();
+		if (achievementHandler != null) achievementHandler.unlockPlayedGamesAchievements(this);
+		else {
+			Timber.d("Achievement Handler is null");
+		}
+	}
 
-    public void fillIdMatrix(int[][] id) {
-        id[0][0] = R.id.btn00;
-        id[0][1] = R.id.btn01;
-        id[0][2] = R.id.btn02;
-        id[0][3] = R.id.btn03;
+	public void fillIdMatrix(int[][] id) {
+		id[0][0] = R.id.btn00;
+		id[0][1] = R.id.btn01;
+		id[0][2] = R.id.btn02;
+		id[0][3] = R.id.btn03;
 
-        id[1][0] = R.id.btn10;
-        id[1][1] = R.id.btn11;
-        id[1][2] = R.id.btn12;
-        id[1][3] = R.id.btn13;
+		id[1][0] = R.id.btn10;
+		id[1][1] = R.id.btn11;
+		id[1][2] = R.id.btn12;
+		id[1][3] = R.id.btn13;
 
-        id[2][0] = R.id.btn20;
-        id[2][1] = R.id.btn21;
-        id[2][2] = R.id.btn22;
-        id[2][3] = R.id.btn23;
+		id[2][0] = R.id.btn20;
+		id[2][1] = R.id.btn21;
+		id[2][2] = R.id.btn22;
+		id[2][3] = R.id.btn23;
 
-        id[3][0] = R.id.btn30;
-        id[3][1] = R.id.btn31;
-        id[3][2] = R.id.btn32;
-        id[3][3] = R.id.btn33;
-    }
+		id[3][0] = R.id.btn30;
+		id[3][1] = R.id.btn31;
+		id[3][2] = R.id.btn32;
+		id[3][3] = R.id.btn33;
+	}
 
-    /**
-     * Update the board according to the matrix
-     *
-     * @param gameMatrix game matrix
-     */
-    public void updateBoard(GameMatrix gameMatrix) {
-        this.gameMatrix = gameMatrix;
-        int size = gameMatrix.getSize();
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (gameMatrix.isEmpty(i, j)) {
-                    buttons[i][j].setText("");
-                    buttons[i][j].setBackgroundColor(getResources().getColor(R.color.light));
-                } else {
-                    String text = gameMatrix.get(i, j) + "";
-                    buttons[i][j].setText(text);
-                    buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
-                }
-            }
-        }
-    }
+	/**
+	 * Update the tile at positionX, positionY with value
+	 *
+	 * @param positionX position on the x-axis
+	 * @param positionY position on the y-axis
+	 * @param value     new value of the tile
+	 */
+	private void updateTile(int positionX, int positionY, int value) {
+		int lightColor = getResources().getColor(R.color.light);
+		int backgroundColor = getResources().getColor(R.color.background);
 
-    public void startTimer(long prevTimeMillis) {
-        if (this.handler == null) {
-            this.handler = new Handler();
-        }
-        this.startTimeMillis = SystemClock.uptimeMillis();
-        this.prevTimeMillis = prevTimeMillis;
-        this.handler.postDelayed(runnable, 0);
-    }
+		String text, altText;
+		int color;
 
-    public void pauseTimer() {
-        prevTimeMillis = currTime.toMillis();
-        handler.removeCallbacks(runnable);
-    }
+		if (value == 0) {
+			text = "";
+			altText = "Empty Tile";
+			color = lightColor;
+		} else {
+			text = value + "";
+			altText = "Tile " + value;
+			color = backgroundColor;
+		}
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        pauseTimer();
-    }
+		tiles[positionX][positionY].setText(text);
+		tiles[positionX][positionY].setBackgroundColor(color);
+		tiles[positionX][positionY].setContentDescription(altText);
+	}
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (!gameOver) {
-            startTimer(prevTimeMillis);
-        }
-    }
+	/**
+	 * Update the board according to the matrix
+	 *
+	 * @param gameMatrix game matrix
+	 */
+	public void updateBoard(GameMatrix gameMatrix) {
+		this.gameMatrix = gameMatrix;
+		int size = gameMatrix.getSize();
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (gameMatrix.isEmpty(i, j)) {
+					updateTile(i, j, 0);
+				} else {
+					updateTile(i, j, gameMatrix.get(i, j));
+				}
+			}
+		}
+	}
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Timber.d("on stop");
+	public void startTimer(long prevTimeMillis) {
+		if (this.handler == null) {
+			this.handler = new Handler();
+		}
+		this.startTimeMillis = SystemClock.uptimeMillis();
+		this.prevTimeMillis = prevTimeMillis;
+		this.handler.postDelayed(runnable, 0);
+	}
 
-        if(!gameOver) {
-            SharedPref.setGameMatrix(gameMatrix);
-            SharedPref.setMoves(moves);
-            SharedPref.setGameTime(currTime.toMillis());
-        }
-    }
+	public void pauseTimer() {
+		prevTimeMillis = currTime.toMillis();
+		handler.removeCallbacks(runnable);
+	}
 
-    private void playClickSound() {
-        if (clickMP != null) {
-            clickMP.release();
-        }
-        clickMP = MediaPlayer.create(this, R.raw.click);
-        clickMP.start();
-    }
+	@Override
+	protected void onPause() {
+		super.onPause();
+		pauseTimer();
+	}
 
-    @Override
-    public void onClick(View v) {
-        int i, j = 0;
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (!gameOver) {
+			startTimer(prevTimeMillis);
+		}
+	}
 
-        // Get button's coordinates using id matrix
-        label:
-        for (i = 0; i < size; i++) {
-            for (j = 0; j < size; j++) {
-                if (v.getId() == id[i][j])
-                    break label;
-            }
-        }
-        makeMove(i - gameMatrix.getEmptyCellRow(), j - gameMatrix.getEmptyCellCol());
-    }
+	@Override
+	protected void onStop() {
+		super.onStop();
+		Timber.d("on stop");
 
-    public void wonGame() {
-        // increment number of completed games
-        SharedPref.incrementCompletedGames();
-        int completedGames = SharedPref.getCompletedGames();
-        Timber.d("Completed games: %s", completedGames);
+		if (!gameOver) {
+			SharedPref.setGameMatrix(gameMatrix);
+			SharedPref.setMoves(moves);
+			SharedPref.setGameTime(currTime.toMillis());
+		}
+	}
 
-        // check if any achievement is unlocked
-        AchievementHandler achievementHandler = getAchievementHandler();
-        if (achievementHandler != null) {
-            achievementHandler.unlockCompletedGamesAchievements(this);
-            achievementHandler.unlockTimeBasedAchievements(this, currTime.toSeconds());
-            achievementHandler.unlockMovesBasedAchievements(this, moves);
-        } else {
-            Timber.d("Achievement Handler is null.");
-        }
+	private void playClickSound() {
+		if (clickMP != null) {
+			clickMP.release();
+		}
+		clickMP = MediaPlayer.create(this, R.raw.click);
+		clickMP.start();
+	}
 
-        // play win sound
-        MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
-        mp.start();
+	@Override
+	public void onClick(View v) {
+		int i, j = 0;
 
-        // invalidate save game data
-        SharedPref.setResumeFlag(false);
+		// Get button's coordinates using id matrix
+		label:
+		for (i = 0; i < size; i++) {
+			for (j = 0; j < size; j++) {
+				if (v.getId() == id[i][j])
+					break label;
+			}
+		}
+		makeMove(i - gameMatrix.getEmptyCellRow(), j - gameMatrix.getEmptyCellCol());
+	}
 
-        // stop the timer
-        gameOver = true;
-        handler.removeCallbacks(runnable);
+	public void wonGame() {
+		// increment number of completed games
+		SharedPref.incrementCompletedGames();
+		int completedGames = SharedPref.getCompletedGames();
+		Timber.d("Completed games: %s", completedGames);
 
-        // save game play with moves, time and score
-        saveGamePlay();
+		// check if any achievement is unlocked
+		AchievementHandler achievementHandler = getAchievementHandler();
+		if (achievementHandler != null) {
+			achievementHandler.unlockCompletedGamesAchievements(this);
+			achievementHandler.unlockTimeBasedAchievements(this, currTime.toSeconds());
+			achievementHandler.unlockMovesBasedAchievements(this, moves);
+		} else {
+			Timber.d("Achievement Handler is null.");
+		}
 
-        Toast.makeText(this, getResources().getString(R.string.game_won), Toast.LENGTH_LONG).show();
+		// play win sound
+		MediaPlayer mp = MediaPlayer.create(this, R.raw.tada);
+		mp.start();
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setView(R.layout.dialog_game_won);
+		// invalidate save game data
+		SharedPref.setResumeFlag(false);
 
-        final AlertDialog dialog = alertDialogBuilder.create();
-        dialog.show();
+		// stop the timer
+		gameOver = true;
+		handler.removeCallbacks(runnable);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dialog.cancel();
-                startNewGame();
-            }
-        }, 2000);
-    }
+		// save game play with moves, time and score
+		saveGamePlay();
 
-    private void saveGamePlay() {
-        GamePlay gamePlay = new GamePlay(moves, currTime);
+		Toast.makeText(this, getResources().getString(R.string.game_won), Toast.LENGTH_LONG).show();
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(GameContract.GameEntry.COLUMN_SCORE, gamePlay.getScore());
-        contentValues.put(GameContract.GameEntry.COLUMN_MOVES, gamePlay.getMoves());
-        contentValues.put(GameContract.GameEntry.COLUMN_TIME, gamePlay.getTime().toSeconds());
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder.setView(R.layout.dialog_game_won);
 
-        Uri uri = getContentResolver().insert(GameContract.GameEntry.CONTENT_URI, contentValues);
-        if(uri != null) {
-            Timber.d("Game Play saved");
-        }
-    }
+		final AlertDialog dialog = alertDialogBuilder.create();
+		dialog.show();
 
-    public void startNewGame() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage(getResources().getString(R.string.play_new_game));
-        alertDialogBuilder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                updateBoard(new GameMatrix(size));
-                //updating the moves
-                updateMoves(0);
-                startTimer(0);
-            }
-        });
-        alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                finish();
-            }
-        });
-        AlertDialog dialog = alertDialogBuilder.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
-        dialog.show();
-    }
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				dialog.cancel();
+				startNewGame();
+			}
+		}, 2000);
+	}
 
-    public void updateMoves(int moves) {
-        movesTextView.setText(String.format(Locale.US, "%d", moves));
-        this.moves = moves;
-    }
+	private void saveGamePlay() {
+		GamePlay gamePlay = new GamePlay(moves, currTime);
 
-    /**
-     * @param rowIndex row index
-     * @param colIndex column index
-     * @return if rowIndex and columnIndex are within bounds
-     */
-    private boolean isValidPosition(int rowIndex, int colIndex) {
-        return rowIndex >= 0 && rowIndex < size && colIndex >= 0 && colIndex < size;
-    }
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(GameContract.GameEntry.COLUMN_SCORE, gamePlay.getScore());
+		contentValues.put(GameContract.GameEntry.COLUMN_MOVES, gamePlay.getMoves());
+		contentValues.put(GameContract.GameEntry.COLUMN_TIME, gamePlay.getTime().toSeconds());
 
-    public class OnSwipeTouchListener implements View.OnTouchListener,
-            SwipeGestureListener.OnSwipeInterface {
-        private final GestureDetector gestureDetector;
+		Uri uri = getContentResolver().insert(GameContract.GameEntry.CONTENT_URI, contentValues);
+		if (uri != null) {
+			Timber.d("Game Play saved");
+		}
+	}
 
-        private int[] rowMoves = {0, 0, 1, -1};
-        private int[] colMoves = {-1, 1, 0, 0};
+	public void startNewGame() {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder.setMessage(getResources().getString(R.string.play_new_game));
+		alertDialogBuilder.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+				updateBoard(new GameMatrix(size));
+				//updating the moves
+				updateMoves(0);
+				startTimer(0);
+			}
+		});
+		alertDialogBuilder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+				finish();
+			}
+		});
+		AlertDialog dialog = alertDialogBuilder.create();
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.setCancelable(false);
+		dialog.show();
+	}
 
-        OnSwipeTouchListener(Context ctx) {
-            Timber.d("Set OnSwipeTouchListener");
-            gestureDetector = new GestureDetector(ctx, new SwipeGestureListener(this));
-        }
+	public void updateMoves(int moves) {
+		movesTextView.setText(String.format(Locale.US, "%d", moves));
+		this.moves = moves;
+	}
 
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            return gestureDetector.onTouchEvent(event);
-        }
+	/**
+	 * @param rowIndex row index
+	 * @param colIndex column index
+	 * @return if rowIndex and columnIndex are within bounds
+	 */
+	private boolean isValidPosition(int rowIndex, int colIndex) {
+		return rowIndex >= 0 && rowIndex < size && colIndex >= 0 && colIndex < size;
+	}
 
-        @Override
-        public void onSwipeRight() {
-            makeMove(rowMoves[0], colMoves[0]);
-        }
+	public class OnSwipeTouchListener implements View.OnTouchListener,
+			SwipeGestureListener.OnSwipeInterface {
+		private final GestureDetector gestureDetector;
 
-        @Override
-        public void onSwipeLeft() {
-            makeMove(rowMoves[1], colMoves[1]);
-        }
+		private int[] rowMoves = {0, 0, 1, -1};
+		private int[] colMoves = {-1, 1, 0, 0};
 
-        @Override
-        public void onSwipeTop() {
-            makeMove(rowMoves[2], colMoves[2]);
-        }
+		OnSwipeTouchListener(Context ctx) {
+			Timber.d("Set OnSwipeTouchListener");
+			gestureDetector = new GestureDetector(ctx, new SwipeGestureListener(this));
+		}
 
-        @Override
-        public void onSwipeBottom() {
-            makeMove(rowMoves[3], colMoves[3]);
-        }
-    }
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			return gestureDetector.onTouchEvent(event);
+		}
 
-    /**
-     * Move empty tile
-     * @param rowMove number of rows to move
-     * @param colMove number of columns to move
-     */
-    private void makeMove(int rowMove, int colMove) {
-        // abs sum ensures that only one of the rowMove or colMove is 1 or -1
-        if (Math.abs(rowMove) + Math.abs(colMove) != 1) return;
-        int newEmptyRowIndex = gameMatrix.getEmptyCellRow() + rowMove;
-        int newEmptyColIndex = gameMatrix.getEmptyCellCol() + colMove;
+		@Override
+		public void onSwipeRight() {
+			makeMove(rowMoves[0], colMoves[0]);
+		}
 
-        if (!isValidPosition(newEmptyRowIndex, newEmptyColIndex)) return;
-        updateMoves(++moves);
+		@Override
+		public void onSwipeLeft() {
+			makeMove(rowMoves[1], colMoves[1]);
+		}
 
-        // TODO Make this click sound optional, give option from the setting to turn this on or off
-        playClickSound();
+		@Override
+		public void onSwipeTop() {
+			makeMove(rowMoves[2], colMoves[2]);
+		}
 
-        // swapping of tiles
-        int i = gameMatrix.getEmptyCellRow(), j = gameMatrix.getEmptyCellCol();
+		@Override
+		public void onSwipeBottom() {
+			makeMove(rowMoves[3], colMoves[3]);
+		}
+	}
 
-        buttons[i][j].setText(String.format("%s", gameMatrix.get(newEmptyRowIndex, newEmptyColIndex)));
-        buttons[i][j].setBackgroundColor(getResources().getColor(R.color.background));
+	/**
+	 * Move empty tile
+	 *
+	 * @param rowMove number of rows to move
+	 * @param colMove number of columns to move
+	 */
+	private void makeMove(int rowMove, int colMove) {
+		// abs sum ensures that only one of the rowMove or colMove is 1 or -1
+		if (Math.abs(rowMove) + Math.abs(colMove) != 1) return;
+		int newEmptyRowIndex = gameMatrix.getEmptyCellRow() + rowMove;
+		int newEmptyColIndex = gameMatrix.getEmptyCellCol() + colMove;
 
-        buttons[newEmptyRowIndex][newEmptyColIndex].setText("");
-        buttons[newEmptyRowIndex][newEmptyColIndex].setBackgroundColor(getResources().getColor(R.color.light));
+		if (!isValidPosition(newEmptyRowIndex, newEmptyColIndex)) return;
+		updateMoves(++moves);
 
-        gameMatrix.swap(i, j, newEmptyRowIndex, newEmptyColIndex);
+		// TODO Make this click sound optional, give option from the setting to turn this on or off
+		playClickSound();
 
-        if (gameMatrix.isSolved()) {
-            wonGame();
-        }
-    }
+		// swapping of tiles
+		int i = gameMatrix.getEmptyCellRow(), j = gameMatrix.getEmptyCellCol();
+
+		updateTile(i, j, gameMatrix.get(newEmptyRowIndex, newEmptyColIndex));
+		updateTile(newEmptyRowIndex, newEmptyColIndex, 0);
+
+		gameMatrix.swap(i, j, newEmptyRowIndex, newEmptyColIndex);
+
+		if (gameMatrix.isSolved()) {
+			wonGame();
+		}
+	}
 }

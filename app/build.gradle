@@ -5,11 +5,15 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.rajatgoyal.puzzle15"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode 18
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {
@@ -34,16 +38,16 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // Support Libraries
-    implementation 'androidx.appcompat:appcompat:1.1.0-alpha04'
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha04'
-    implementation 'com.google.android.material:material:1.1.0-alpha05'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-beta01'
+    implementation 'com.google.android.material:material:1.1.0-alpha08'
     // Firebase
-    implementation 'com.google.firebase:firebase-core:16.0.8'
-    implementation 'com.google.firebase:firebase-auth:16.2.1'
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    implementation 'com.google.android.gms:play-services-games:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-auth:18.1.0'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-games:18.0.0'
     // Extras
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.8'
     implementation 'com.jakewharton.timber:timber:4.7.1'

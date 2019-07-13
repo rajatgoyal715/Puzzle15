@@ -30,7 +30,7 @@ public class Tile extends AppCompatButton {
 		this.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
 		CharSequence text = this.getText();
-		if(TextUtils.isEmpty(text)) text = "Empty Tile";
+		if (TextUtils.isEmpty(text)) text = "Empty Tile";
 		else text = "Tile Number " + text;
 		this.setContentDescription(text);
 
