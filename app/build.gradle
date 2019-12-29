@@ -7,7 +7,7 @@ android {
         applicationId "com.rajatgoyal.puzzle15"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 18
+        versionCode 19
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
