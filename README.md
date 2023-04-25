@@ -1,4 +1,5 @@
-# Puzzle15 [![Build Status](https://travis-ci.org/rajatgoyal715/Puzzle15.svg?branch=master)](https://travis-ci.org/rajatgoyal715/Puzzle15)
+# Puzzle15
+<!-- [![Build Status](https://travis-ci.org/rajatgoyal715/Puzzle15.svg?branch=master)](https://travis-ci.org/rajatgoyal715/Puzzle15) -->
 Classic Android Puzzle game to reorder 15 tiles in ascending order
 
 <a href="https://play.google.com/store/apps/details?id=com.rajatgoyal.puzzle15"><img alt="Get it on Google Play" src="screenshots/google-play-badge.png" height="60px"/></a>
